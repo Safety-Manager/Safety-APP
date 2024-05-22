@@ -20,7 +20,11 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Main">
-          <Stack.Screen name="Main" component={MainScreens} />
+          <Stack.Screen
+            name="Main"
+            component={MainScreens}
+            options={{headerShown: false}}
+          />
           <Stack.Screen
             name="Welcome"
             component={WelcomeScreens}
