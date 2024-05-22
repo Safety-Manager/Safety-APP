@@ -1,9 +1,9 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import MyPage from '../pages/MyPage';
-import HomePage from '../pages/HomePage';
-import SafetyCompany from '../pages/SafetyCompany';
+import MyPage from '../screens/MyPageScreens';
+import HomePage from '../screens/HomeScreens';
+import SafetyCompany from '../screens/SafetyCompanyScreens';
 
 export default function MyTabs() {
   const Tab = createBottomTabNavigator();
