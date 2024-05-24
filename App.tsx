@@ -4,6 +4,8 @@ import {NavigationContainer} from '@react-navigation/native';
 import MainScreens from '@screens/MainScreens';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import WelcomeScreens from '@screens/WelcomeScreens';
+import SearchInfoScreens from '@screens/SearchInfoScreens';
+import SearchScreens from '@screens/SearchScreens';
 import MyTabs from '@navigation/MyTabs';
 
 export default function App() {
@@ -33,7 +35,17 @@ export default function App() {
           <Stack.Screen
             name="Home"
             component={MyTabs}
-            options={{headerShown: false, gestureEnabled: false}}
+            options={{headerShown: false, gestureEnabled: false, title: ''}}
+          />
+          <Stack.Screen
+            name="Search"
+            component={SearchScreens}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="SearchInfo"
+            component={SearchInfoScreens}
+            options={{title: '', headerShown: false}}
           />
         </Stack.Navigator>
       </NavigationContainer>

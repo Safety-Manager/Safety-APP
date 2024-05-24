@@ -1,4 +1,8 @@
 {
   "name": "SafetyApp",
-  "displayName": "SafetyApp"
+  "displayName": "SafetyApp",
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-9537856237755642~3465323788",
+    "ios_app_id": "ca-app-pub-9537856237755642~1947060691"
+  }
 }

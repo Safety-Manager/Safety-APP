@@ -9,6 +9,7 @@ import {
   unlink,
   loginWithKakaoAccount,
 } from '@react-native-seoul/kakao-login';
+import Admob from '@components/Admob';
 
 const MainScreens = ({navigation}: {navigation: any}) => {
   const [result, setResult] = useState<string>('');

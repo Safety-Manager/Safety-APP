@@ -6,10 +6,13 @@ import {
   SafeAreaView,
 } from 'react-native';
 import React from 'react';
+import Admob from '@components/Admob';
 
 const WelcomeScreens = ({navigation}: {navigation: any}) => {
   return (
     <SafeAreaView style={styles.safeArea}>
+      <Admob />
+
       <View style={styles.container}>
         <TouchableOpacity
           onPress={() => navigation.navigate('Home')}

@@ -22,6 +22,7 @@ android {
     defaultConfig {
         applicationId "com.safetyapp"
         minSdkVersion rootProject.ext.minSdkVersion
+        missingDimensionStrategy "store", "play"
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
