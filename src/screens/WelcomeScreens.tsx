@@ -18,7 +18,7 @@ const surveyData = {
   ],
 };
 
-const WelcomeScreens = () => {
+const WelcomeScreens = ({navigation}: any) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
 
@@ -56,7 +56,10 @@ const WelcomeScreens = () => {
               </TouchableOpacity>
             ))}
             <View style={styles.buttonContainer}>
-              <Button title="Submit" onPress={handleSubmit} />
+              <Button
+                title="Submit"
+                onPress={navigation.navigate('HomeScreens')}
+              />
               <Button title="Cancel" onPress={() => setModalVisible(false)} />
             </View>
           </View>

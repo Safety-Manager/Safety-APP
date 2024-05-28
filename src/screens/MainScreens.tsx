@@ -45,7 +45,7 @@ const MainScreens = ({navigation}: {navigation: any}) => {
     try {
       const profileResult = await NaverLogin.getProfile(accessToken);
       setGetProfileRes(profileResult);
-      navigation.navigate('Welcome');
+      navigation.navigate('Home');
     } catch (e) {
       setGetProfileRes(undefined);
     }

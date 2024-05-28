@@ -1208,6 +1208,8 @@ PODS:
     - React-logger (= 0.74.1)
     - React-perflogger (= 0.74.1)
     - React-utils (= 0.74.1)
+  - RNDeviceInfo (11.1.0):
+    - React-Core
   - RNGoogleMobileAds (13.6.0):
     - DoubleConversion
     - glog
@@ -1362,6 +1364,7 @@ DEPENDENCIES:
   - React-runtimescheduler (from `../node_modules/react-native/ReactCommon/react/renderer/runtimescheduler`)
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNGoogleMobileAds (from `../node_modules/react-native-google-mobile-ads`)
   - RNIap (from `../node_modules/react-native-iap`)
   - "RNNaverLogin (from `../node_modules/@react-native-seoul/naver-login`)"
@@ -1495,6 +1498,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/react/utils"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNGoogleMobileAds:
     :path: "../node_modules/react-native-google-mobile-ads"
   RNIap:
@@ -1574,6 +1579,7 @@ SPEC CHECKSUMS:
   React-runtimescheduler: e2152ed146b6a35c07386fc2ac4827b27e6aad12
   React-utils: 3285151c9d1e3a28a9586571fc81d521678c196d
   ReactCommon: f42444e384d82ab89184aed5d6f3142748b54768
+  RNDeviceInfo: b899ce37a403a4dea52b7cb85e16e49c04a5b88e
   RNGoogleMobileAds: 98d579aff4a05029f4f92ca5632eb6753493911d
   RNIap: b30126ab51607421ba595d534a3710d2796212f4
   RNNaverLogin: becc8dfef0c23bacbb309bc6d5a19d013bf4caff
