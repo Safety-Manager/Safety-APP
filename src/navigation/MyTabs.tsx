@@ -51,8 +51,10 @@ export default function MyTabs() {
       screenOptions={{
         tabBarActiveTintColor: '#000000',
         tabBarInactiveTintColor: '#CCCCCC',
+        tabBarHideOnKeyboard: true,
         tabBarStyle: [
           styles.tabBarStyle,
+
           isIphoneWithNotch()
             ? styles.tabBarStyleNotch
             : styles.tabBarStyleDefault,
