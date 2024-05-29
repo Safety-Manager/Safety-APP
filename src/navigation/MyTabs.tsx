@@ -50,6 +50,7 @@ export default function MyTabs() {
       initialRouteName="Feed"
       screenOptions={{
         tabBarActiveTintColor: '#000000',
+        tabBarInactiveTintColor: '#CCCCCC',
         tabBarStyle: [
           styles.tabBarStyle,
           isIphoneWithNotch()
@@ -111,7 +112,7 @@ export default function MyTabs() {
 const styles = StyleSheet.create({
   tabBar: {
     borderTopWidth: 1,
-    borderTopColor: '#f9f9f9',
+    borderTopColor: '',
   },
   tabBarLabel: {
     fontSize: 10,

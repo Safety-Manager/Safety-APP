@@ -9,12 +9,20 @@ import {
   Platform,
   TextInput,
   ScrollView,
+  TouchableOpacity,
+  Pressable,
+  Animated,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import SearchImg from '@assets/images/SearchImg.png';
 import ToggleIcon from '@assets/icons/Toggle.png';
 import SearchIcon from '@assets/icons/Search.png';
 import LawIcon from '@assets/icons/LatestLaw.png';
+import RecentLaw from '@components/RecentLaw';
+import LancIcon from '@assets/icons/Lank.png';
+import UpIcon from '@assets/icons/Up.png';
+import DownIcon from '@assets/icons/Down.png';
+import BottomSheet from '@components/BottomSheet';
 
 const suggestions = [
   '지게차',
@@ -27,7 +35,27 @@ const suggestions = [
   '화학설비',
 ];
 
+const LankData = ['지게차', '비계', '차', '관로', '관'];
 const HomeScreens = ({navigation}: {navigation: any}) => {
+  const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
+  const [searchText, setSearchText] = useState('');
+
+  const rotateAnim = useRef(new Animated.Value(0)).current;
+
+  const toggleBottomSheet = () => {
+    setBottomSheetVisible(!bottomSheetVisible);
+    Animated.timing(rotateAnim, {
+      toValue: bottomSheetVisible ? 0 : 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const rotation = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '180deg'],
+  });
+
   return (
     <ScrollView style={styles.container}>
       <ImageBackground
@@ -45,16 +73,29 @@ const HomeScreens = ({navigation}: {navigation: any}) => {
         </View>
         <View style={{flex: 1, width: '100%'}}>
           <View style={{width: '100%', height: 100}}>
-            <View style={styles.rectangleView}>
+            <Pressable style={styles.rectangleView} onPress={toggleBottomSheet}>
               <Text style={styles.text}>카테고리</Text>
               <View style={{width: 9, height: 9}}>
-                <Image
+                <Animated.Image
                   source={ToggleIcon}
-                  style={styles.toggleicon}
+                  style={[styles.toggleicon, {transform: [{rotate: rotation}]}]}
                   resizeMode="contain"
                 />
               </View>
-            </View>
+            </Pressable>
+            <BottomSheet
+              visible={bottomSheetVisible}
+              searchText={searchText}
+              setSearchText={setSearchText}
+              onClose={() => {
+                setBottomSheetVisible(false);
+                Animated.timing(rotateAnim, {
+                  toValue: 0,
+                  duration: 300,
+                  useNativeDriver: true,
+                }).start();
+              }}
+            />
             <View style={{width: '100%'}}>
               <View style={styles.searchbarContainer}>
                 <TextInput
@@ -62,14 +103,18 @@ const HomeScreens = ({navigation}: {navigation: any}) => {
                   placeholderTextColor="#ccc"
                   placeholder="검색어를 입력해주세요."
                 />
-                <Image source={SearchIcon} style={styles.searchicon} />
+                <Image
+                  source={SearchIcon}
+                  style={styles.searchicon}
+                  resizeMode="contain"
+                />
               </View>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.suggestionContainer}>
                 <Text style={styles.bestText}>추천 검색어</Text>
-                {suggestions.map((suggestion, index) => (
+                {suggestions.map((suggestion: any, index: number) => (
                   <View key={index} style={styles.suggestionItem}>
                     <Text style={styles.suggestionText}>{suggestion}</Text>
                   </View>
@@ -80,37 +125,21 @@ const HomeScreens = ({navigation}: {navigation: any}) => {
         </View>
       </ImageBackground>
       <View style={styles.LowContainer}>
-        <Image source={LawIcon} style={styles.LowIcons} />
+        <Image source={LawIcon} style={styles.LowIcons} resizeMode="contain" />
         <Text style={styles.LowText}>최근 조회한 이력</Text>
       </View>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.LowCardContainer}>
-        {suggestions.map((suggestion, index) => (
-          <View key={index} style={styles.LowCard}>
-            <View style={{marginLeft: 20}}>
-              <Text style={styles.LowCardTittle}>제목</Text>
-              <Text
-                style={styles.LowCardTittleInfo}
-                numberOfLines={2}
-                ellipsizeMode="tail">
-                (특수형태근로종사자) {'\n'}굴착기 운전자 안전보건교육
-                (특수형태근로종사자) {'\n'}굴착기 운전자 안전보건교육
-                (특수형태근로종사자) {'\n'}굴착기 운전자 안전보건교육
-              </Text>
-              <View style={styles.LowLine} />
-              <Text style={styles.LowCardTittle}>카테고리</Text>
-              <Text
-                style={styles.LowCardTittleInfo}
-                numberOfLines={1}
-                ellipsizeMode="tail">
-                산업안전보건 기준에 관한 규칙
-              </Text>
-            </View>
-          </View>
-        ))}
-      </ScrollView>
+      <RecentLaw />
+      <View style={styles.lank}>
+        <Image source={LancIcon} style={styles.LowIcons} resizeMode="contain" />
+        <Text style={styles.LowText}>검색어 순위</Text>
+      </View>
+      {LankData.map((data, index) => (
+        <View style={styles.lancContainer} key={index}>
+          <Text style={styles.lankTitle}>{index + 1}</Text>
+          <Text style={styles.lankText}>{data}</Text>
+          <Image source={UpIcon} style={styles.lankIcon} resizeMode="contain" />
+        </View>
+      ))}
     </ScrollView>
   );
 };
@@ -127,7 +156,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   image: {
-    opacity: 0.65,
+    opacity: 0.98,
   },
   contentContainer: {
     // position: 'absolute',
@@ -236,40 +265,39 @@ const styles = StyleSheet.create({
     fontFamily: 'NotoSansCJKkr',
     color: '#000',
   },
-  LowCardContainer: {
-    marginLeft: 20,
+  lank: {
     flexDirection: 'row',
-  },
-  LowCard: {
-    borderRadius: 10,
-    backgroundColor: '#f2f2f2',
-    width: 251,
-    height: 170,
-    marginRight: 10,
-    marginBottom: 10,
-  },
-  LowCardTittle: {
-    fontSize: 12,
-    fontWeight: '700',
-    fontFamily: 'NotoSansCJKkr',
-    color: '#bbb',
+    alignItems: 'center',
     marginTop: 15,
-    marginBottom: 4,
+    marginLeft: 20,
+    marginBottom: 12,
   },
-  LowCardTittleInfo: {
-    fontSize: 16,
+  lancContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 20,
+    marginBottom: 20,
+    width: '100%',
+  },
+  lankTitle: {
+    fontSize: 15,
+    marginRight: 10,
+    fontFamily: 'NotoSansCJKkr',
+    fontWeight: '800',
+    color: '#000',
+  },
+  lankText: {
+    fontSize: 15,
     fontWeight: '500',
     fontFamily: 'NotoSansCJKkr',
     color: '#000',
-    marginBottom: 12,
-    paddingRight: 38,
-    textAlign: 'left',
   },
-  LowLine: {
-    borderStyle: 'solid',
-    borderColor: '#ddd',
-    borderTopWidth: 1,
-    flex: 1,
+  lankIcon: {
+    height: 11,
+    width: 11,
+    position: 'absolute',
+    marginRight: 20,
+    right: 20,
   },
 });
 
