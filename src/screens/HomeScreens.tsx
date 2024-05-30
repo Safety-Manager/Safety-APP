@@ -14,7 +14,7 @@ import {
   Animated,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
-import SearchImg from '@assets/images/SearchImg.png';
+import SearchImg from '@assets/images/Ho.webp';
 import ToggleIcon from '@assets/icons/Toggle.png';
 import SearchIcon from '@assets/icons/Search.png';
 import LawIcon from '@assets/icons/LatestLaw.png';
@@ -152,11 +152,10 @@ const styles = StyleSheet.create({
   rectangleImage: {
     width: '100%',
     height: 500,
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+    backgroundColor: '#000',
   },
   image: {
-    opacity: 0.98,
+    opacity: 0.6,
   },
   contentContainer: {
     // position: 'absolute',
