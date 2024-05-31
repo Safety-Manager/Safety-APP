@@ -6,6 +6,18 @@ import NaverLogin, {
   NaverLoginResponse,
   GetProfileResponse,
 } from '@react-native-seoul/naver-login';
+import {authApi} from '@api/userApi';
+
+type userInfoType = {
+  message: string;
+  response: {
+    id: string;
+    email: string;
+    name: string;
+    mobile: string;
+    nickname: string;
+  };
+};
 
 const MainScreens = ({navigation}: {navigation: any}) => {
   const consumerKey = '7tIhAqxaGO6m5sPqtLuD';
@@ -32,26 +44,46 @@ const MainScreens = ({navigation}: {navigation: any}) => {
     useState<NaverLoginResponse['failureResponse']>();
   const [getProfileRes, setGetProfileRes] = useState<GetProfileResponse>();
 
+  const mutateJoin = authApi.PostJoin();
+
   const login = async (): Promise<void> => {
     const {failureResponse, successResponse} = await NaverLogin.login();
     setSuccessResponse(successResponse);
-    console.log('>>>', successResponse);
+
     getProfile(successResponse?.accessToken as string);
     setFailureResponse(failureResponse);
-    console.log('>>>', failureResponse);
   };
 
   const getProfile = async (accessToken: string): Promise<void> => {
     try {
       const profileResult = await NaverLogin.getProfile(accessToken);
-      setGetProfileRes(profileResult);
-      navigation.navigate('Home');
+      if (profileResult.message === 'success') {
+        mutateJoin.mutate(
+          {
+            id: profileResult.response.id,
+            email: profileResult.response.email,
+            name: profileResult.response.name,
+            hpno: profileResult.response.mobile?.replace(/-/g, '') as string,
+            nickname: profileResult.response.nickname as string,
+            platform: 'naver ',
+          },
+          {
+            onSuccess: (data: any) => {
+              console.log('data>>>', data);
+
+              navigation.navigate('Home');
+            },
+            onError: (error: any) => {
+              console.log('error>>>', error);
+            },
+          },
+        );
+      }
     } catch (e) {
       setGetProfileRes(undefined);
     }
   };
 
-  console.log('getProfileRes>>>', getProfileRes);
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>

@@ -38,7 +38,8 @@ const suggestions = [
 const LankData = ['지게차', '비계', '차', '관로', '관'];
 const HomeScreens = ({navigation}: {navigation: any}) => {
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
-  const [searchText, setSearchText] = useState('');
+  const [searchCategory, setSearchCategory] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
@@ -85,8 +86,8 @@ const HomeScreens = ({navigation}: {navigation: any}) => {
             </Pressable>
             <BottomSheet
               visible={bottomSheetVisible}
-              searchText={searchText}
-              setSearchText={setSearchText}
+              searchCategory={searchCategory}
+              setSearchCategory={setSearchCategory}
               onClose={() => {
                 setBottomSheetVisible(false);
                 Animated.timing(rotateAnim, {
@@ -102,6 +103,8 @@ const HomeScreens = ({navigation}: {navigation: any}) => {
                   style={styles.searchbarView}
                   placeholderTextColor="#ccc"
                   placeholder="검색어를 입력해주세요."
+                  value={searchQuery}
+                  onChangeText={text => setSearchQuery(text)}
                 />
                 <Image
                   source={SearchIcon}

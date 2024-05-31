@@ -65,7 +65,7 @@ export default function MyTabs() {
         component={SafetyCompany}
         options={{
           tabBarLabel: ({color}) => (
-            <Text style={[styles.tabBarLabel, {color}]}>안전업체</Text>
+            <Text style={[styles.tabBarLabel, {color}]}>안전교육</Text>
           ),
           headerShown: false,
           tabBarIcon: ({color, size}) => (

@@ -16,15 +16,15 @@ import CloseIcon from '@assets/icons/Close.png';
 type BottomSheetProps = {
   visible: boolean;
   onClose: () => void;
-  searchText: string;
-  setSearchText: (text: string) => void;
+  searchCategory: string;
+  setSearchCategory: (text: string) => void;
 };
 
 const BottomSheet = ({
   visible,
   onClose,
-  searchText,
-  setSearchText,
+  searchCategory,
+  setSearchCategory,
 }: BottomSheetProps) => {
   const slideAnim = useRef(new Animated.Value(0)).current;
 
@@ -89,10 +89,10 @@ const BottomSheet = ({
           <View style={styles.bottomContainer}>
             {data.map((item, index) => (
               <View style={styles.sheetContainer} key={index}>
-                <TouchableOpacity onPress={() => setSearchText(item)}>
+                <TouchableOpacity onPress={() => setSearchCategory(item)}>
                   <Text style={styles.sheetTitle}>{item}</Text>
                 </TouchableOpacity>
-                {searchText === item ? (
+                {searchCategory === item ? (
                   <Image
                     source={CheckIcon}
                     style={styles.checkIcon}
