@@ -47,14 +47,13 @@ export default function MyTabs() {
 
   return (
     <Tab.Navigator
-      initialRouteName="Feed"
+      initialRouteName="Home"
       screenOptions={{
         tabBarActiveTintColor: '#000000',
         tabBarInactiveTintColor: '#CCCCCC',
         tabBarHideOnKeyboard: true,
         tabBarStyle: [
           styles.tabBarStyle,
-
           isIphoneWithNotch()
             ? styles.tabBarStyleNotch
             : styles.tabBarStyleDefault,
@@ -77,7 +76,7 @@ export default function MyTabs() {
         }}
       />
       <Tab.Screen
-        name="HomePage"
+        name="Home"
         component={HomePage}
         options={{
           tabBarLabel: ({color}) => (

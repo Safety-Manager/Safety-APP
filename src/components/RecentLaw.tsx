@@ -9,52 +9,47 @@ import {
   Platform,
   TextInput,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import React from 'react';
 import NodataIcon from '@assets/icons/NoData.png';
 
-const RecentLaw = () => {
-  const suggestions = [
-    '지게차',
-    '비계',
-    '질식',
-    '관로',
-    '나무',
-    '폐기물',
-    '수거',
-    '화학설비',
-  ];
+interface RecentLawProps {
+  data: any;
+}
+const RecentLaw = ({data}: RecentLawProps) => {
+  const onClickSearchInfo = () => {
+    console.log('onClickSearchInfo');
+  };
+
   return (
     <>
-      {true ? (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.LowCardContainer}>
-          {suggestions.map((suggestio: any, index: number) => (
-            <View key={index} style={styles.LowCard}>
-              <View style={{marginLeft: 20}}>
-                <Text style={styles.LowCardTittle}>제목</Text>
-                <Text
-                  style={styles.LowCardTittleInfo}
-                  numberOfLines={2}
-                  ellipsizeMode="tail">
-                  (특수형태근로종사자) {'\n'}굴착기 운전자 안전보건교육
-                  (특수형태근로종사자) {'\n'}굴착기 운전자 안전보건교육
-                  (특수형태근로종사자) {'\n'}굴착기 운전자 안전보건교육
-                </Text>
-                <View style={styles.LowLine} />
-                <Text style={styles.LowCardTittle}>카테고리</Text>
-                <Text
-                  style={styles.LowCardTittleInfo}
-                  numberOfLines={1}
-                  ellipsizeMode="tail">
-                  산업안전보건 기준에 관한 규칙
-                </Text>
+      {data?.length > 0 ? (
+        <>
+          {data.map((list: any, index: number) => (
+            <TouchableOpacity key={index} onPress={() => onClickSearchInfo()}>
+              <View style={styles.LowCard}>
+                <View style={{marginLeft: 20}}>
+                  <Text style={styles.LowCardTittle}>제목</Text>
+                  <Text
+                    style={styles.LowCardTittleInfo}
+                    numberOfLines={2}
+                    ellipsizeMode="tail">
+                    {list.title}
+                  </Text>
+                  <View style={styles.LowLine} />
+                  <Text style={styles.LowCardTittle}>카테고리</Text>
+                  <Text
+                    style={styles.LowCardTittleInfo}
+                    numberOfLines={1}
+                    ellipsizeMode="tail">
+                    {list.category ?? '카테고리 없음'}
+                  </Text>
+                </View>
               </View>
-            </View>
+            </TouchableOpacity>
           ))}
-        </ScrollView>
+        </>
       ) : (
         <View style={styles.noDataContainer}>
           <Image
@@ -68,10 +63,6 @@ const RecentLaw = () => {
 };
 
 const styles = StyleSheet.create({
-  LowCardContainer: {
-    marginLeft: 20,
-    flexDirection: 'row',
-  },
   LowCard: {
     borderRadius: 10,
     backgroundColor: '#f2f2f2',

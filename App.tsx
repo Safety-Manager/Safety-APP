@@ -40,12 +40,12 @@ export default function App() {
           <Stack.Screen
             name="Search"
             component={SearchScreens}
-            options={{headerShown: false}}
+            options={{headerShown: true}}
           />
           <Stack.Screen
             name="SearchInfo"
             component={SearchInfoScreens}
-            options={{title: '', headerShown: false}}
+            options={{title: ''}}
           />
         </Stack.Navigator>
       </NavigationContainer>

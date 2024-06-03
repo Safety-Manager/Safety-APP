@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   Pressable,
   Animated,
+  Alert,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import SearchImg from '@assets/images/Ho.webp';
@@ -23,6 +24,8 @@ import LancIcon from '@assets/icons/Lank.png';
 import UpIcon from '@assets/icons/Up.png';
 import DownIcon from '@assets/icons/Down.png';
 import BottomSheet from '@components/BottomSheet';
+import {lawApi} from '@api/lawApi';
+import axiosInstance from '@utils/axiosInterceptor';
 
 const suggestions = [
   '지게차',
@@ -36,6 +39,7 @@ const suggestions = [
 ];
 
 const LankData = ['지게차', '비계', '차', '관로', '관'];
+
 const HomeScreens = ({navigation}: {navigation: any}) => {
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [searchCategory, setSearchCategory] = useState('');
@@ -56,6 +60,32 @@ const HomeScreens = ({navigation}: {navigation: any}) => {
     inputRange: [0, 1],
     outputRange: ['0deg', '180deg'],
   });
+
+  const onClickSearch = async () => {
+    if (searchQuery === '') {
+      Alert.alert('검색 에러', '검색어를 입력해주세요', [{text: '확인'}]);
+    } else {
+      try {
+        const response = await axiosInstance.get(
+          `/law/search?pageNum=${1}&keyWord=${searchQuery}&row=10&category=${searchCategory}`,
+        );
+        console.log('response>>', response);
+        if (response.data.searchDataList.length > 0) {
+          navigation.navigate('Search', {
+            searchDataList: response.data.searchDataList,
+            searchQuery: searchQuery,
+          });
+        } else {
+          Alert.alert('검색 결과', '검색 결과가 없습니다.', [{text: '확인'}]);
+        }
+      } catch (error) {
+        console.error(error);
+        Alert.alert('에러', '데이터를 가져오는 도중 문제가 발생했습니다.', [
+          {text: '확인'},
+        ]);
+      }
+    }
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -105,12 +135,17 @@ const HomeScreens = ({navigation}: {navigation: any}) => {
                   placeholder="검색어를 입력해주세요."
                   value={searchQuery}
                   onChangeText={text => setSearchQuery(text)}
+                  onSubmitEditing={onClickSearch}
                 />
-                <Image
-                  source={SearchIcon}
-                  style={styles.searchicon}
-                  resizeMode="contain"
-                />
+                <Pressable
+                  style={styles.searchButton}
+                  onPress={() => onClickSearch()}>
+                  <Image
+                    source={SearchIcon}
+                    style={styles.searchicon}
+                    resizeMode="contain"
+                  />
+                </Pressable>
               </View>
               <ScrollView
                 horizontal
@@ -131,7 +166,13 @@ const HomeScreens = ({navigation}: {navigation: any}) => {
         <Image source={LawIcon} style={styles.LowIcons} resizeMode="contain" />
         <Text style={styles.LowText}>최근 조회한 이력</Text>
       </View>
-      <RecentLaw />
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.LowCardContainer}>
+        <RecentLaw data={suggestions} />
+      </ScrollView>
+
       <View style={styles.lank}>
         <Image source={LancIcon} style={styles.LowIcons} resizeMode="contain" />
         <Text style={styles.LowText}>검색어 순위</Text>
@@ -214,10 +255,12 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingLeft: 15,
   },
-  searchicon: {
+  searchButton: {
     position: 'absolute',
     right: 1,
     top: 15,
+  },
+  searchicon: {
     width: 20,
     height: 20,
   },
@@ -266,6 +309,10 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontFamily: 'NotoSansCJKkr',
     color: '#000',
+  },
+  LowCardContainer: {
+    marginLeft: 20,
+    flexDirection: 'row',
   },
   lank: {
     flexDirection: 'row',
