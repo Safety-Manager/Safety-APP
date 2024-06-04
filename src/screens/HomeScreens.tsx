@@ -26,6 +26,8 @@ import DownIcon from '@assets/icons/Down.png';
 import BottomSheet from '@components/BottomSheet';
 import {lawApi} from '@api/lawApi';
 import axiosInstance from '@utils/axiosInterceptor';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from 'App';
 
 const suggestions = [
   '지게차',
@@ -40,7 +42,9 @@ const suggestions = [
 
 const LankData = ['지게차', '비계', '차', '관로', '관'];
 
-const HomeScreens = ({navigation}: {navigation: any}) => {
+type HomeScreenProps = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+
+const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [searchCategory, setSearchCategory] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
@@ -72,7 +76,6 @@ const HomeScreens = ({navigation}: {navigation: any}) => {
         console.log('response>>', response);
         if (response.data.searchDataList.length > 0) {
           navigation.navigate('Search', {
-            searchDataList: response.data.searchDataList,
             searchQuery: searchQuery,
           });
         } else {

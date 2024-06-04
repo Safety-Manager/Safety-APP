@@ -6,6 +6,7 @@ export const lawApi = {
     const res = await axiosInstance.get('/law/search', {
       params: {
         pageNum: pageParam,
+        // 인코딩이 필요한 경우
         keyWord: keyWord,
         row: 10,
         category: category,

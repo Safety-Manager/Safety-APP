@@ -15,8 +15,9 @@ import NaverLogin, {
 } from '@react-native-seoul/naver-login';
 import {authApi} from '@api/authApi';
 import {COOKIE_ACCESS_TOKEN, COOKIE_REFRESH_TOKEN} from '../config/constants';
-import Cookies from 'js-cookie';
 import * as Keychain from 'react-native-keychain';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from 'App';
 
 type userInfoType = {
   message: string;
@@ -29,7 +30,9 @@ type userInfoType = {
   };
 };
 
-const MainScreens = ({navigation}: {navigation: any}) => {
+type MainScreenProps = NativeStackNavigationProp<RootStackParamList, 'Main'>;
+
+const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
   const consumerKey = '7tIhAqxaGO6m5sPqtLuD';
   const consumerSecret = 'zu1n1pbsMz';
   const appName = 'safetyapp';

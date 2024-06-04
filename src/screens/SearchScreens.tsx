@@ -9,14 +9,26 @@ import {
 } from 'react-native';
 import React from 'react';
 import {lawApi} from '@api/lawApi';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from 'App';
 
-const SearchScreens = ({route, navigation}: {route: any; navigation: any}) => {
+type SearchScreenProps = NativeStackNavigationProp<
+  RootStackParamList,
+  'Search'
+>;
+
+const SearchScreens = ({
+  route,
+  navigation,
+}: {
+  route: any;
+  navigation: SearchScreenProps;
+}) => {
   const {searchQuery} = route.params; // Assuming `searchQuery` is passed correctly
 
   const {data, fetchNextPage, hasNextPage, isFetchingNextPage} =
     lawApi.GetLawList(searchQuery, 1); // Call without pageParam
 
-  console.log('searchQuery>>>', searchQuery);
   const renderFooter = () => {
     if (isFetchingNextPage) {
       return <ActivityIndicator />;
