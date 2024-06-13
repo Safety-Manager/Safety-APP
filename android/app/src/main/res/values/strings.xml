@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">SafetyApp</string>
-     <string name="kakao_app_key">b2da9fe16fa9e0aa3ae0917ecbc89620</string>
+    <string name="app_name">safe_android</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">T8vSOsarLuJrQwyCMR2jhpD-mlqePTACu4Sz1</string>
 </resources>

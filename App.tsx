@@ -7,6 +7,7 @@ import WelcomeScreens from '@screens/WelcomeScreens';
 import SearchInfoScreens from '@screens/SearchInfoScreens';
 import SearchScreens from '@screens/SearchScreens';
 import MyTabs from '@navigation/MyTabs';
+import CodePush from 'react-native-code-push';
 
 // 타입 정의
 export type RootStackParamList = {
@@ -19,7 +20,7 @@ export type RootStackParamList = {
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-export default function App() {
+function App() {
   const queryClient = new QueryClient();
 
   return (
@@ -56,3 +57,16 @@ export default function App() {
     </QueryClientProvider>
   );
 }
+
+const codePushOptions = {
+  checkFrequency: CodePush.CheckFrequency.ON_APP_START,
+  updateDialog: {
+    title: '...',
+    optionalUpdateMessage: '...',
+    optionalInstallButtonLabel: '업데이트',
+    optionalIgnoreButtonLabel: '아니요.',
+  },
+  installMode: CodePush.InstallMode.IMMEDIATE,
+};
+
+export default CodePush(codePushOptions)(App);
