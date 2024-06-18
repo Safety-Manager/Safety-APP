@@ -1,7 +1,18 @@
 import {lawApi} from '@api/lawApi';
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, StyleSheet, Text, ActivityIndicator} from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  ActivityIndicator,
+  TouchableOpacity,
+  Image,
+  View,
+} from 'react-native';
 import {WebView} from 'react-native-webview';
+import LeftLineIcon from '@assets/icons/LeftLine.png';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from 'App';
 
 // 텍스트 데이터를 HTML로 변환하는 함수
 const generateHtmlContent = (
@@ -50,8 +61,6 @@ const generateHtmlContent = (
       </style>
   </head>
   <body>
-      <h1>${title}</h1>
-      <div class="category">카테고리 : ${category}</div>
       <div class="content">
           <ul>
   `;
@@ -73,7 +82,18 @@ const generateHtmlContent = (
   return htmlContent;
 };
 
-const SearchInfoScreens = ({route}: {route: any}) => {
+type SearchScreenProps = NativeStackNavigationProp<
+  RootStackParamList,
+  'SearchInfo'
+>;
+
+const SearchInfoScreens = ({
+  route,
+  navigation,
+}: {
+  route: any;
+  navigation: SearchScreenProps;
+}) => {
   const {lawIdx} = route.params;
   const [lawInfo, setLawInfo] = useState({
     title: '',
@@ -110,6 +130,35 @@ const SearchInfoScreens = ({route}: {route: any}) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View
+        style={{
+          width: '100%',
+          height: 'auto',
+          backgroundColor: 'white',
+        }}>
+        <TouchableOpacity
+          style={styles.headerBackButton}
+          onPress={() => navigation.goBack()}>
+          <Image
+            source={LeftLineIcon}
+            style={styles.leftLineIcon}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+        <Text style={styles.text}>{data?.title}</Text>
+        <View style={styles.lineView} />
+        <View
+          style={{
+            flexDirection: 'row',
+            paddingTop: 20,
+            paddingLeft: 20,
+          }}>
+          <Text style={styles.categoryText}>카테고리</Text>
+          <View style={styles.rectangleView}>
+            <Text>안업안전보건법</Text>
+          </View>
+        </View>
+      </View>
       <WebView originWhitelist={['*']} source={{html: htmlContent}} />
     </SafeAreaView>
   );
@@ -118,6 +167,53 @@ const SearchInfoScreens = ({route}: {route: any}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    height: '100%',
+    width: '100%',
+  },
+  headerBackButton: {
+    position: 'absolute',
+    top: 21,
+    left: 21,
+    zIndex: 1,
+  },
+  leftLineIcon: {
+    width: 21,
+    height: 21,
+  },
+  text: {
+    paddingTop: 66,
+    paddingBottom: 20,
+    fontSize: 20,
+    fontWeight: '700',
+    fontFamily: 'Noto Sans CJK KR',
+    color: '#000',
+    textAlign: 'center',
+  },
+  lineView: {
+    borderStyle: 'solid',
+    borderColor: '#e6e6e6',
+    borderTopWidth: 1,
+    flex: 1,
+    width: '100%',
+    paddingLeft: 20,
+    paddingRight: 20,
+    height: 1,
+  },
+  categoryText: {
+    fontSize: 13,
+    fontWeight: '700',
+    fontFamily: 'notoSansCJKkr',
+    color: '#000',
+  },
+  rectangleView: {
+    borderRadius: 50,
+    backgroundColor: '#fff',
+    borderStyle: 'solid',
+    borderColor: '#bbb',
+    borderWidth: 1,
+    flex: 1,
+    width: '100%',
+    height: 35,
   },
   loadingContainer: {
     flex: 1,

@@ -8,6 +8,8 @@ import SearchInfoScreens from '@screens/SearchInfoScreens';
 import SearchScreens from '@screens/SearchScreens';
 import MyTabs from '@navigation/MyTabs';
 import CodePush from 'react-native-code-push';
+import {Button} from 'react-native';
+import LawIcon from '@assets/icons/LatestLaw.png';
 
 // 타입 정의
 export type RootStackParamList = {
@@ -25,6 +27,10 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function App() {
   const queryClient = new QueryClient();
+
+  function alert(arg0: string): void {
+    throw new Error('Function not implemented.');
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -48,12 +54,15 @@ function App() {
           <Stack.Screen
             name="Search"
             component={SearchScreens}
-            options={{headerShown: true}}
+            options={{headerShown: false, gestureEnabled: false, title: ''}}
           />
           <Stack.Screen
             name="SearchInfo"
             component={SearchInfoScreens}
-            options={{title: ''}}
+            options={{
+              headerShown: false,
+              headerTitle: '',
+            }}
           />
         </Stack.Navigator>
       </NavigationContainer>

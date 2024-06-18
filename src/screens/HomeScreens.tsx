@@ -15,7 +15,7 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import SearchImg from '@assets/images/Ho.webp';
 import ToggleIcon from '@assets/icons/Toggle.png';
 import SearchIcon from '@assets/icons/Search.png';
@@ -31,6 +31,7 @@ import {lawApi} from '@api/lawApi';
 import axiosInstance from '@utils/axiosInterceptor';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from 'App';
+import _ from 'lodash';
 
 const suggestions = [
   '지게차',
@@ -68,79 +69,82 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
     }
   };
 
-  console.log('>>', searchCategory);
   const rotation = rotateAnim.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '180deg'],
   });
 
-  const onClickSearch = async () => {
+  const fetchData = async (query: string, category: number) => {
+    setLoading(true); // 로딩 시작
+    try {
+      const response = await axiosInstance.get(
+        `/law/search?pageNum=${1}&keyWord=${query}&row=10&category=${category}`,
+      );
+      console.log('response>>', response);
+      if (response.data.searchDataList.length > 0) {
+        navigation.navigate('Search', {
+          searchQuery: query,
+          searchData: response.data.searchDataList,
+        });
+      } else {
+        Alert.alert('검색 결과', '검색 결과가 없습니다.', [{text: '확인'}]);
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('에러', '데이터를 가져오는 도중 문제가 발생했습니다.', [
+        {text: '확인'},
+      ]);
+    } finally {
+      setLoading(false); // 로딩 종료
+    }
+  };
+
+  const debouncedFetchData = useCallback(_.debounce(fetchData, 500), []);
+
+  const onClickSearch = () => {
     if (searchQuery === '') {
       Alert.alert('검색 에러', '검색어를 입력해주세요', [{text: '확인'}]);
     } else {
-      setLoading(true); // 로딩 시작
-      try {
-        let category = 0;
-        switch (searchCategory) {
-          case '전체':
-            category = 0;
-            break;
-          case '산업안전보건법':
-            category = 1;
-            break;
-          case '산업안전보건법 시행령':
-            category = 2;
-            break;
-          case '산업안전보건법 시행규칙':
-            category = 3;
-            break;
-          case '산업안전보건법 기준에 관한 규칙':
-            category = 4;
-            break;
-          case '고시 · 훈령 · 예규':
-            category = 5;
-            break;
-          case 'KOSHA GUIDE':
-            category = 7;
-            break;
-          default:
-            category = 0;
-            break;
-        }
-        console.log('category>>', category);
-        console.log('category>>', searchQuery);
-        const response = await axiosInstance.get(
-          `/law/search?pageNum=${1}&keyWord=${searchQuery}&row=10&category=${category}`,
-        );
-        console.log('response>>', response);
-        if (response.data.searchDataList.length > 0) {
-          navigation.navigate('Search', {
-            searchQuery: searchQuery,
-            searchData: response.data.searchDataList,
-          });
-        } else {
-          Alert.alert('검색 결과', '검색 결과가 없습니다.', [{text: '확인'}]);
-        }
-      } catch (error) {
-        console.error(error);
-        Alert.alert('에러', '데이터를 가져오는 도중 문제가 발생했습니다.', [
-          {text: '확인'},
-        ]);
-      } finally {
-        setLoading(false); // 로딩 종료
+      let category = 0;
+      switch (searchCategory) {
+        case '전체':
+          category = 0;
+          break;
+        case '산업안전보건법':
+          category = 1;
+          break;
+        case '산업안전보건법 시행령':
+          category = 2;
+          break;
+        case '산업안전보건법 시행규칙':
+          category = 3;
+          break;
+        case '산업안전보건법 기준에 관한 규칙':
+          category = 4;
+          break;
+        case '고시 · 훈령 · 예규':
+          category = 5;
+          break;
+        case 'KOSHA GUIDE':
+          category = 7;
+          break;
+        default:
+          category = 0;
+          break;
       }
+      debouncedFetchData(searchQuery, category);
     }
   };
 
   return (
     <ScrollView style={styles.container}>
       {loading && (
-        <SafeAreaView style={styles.loadingContainer}>
+        <View style={styles.loadingContainer}>
           <View style={styles.overlay}>
             <ActivityIndicator size="large" color="#0000ff" />
             <Text style={styles.loadingText}>로딩중...</Text>
           </View>
-        </SafeAreaView>
+        </View>
       )}
       <ImageBackground
         style={styles.rectangleImage}
@@ -156,97 +160,96 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
           </Text>
         </View>
         <View style={{flex: 1, width: '100%'}}>
-          <View style={{width: '100%', height: 100}}>
-            <View style={{flexDirection: 'row'}}>
-              <Pressable
-                style={styles.rectangleView}
-                onPress={toggleBottomSheet}>
-                <Text style={styles.text}>
-                  {searchCategory ? '초기화' : '카테고리'}
-                </Text>
+          <View style={{flexDirection: 'row'}}>
+            <Pressable style={styles.rectangleView} onPress={toggleBottomSheet}>
+              <Text style={styles.text}>
+                {searchCategory ? '초기화' : '카테고리'}
+              </Text>
 
-                {searchCategory ? (
-                  <View style={{width: 11, height: 11}}>
-                    <Animated.Image
-                      source={SearchRefresh}
-                      style={[
-                        styles.toggleicon,
-                        {transform: [{rotate: rotation}]},
-                      ]}
-                      resizeMode="contain"
-                    />
-                  </View>
-                ) : (
-                  <View style={{width: 9, height: 9}}>
-                    <Animated.Image
-                      source={ToggleIcon}
-                      style={[
-                        styles.toggleicon,
-                        {transform: [{rotate: rotation}]},
-                      ]}
-                      resizeMode="contain"
-                    />
-                  </View>
-                )}
-              </Pressable>
-              {searchCategory && (
-                <Pressable style={styles.selectRectangleView}>
-                  <Text style={styles.selectText}>{searchCategory}</Text>
-                  <View style={{width: 9, height: 9}}>
-                    <Animated.Image
-                      source={WhiteToggle}
-                      style={[styles.toggleicon]}
-                      resizeMode="contain"
-                    />
-                  </View>
-                </Pressable>
-              )}
-            </View>
-            <BottomSheet
-              visible={bottomSheetVisible}
-              searchCategory={searchCategory}
-              setSearchCategory={setSearchCategory}
-              onClose={() => {
-                setBottomSheetVisible(false);
-                Animated.timing(rotateAnim, {
-                  toValue: 0,
-                  duration: 300,
-                  useNativeDriver: true,
-                }).start();
-              }}
-            />
-            <View style={{width: '100%'}}>
-              <View style={styles.searchbarContainer}>
-                <TextInput
-                  style={styles.searchbarView}
-                  placeholderTextColor="#ccc"
-                  placeholder="검색어를 입력해주세요."
-                  value={searchQuery}
-                  onChangeText={text => setSearchQuery(text)}
-                  onSubmitEditing={onClickSearch}
-                />
-                <Pressable
-                  style={styles.searchButton}
-                  onPress={() => onClickSearch()}>
-                  <Image
-                    source={SearchIcon}
-                    style={styles.searchicon}
+              {searchCategory ? (
+                <View style={{width: 11, height: 11}}>
+                  <Animated.Image
+                    source={SearchRefresh}
+                    style={[
+                      styles.toggleicon,
+                      {transform: [{rotate: rotation}]},
+                    ]}
                     resizeMode="contain"
                   />
-                </Pressable>
-              </View>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.suggestionContainer}>
-                <Text style={styles.bestText}>추천 검색어</Text>
-                {suggestions.map((suggestion: any, index: number) => (
-                  <View key={index} style={styles.suggestionItem}>
-                    <Text style={styles.suggestionText}>{suggestion}</Text>
-                  </View>
-                ))}
-              </ScrollView>
+                </View>
+              ) : (
+                <View style={{width: 9, height: 9}}>
+                  <Animated.Image
+                    source={ToggleIcon}
+                    style={[
+                      styles.toggleicon,
+                      {transform: [{rotate: rotation}]},
+                    ]}
+                    resizeMode="contain"
+                  />
+                </View>
+              )}
+            </Pressable>
+            {searchCategory && (
+              <Pressable style={styles.selectRectangleView}>
+                <Text style={styles.selectText}>{searchCategory}</Text>
+                <View style={{width: 9, height: 9}}>
+                  <Animated.Image
+                    source={WhiteToggle}
+                    style={[styles.toggleicon]}
+                    resizeMode="contain"
+                  />
+                </View>
+              </Pressable>
+            )}
+          </View>
+          <BottomSheet
+            visible={bottomSheetVisible}
+            searchCategory={searchCategory}
+            setSearchCategory={setSearchCategory}
+            onClose={() => {
+              setBottomSheetVisible(false);
+              Animated.timing(rotateAnim, {
+                toValue: 0,
+                duration: 300,
+                useNativeDriver: true,
+              }).start();
+            }}
+          />
+          <View style={{width: '100%'}}>
+            <View style={styles.searchbarContainer}>
+              <TextInput
+                style={styles.searchbarView}
+                placeholderTextColor="#ccc"
+                placeholder="검색어를 입력해주세요."
+                value={searchQuery}
+                onChangeText={text => setSearchQuery(text)}
+                onSubmitEditing={onClickSearch}
+              />
+              <Pressable
+                style={styles.searchButton}
+                onPress={() => onClickSearch()}>
+                <Image
+                  source={SearchIcon}
+                  style={styles.searchicon}
+                  resizeMode="contain"
+                />
+              </Pressable>
             </View>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.suggestionContainer}>
+              <Text style={styles.bestText}>추천 검색어</Text>
+              {suggestions.map((suggestion: any, index: number) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.suggestionItem}
+                  onPress={() => setSearchQuery(suggestion)}>
+                  <Text style={styles.suggestionText}>{suggestion}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </View>
         </View>
       </ImageBackground>
@@ -307,7 +310,7 @@ const styles = StyleSheet.create({
   rectangleView: {
     borderRadius: 50,
     backgroundColor: '#fff',
-    width: 100,
+    width: '30%',
     height: 35,
     alignItems: 'center',
     justifyContent: 'center',
@@ -320,8 +323,8 @@ const styles = StyleSheet.create({
   },
   selectRectangleView: {
     borderRadius: 50,
-    backgroundColor: '#aaa',
-    width: 225,
+    backgroundColor: '#404d60',
+    width: '50%',
     height: 35,
     alignItems: 'center',
     justifyContent: 'center',
