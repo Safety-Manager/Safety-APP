@@ -13,14 +13,17 @@ import {
   Pressable,
   Animated,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import SearchImg from '@assets/images/Ho.webp';
 import ToggleIcon from '@assets/icons/Toggle.png';
 import SearchIcon from '@assets/icons/Search.png';
+import SearchRefresh from '@assets/icons/SearchRefresh.png';
 import LawIcon from '@assets/icons/LatestLaw.png';
 import RecentLaw from '@components/RecentLaw';
 import LancIcon from '@assets/icons/Lank.png';
+import WhiteToggle from '@assets/icons/WhiteToggle.png';
 import UpIcon from '@assets/icons/Up.png';
 import DownIcon from '@assets/icons/Down.png';
 import BottomSheet from '@components/BottomSheet';
@@ -46,20 +49,26 @@ type HomeScreenProps = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
-  const [searchCategory, setSearchCategory] = useState('');
+  const [searchCategory, setSearchCategory] = useState(null as null | string);
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
   const toggleBottomSheet = () => {
-    setBottomSheetVisible(!bottomSheetVisible);
-    Animated.timing(rotateAnim, {
-      toValue: bottomSheetVisible ? 0 : 1,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
+    if (searchCategory) {
+      setSearchCategory(null);
+    } else {
+      setBottomSheetVisible(!bottomSheetVisible);
+      Animated.timing(rotateAnim, {
+        toValue: bottomSheetVisible ? 0 : 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }
   };
 
+  console.log('>>', searchCategory);
   const rotation = rotateAnim.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '180deg'],
@@ -69,14 +78,45 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
     if (searchQuery === '') {
       Alert.alert('검색 에러', '검색어를 입력해주세요', [{text: '확인'}]);
     } else {
+      setLoading(true); // 로딩 시작
       try {
+        let category = 0;
+        switch (searchCategory) {
+          case '전체':
+            category = 0;
+            break;
+          case '산업안전보건법':
+            category = 1;
+            break;
+          case '산업안전보건법 시행령':
+            category = 2;
+            break;
+          case '산업안전보건법 시행규칙':
+            category = 3;
+            break;
+          case '산업안전보건법 기준에 관한 규칙':
+            category = 4;
+            break;
+          case '고시 · 훈령 · 예규':
+            category = 5;
+            break;
+          case 'KOSHA GUIDE':
+            category = 7;
+            break;
+          default:
+            category = 0;
+            break;
+        }
+        console.log('category>>', category);
+        console.log('category>>', searchQuery);
         const response = await axiosInstance.get(
-          `/law/search?pageNum=${1}&keyWord=${searchQuery}&row=10&category=${searchCategory}`,
+          `/law/search?pageNum=${1}&keyWord=${searchQuery}&row=10&category=${category}`,
         );
         console.log('response>>', response);
         if (response.data.searchDataList.length > 0) {
           navigation.navigate('Search', {
             searchQuery: searchQuery,
+            searchData: response.data.searchDataList,
           });
         } else {
           Alert.alert('검색 결과', '검색 결과가 없습니다.', [{text: '확인'}]);
@@ -86,12 +126,22 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
         Alert.alert('에러', '데이터를 가져오는 도중 문제가 발생했습니다.', [
           {text: '확인'},
         ]);
+      } finally {
+        setLoading(false); // 로딩 종료
       }
     }
   };
 
   return (
     <ScrollView style={styles.container}>
+      {loading && (
+        <SafeAreaView style={styles.loadingContainer}>
+          <View style={styles.overlay}>
+            <ActivityIndicator size="large" color="#0000ff" />
+            <Text style={styles.loadingText}>로딩중...</Text>
+          </View>
+        </SafeAreaView>
+      )}
       <ImageBackground
         style={styles.rectangleImage}
         resizeMode="cover"
@@ -107,16 +157,51 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
         </View>
         <View style={{flex: 1, width: '100%'}}>
           <View style={{width: '100%', height: 100}}>
-            <Pressable style={styles.rectangleView} onPress={toggleBottomSheet}>
-              <Text style={styles.text}>카테고리</Text>
-              <View style={{width: 9, height: 9}}>
-                <Animated.Image
-                  source={ToggleIcon}
-                  style={[styles.toggleicon, {transform: [{rotate: rotation}]}]}
-                  resizeMode="contain"
-                />
-              </View>
-            </Pressable>
+            <View style={{flexDirection: 'row'}}>
+              <Pressable
+                style={styles.rectangleView}
+                onPress={toggleBottomSheet}>
+                <Text style={styles.text}>
+                  {searchCategory ? '초기화' : '카테고리'}
+                </Text>
+
+                {searchCategory ? (
+                  <View style={{width: 11, height: 11}}>
+                    <Animated.Image
+                      source={SearchRefresh}
+                      style={[
+                        styles.toggleicon,
+                        {transform: [{rotate: rotation}]},
+                      ]}
+                      resizeMode="contain"
+                    />
+                  </View>
+                ) : (
+                  <View style={{width: 9, height: 9}}>
+                    <Animated.Image
+                      source={ToggleIcon}
+                      style={[
+                        styles.toggleicon,
+                        {transform: [{rotate: rotation}]},
+                      ]}
+                      resizeMode="contain"
+                    />
+                  </View>
+                )}
+              </Pressable>
+              {searchCategory && (
+                <Pressable style={styles.selectRectangleView}>
+                  <Text style={styles.selectText}>{searchCategory}</Text>
+                  <View style={{width: 9, height: 9}}>
+                    <Animated.Image
+                      source={WhiteToggle}
+                      style={[styles.toggleicon]}
+                      resizeMode="contain"
+                    />
+                  </View>
+                </Pressable>
+              )}
+            </View>
             <BottomSheet
               visible={bottomSheetVisible}
               searchCategory={searchCategory}
@@ -193,8 +278,8 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#fff',
+    flex: 1,
   },
   rectangleImage: {
     width: '100%',
@@ -225,7 +310,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 35,
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     flexDirection: 'row',
     paddingLeft: 15,
     paddingRight: 15,
@@ -233,9 +318,31 @@ const styles = StyleSheet.create({
     marginTop: 90,
     marginBottom: 10,
   },
+  selectRectangleView: {
+    borderRadius: 50,
+    backgroundColor: '#aaa',
+    width: 225,
+    height: 35,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    paddingLeft: 15,
+    paddingRight: 15,
+    marginLeft: 20,
+    marginTop: 90,
+    marginBottom: 10,
+  },
+  selectText: {
+    fontSize: 13,
+    fontWeight: '500',
+    marginRight: 5,
+    fontFamily: 'NotoSansCJKkr',
+    color: '#ffff',
+  },
   text: {
     fontSize: 13,
     fontWeight: '500',
+    marginRight: 5,
     fontFamily: 'NotoSansCJKkr',
     color: '#000',
   },
@@ -350,6 +457,27 @@ const styles = StyleSheet.create({
     position: 'absolute',
     marginRight: 20,
     right: 20,
+  },
+
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#fff',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

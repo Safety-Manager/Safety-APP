@@ -24,7 +24,7 @@ const SearchScreens = ({
   route: any;
   navigation: SearchScreenProps;
 }) => {
-  const {searchQuery} = route.params; // Assuming `searchQuery` is passed correctly
+  const {searchQuery, searchData} = route.params; // Assuming `searchQuery` is passed correctly
 
   const {data, fetchNextPage, hasNextPage, isFetchingNextPage} =
     lawApi.GetLawList(searchQuery, 1); // Call without pageParam

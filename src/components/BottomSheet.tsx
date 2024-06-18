@@ -16,7 +16,7 @@ import CloseIcon from '@assets/icons/Close.png';
 type BottomSheetProps = {
   visible: boolean;
   onClose: () => void;
-  searchCategory: string;
+  searchCategory: string | null;
   setSearchCategory: (text: string) => void;
 };
 

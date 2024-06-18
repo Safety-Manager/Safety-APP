@@ -14,7 +14,10 @@ export type RootStackParamList = {
   Main: undefined;
   Welcome: undefined;
   Home: undefined;
-  Search: {searchQuery: string};
+  Search: {
+    searchQuery: string;
+    searchData: [{lawIdx: number; lawDocId: string; title: string}];
+  };
   SearchInfo: {lawIdx: number}; // lawIdx가 필요하다면
 };
 
