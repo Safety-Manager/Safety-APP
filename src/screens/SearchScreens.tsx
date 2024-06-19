@@ -77,7 +77,6 @@ const SearchScreens = ({
           width: '100%',
           height: 120,
           backgroundColor: 'white',
-          marginBottom: 10,
         }}>
         <TouchableOpacity
           style={styles.headerBackButton}
@@ -112,8 +111,9 @@ const SearchScreens = ({
           ))}
         </ScrollView>
       </View>
+      <View style={{height: 10, backgroundColor: '#f2f2f2'}} />
       <View style={styles.contant}>
-        <View style={{flexDirection: 'row', marginBottom: 10}}>
+        <View style={{flexDirection: 'row', marginBottom: 10, paddingLeft: 20}}>
           <Image
             source={LawIcon}
             style={styles.LowIcons}
@@ -129,6 +129,7 @@ const SearchScreens = ({
               fetchNextPage();
             }
           }}
+          style={styles.flatListContentContainer}
           onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter}
           renderItem={({item}) => (
@@ -172,6 +173,7 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     flex: 1,
+    backgroundColor: 'white',
   },
   headerBackButton: {
     position: 'absolute',
@@ -214,25 +216,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 5,
   },
+
   selectText: {
     fontSize: 13,
     textAlign: 'center',
     fontWeight: '500',
-    fontFamily: 'notoSansCJKkr',
+    fontFamily: 'NotoSansCJKkr-Medium',
     color: '#ffff',
   },
   text: {
     fontSize: 13,
     textAlign: 'center',
     fontWeight: '500',
-    fontFamily: 'notoSansCJKkr',
+    fontFamily: 'NotoSansCJKkr-Medium',
     color: '#000',
   },
-
   contant: {
     width: '100%',
+    height: '100%',
     paddingTop: 30,
-    paddingLeft: 20,
     backgroundColor: 'white',
   },
   LowIcons: {
@@ -243,25 +245,28 @@ const styles = StyleSheet.create({
   LowText: {
     fontSize: 15,
     fontWeight: '700',
-    fontFamily: 'NotoSansCJKkr',
+    fontFamily: 'NotoSansCJKkr-Bold',
     color: '#000',
+  },
+  flatListContentContainer: {
+    paddingHorizontal: 20, // 양쪽에 20씩 패딩을 추가합니다
+    height: '100%',
   },
   cardContainer: {
     flex: 1,
-    alignSelf: 'center',
+    alignSelf: 'stretch',
   },
   LowCard: {
     borderRadius: 10,
     backgroundColor: '#f2f2f2',
-    width: 251,
+    width: '100%',
     height: 170,
-    marginRight: 10,
     marginBottom: 10,
   },
   LowCardTittle: {
     fontSize: 12,
     fontWeight: '700',
-    fontFamily: 'NotoSansCJKkr',
+    fontFamily: 'NotoSansCJKkr-Medium',
     color: '#bbb',
     marginTop: 15,
     marginBottom: 4,
@@ -269,13 +274,14 @@ const styles = StyleSheet.create({
   LowCardTittleInfo: {
     fontSize: 16,
     fontWeight: '500',
-    fontFamily: 'NotoSansCJKkr',
+    fontFamily: 'NotoSansCJKkr-Medium',
     color: '#000',
     marginBottom: 12,
     paddingRight: 38,
     textAlign: 'left',
   },
   LowLine: {
+    justifyContent: 'center',
     borderStyle: 'solid',
     borderColor: '#ddd',
     borderTopWidth: 1,
@@ -286,12 +292,11 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontFamily: 'NotoSansCJKkr',
     color: '#ccc',
-    marginBottom: 35,
+    marginBottom: 10,
   },
   noDataContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 30,
   },
   groupChild: {
     right: 20,

@@ -1271,6 +1271,27 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNReanimated (3.12.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNScreens (3.31.1):
     - DoubleConversion
     - glog
@@ -1387,6 +1408,7 @@ DEPENDENCIES:
   - RNIap (from `../node_modules/react-native-iap`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - "RNNaverLogin (from `../node_modules/@react-native-seoul/naver-login`)"
+  - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
@@ -1536,6 +1558,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-keychain"
   RNNaverLogin:
     :path: "../node_modules/@react-native-seoul/naver-login"
+  RNReanimated:
+    :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   RNSVG:
@@ -1619,6 +1643,7 @@ SPEC CHECKSUMS:
   RNIap: b30126ab51607421ba595d534a3710d2796212f4
   RNKeychain: bfe3d12bf4620fe488771c414530bf16e88f3678
   RNNaverLogin: becc8dfef0c23bacbb309bc6d5a19d013bf4caff
+  RNReanimated: 8978449b2a511388ea71faf1e66f669134e87658
   RNScreens: b32a9ff15bea7fcdbe5dff6477bc503f792b1208
   RNSVG: a48668fd382115bc89761ce291a81c4ca5f2fd2e
   RNVectorIcons: 2a2f79274248390b80684ea3c4400bd374a15c90

@@ -339,14 +339,14 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '500',
     marginRight: 5,
-    fontFamily: 'NotoSansCJKkr',
+    fontFamily: 'NotoSansCJKkr-Medium',
     color: '#ffff',
   },
   text: {
     fontSize: 13,
     fontWeight: '500',
     marginRight: 5,
-    fontFamily: 'NotoSansCJKkr',
+    fontFamily: 'NotoSansCJKkr-Medium',
     color: '#000',
   },
   toggleicon: {
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
   bestText: {
     fontSize: 13,
     fontWeight: '700',
-    fontFamily: 'NotoSansCJKkr',
+    fontFamily: 'NotoSansCJKkr-Medium',
     color: '#fff',
     marginLeft: 20,
     marginRight: 10,
@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
   suggestionText: {
     fontSize: 13,
     fontWeight: '700',
-    fontFamily: 'NotoSansCJKkr',
+    fontFamily: 'NotoSansCJKkr-Medium',
     color: '#fff',
     textAlign: 'center',
   },
@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
   LowText: {
     fontSize: 15,
     fontWeight: '700',
-    fontFamily: 'NotoSansCJKkr',
+    fontFamily: 'NotoSansCJKkr-Bold',
     color: '#000',
   },
   LowCardContainer: {
@@ -444,14 +444,14 @@ const styles = StyleSheet.create({
   lankTitle: {
     fontSize: 15,
     marginRight: 10,
-    fontFamily: 'NotoSansCJKkr',
+    fontFamily: 'NotoSansCJKkr-Medium',
     fontWeight: '800',
     color: '#000',
   },
   lankText: {
     fontSize: 15,
     fontWeight: '500',
-    fontFamily: 'NotoSansCJKkr',
+    fontFamily: 'NotoSansCJKkr-Medium',
     color: '#000',
   },
   lankIcon: {

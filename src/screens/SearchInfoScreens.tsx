@@ -169,6 +169,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: '100%',
     width: '100%',
+    backgroundColor: 'white',
   },
   headerBackButton: {
     position: 'absolute',
@@ -185,7 +186,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     fontSize: 20,
     fontWeight: '700',
-    fontFamily: 'Noto Sans CJK KR',
+    fontFamily: 'NotoSansCJKkr-Bold',
     color: '#000',
     textAlign: 'center',
   },
@@ -202,7 +203,7 @@ const styles = StyleSheet.create({
   categoryText: {
     fontSize: 13,
     fontWeight: '700',
-    fontFamily: 'notoSansCJKkr',
+    fontFamily: 'NotoSansCJKkr-Medium',
     color: '#000',
   },
   rectangleView: {

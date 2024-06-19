@@ -9,6 +9,7 @@ import {
   Image,
   Pressable,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import CheckIcon from '@assets/icons/Check.png';
 import CloseIcon from '@assets/icons/Close.png';
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
   bottomSheet: {
     backgroundColor: 'white',
     padding: 16,
-    height: 330,
+    height: 360,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
@@ -130,12 +131,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 22,
+    marginBottom: Platform.OS === 'android' ? 3 : 22,
   },
   sheetTitle: {
     fontSize: 14,
     fontWeight: '500',
-    fontFamily: 'NotoSansCJKkr',
+    fontFamily: 'NotoSansCJKkr-Medium',
     color: '#000',
   },
   checkIcon: {
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
   },
   closeIcon: {
     height: 26,
-    bottom: 345,
+    bottom: 375,
     position: 'absolute',
     right: 10,
   },

@@ -5,6 +5,7 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  SafeAreaView,
 } from 'react-native';
 import React from 'react';
 import Person from '@assets/icons/Person.png';
@@ -20,77 +21,90 @@ const myTab = [
 
 const MyPageScreens = () => {
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.rectangleView}>
-        <TouchableOpacity style={styles.rectangleContainer}>
-          <Text style={styles.text}>김민지 님</Text>
-          <Text style={styles.profileText}>프로필 수정 &gt; </Text>
-        </TouchableOpacity>
-        <View style={{flex: 1, justifyContent: 'center'}}>
-          <Image
-            source={Person}
-            style={styles.PersonIcon}
-            resizeMode="contain"
-          />
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container}>
+        <View style={styles.rectangleView}>
+          <TouchableOpacity style={styles.textContainer}>
+            <Text style={styles.text}>김민지 님</Text>
+            <Text style={styles.profileText}>프로필 수정 &gt; </Text>
+          </TouchableOpacity>
+          <View style={styles.imageContainer}>
+            <Image
+              source={Person}
+              style={styles.PersonIcon}
+              resizeMode="contain"
+            />
+          </View>
         </View>
-      </View>
-      <View style={styles.contantView}>
-        {myTab.map((item: string, index: number) => {
-          return (
-            <View key={index}>
-              <TouchableOpacity style={styles.contantBar}>
-                <Text style={styles.contantText}>{item}</Text>
-              </TouchableOpacity>
-              <View style={styles.lineView} />
-            </View>
-          );
-        })}
-      </View>
-    </ScrollView>
+        <View style={{height: 10, backgroundColor: '#f2f2f2'}} />
+        <View style={styles.contantView}>
+          {myTab.map((item: string, index: number) => {
+            return (
+              <View key={index}>
+                <TouchableOpacity style={styles.contantBar}>
+                  <Text style={styles.contantText}>{item}</Text>
+                  <Image
+                    source={RightLine}
+                    style={{width: 20, height: 17}}
+                    resizeMode="contain"
+                  />
+                </TouchableOpacity>
+                <View style={styles.lineView} />
+              </View>
+            );
+          })}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  container: {
+    flex: 1,
+  },
   rectangleView: {
     backgroundColor: '#fff',
-    flex: 1,
     width: '100%',
     height: 160,
-    justifyContent: 'center',
-    paddingLeft: 20,
     flexDirection: 'row',
-    marginBottom: 10,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
   },
-  rectangleContainer: {
+  textContainer: {
     flex: 1,
-    flexDirection: 'column',
     justifyContent: 'center',
   },
   text: {
     fontSize: 26,
     marginBottom: 2,
     fontWeight: '700',
-    fontFamily: 'NotoSansCJKkr',
+    fontFamily: 'NotoSansCJKkr-Bold',
     color: '#000',
   },
   profileText: {
     fontSize: 14,
     fontWeight: '500',
-    fontFamily: 'NotoSansCJKkr',
+    fontFamily: 'NotoSansCJKkr-Bold',
     color: '#aaa',
-    alignItems: 'flex-end',
+  },
+  imageContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   PersonIcon: {
-    width: '100%',
+    width: 68,
     height: 68,
-    overflow: 'hidden',
   },
   contantView: {
     backgroundColor: '#fff',
     flex: 1,
     width: '100%',
-    height: '100%',
   },
   contantBar: {
     height: 113,
@@ -98,14 +112,16 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderColor: '#e6e6e6',
     borderTopWidth: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    flexDirection: 'row',
   },
   contantText: {
     fontSize: 18,
     fontWeight: '700',
-    fontFamily: 'NotoSansCJKkr',
+    fontFamily: 'NotoSansCJKkr-Bold',
     color: '#000',
-    marginLeft: 20,
   },
   lineView: {
     borderStyle: 'solid',
