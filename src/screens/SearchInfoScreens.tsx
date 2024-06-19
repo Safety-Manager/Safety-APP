@@ -13,6 +13,7 @@ import {WebView} from 'react-native-webview';
 import LeftLineIcon from '@assets/icons/LeftLine.png';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from 'App';
+import TitleBar from '@components/TitleBar';
 
 // 텍스트 데이터를 HTML로 변환하는 함수
 const generateHtmlContent = (
@@ -136,15 +137,8 @@ const SearchInfoScreens = ({
           height: 'auto',
           backgroundColor: 'white',
         }}>
-        <TouchableOpacity
-          style={styles.headerBackButton}
-          onPress={() => navigation.goBack()}>
-          <Image
-            source={LeftLineIcon}
-            style={styles.leftLineIcon}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
+        <TitleBar />
+
         <Text style={styles.text}>{data?.title}</Text>
         <View style={styles.lineView} />
         <View

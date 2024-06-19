@@ -13,9 +13,10 @@ import React, {useRef} from 'react';
 import {lawApi} from '@api/lawApi';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from 'App';
-import LeftLineIcon from '@assets/icons/LeftLine.png';
 import LawIcon from '@assets/icons/LatestLaw.png';
 import UpIcon from '@assets/icons/UpBtn.png';
+import TitleBar from '@components/TitleBar';
+
 type SearchScreenProps = NativeStackNavigationProp<
   RootStackParamList,
   'Search'
@@ -31,10 +32,6 @@ const categoryData = [
   'KOSHA GUIDE',
 ];
 
-const scrollToTop = (scrollViewRef: any) => {
-  scrollViewRef.current?.scrollTo({y: 0, animated: true});
-};
-
 const SearchScreens = ({
   route,
   navigation,
@@ -45,6 +42,9 @@ const SearchScreens = ({
   const {searchQuery, searchData} = route.params; // Assuming `searchQuery` is passed correctly
   const [selectCategory, setSelectCategory] = React.useState('전체'); // Default category is '전체'
 
+  const scrollToTop = (scrollViewRef: any) => {
+    scrollViewRef.current?.scrollTo({y: 0, animated: true});
+  };
   const scrollViewRef = useRef<ScrollView>(null);
 
   const {data, fetchNextPage, hasNextPage, isFetchingNextPage} =
@@ -78,15 +78,7 @@ const SearchScreens = ({
           height: 120,
           backgroundColor: 'white',
         }}>
-        <TouchableOpacity
-          style={styles.headerBackButton}
-          onPress={() => navigation.goBack()}>
-          <Image
-            source={LeftLineIcon}
-            style={styles.leftLineIcon}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
+        <TitleBar />
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}

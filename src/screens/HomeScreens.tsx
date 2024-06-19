@@ -16,7 +16,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import SearchImg from '@assets/images/Ho.webp';
+import HomeImg from '@assets/images/Home.png';
 import ToggleIcon from '@assets/icons/Toggle.png';
 import SearchIcon from '@assets/icons/Search.png';
 import SearchRefresh from '@assets/icons/SearchRefresh.png';
@@ -149,7 +149,7 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
       <ImageBackground
         style={styles.rectangleImage}
         resizeMode="cover"
-        source={SearchImg}
+        source={HomeImg}
         imageStyle={styles.image} // imageStyle을 사용하여 opacity 적용
       >
         <View style={styles.contentContainer}>
