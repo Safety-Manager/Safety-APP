@@ -6,13 +6,12 @@ export const lawApi = {
     const res = await axiosInstance.get('/law/search', {
       params: {
         pageNum: pageParam,
-        // 인코딩이 필요한 경우
-        keyWord: keyWord,
+        keyWord: encodeURIComponent(keyWord), // 인코딩 추가
         row: 10,
         category: category,
       },
     });
-    console.log('이게 몇번>>>', res);
+    console.log('이게 몇번>>>', keyWord);
     return res.data.searchDataList;
   },
   GetLawList: function (keyWord: string, category: number) {

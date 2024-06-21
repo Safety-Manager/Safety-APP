@@ -50,23 +50,19 @@ type HomeScreenProps = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
-  const [searchCategory, setSearchCategory] = useState(null as null | string);
+  const [searchCategory, setSearchCategory] = useState('전체' as null | string);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
 
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
   const toggleBottomSheet = () => {
-    if (searchCategory) {
-      setSearchCategory(null);
-    } else {
-      setBottomSheetVisible(!bottomSheetVisible);
-      Animated.timing(rotateAnim, {
-        toValue: bottomSheetVisible ? 0 : 1,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-    }
+    setBottomSheetVisible(!bottomSheetVisible);
+    Animated.timing(rotateAnim, {
+      toValue: bottomSheetVisible ? 0 : 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
   };
 
   const rotation = rotateAnim.interpolate({
@@ -162,33 +158,14 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
         <View style={{flex: 1, width: '100%'}}>
           <View style={{flexDirection: 'row'}}>
             <Pressable style={styles.rectangleView} onPress={toggleBottomSheet}>
-              <Text style={styles.text}>
-                {searchCategory ? '초기화' : '카테고리'}
-              </Text>
-
-              {searchCategory ? (
-                <View style={{width: 11, height: 11}}>
-                  <Animated.Image
-                    source={SearchRefresh}
-                    style={[
-                      styles.toggleicon,
-                      {transform: [{rotate: rotation}]},
-                    ]}
-                    resizeMode="contain"
-                  />
-                </View>
-              ) : (
-                <View style={{width: 9, height: 9}}>
-                  <Animated.Image
-                    source={ToggleIcon}
-                    style={[
-                      styles.toggleicon,
-                      {transform: [{rotate: rotation}]},
-                    ]}
-                    resizeMode="contain"
-                  />
-                </View>
-              )}
+              <Text style={styles.text}>카테고리</Text>
+              <View style={{width: 9, height: 9}}>
+                <Animated.Image
+                  source={ToggleIcon}
+                  style={[styles.toggleicon, {transform: [{rotate: rotation}]}]}
+                  resizeMode="contain"
+                />
+              </View>
             </Pressable>
             {searchCategory && (
               <Pressable style={styles.selectRectangleView}>
@@ -324,14 +301,14 @@ const styles = StyleSheet.create({
   selectRectangleView: {
     borderRadius: 50,
     backgroundColor: '#404d60',
-    width: '50%',
+    width: '55%',
     height: 35,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
     paddingLeft: 15,
     paddingRight: 15,
-    marginLeft: 20,
+    marginLeft: 10,
     marginTop: 90,
     marginBottom: 10,
   },

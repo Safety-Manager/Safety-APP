@@ -28,10 +28,6 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function App() {
   const queryClient = new QueryClient();
 
-  function alert(arg0: string): void {
-    throw new Error('Function not implemented.');
-  }
-
   return (
     <QueryClientProvider client={queryClient}>
       <NavigationContainer>
