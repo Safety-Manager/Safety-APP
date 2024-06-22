@@ -24,7 +24,6 @@ axiosInstance.interceptors.request.use(
     try {
       const accessToken = await AsyncStorage.getItem(COOKIE_ACCESS_TOKEN);
 
-      console.log('accessToken>>', accessToken);
       if (accessToken) {
         config.headers.Authorization = `Bearer ${accessToken}`;
       }

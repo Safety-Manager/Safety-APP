@@ -1,19 +1,15 @@
 import axiosInstance from '@utils/axiosInterceptor';
 import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
+import {LawCountTypes, LawListTypes} from 'types/law';
 
 export const lawApi = {
   lawFn: async (pageParam: number, keyWord: string, category: number) => {
-    const res = await axiosInstance.get('/law/search', {
-      params: {
-        pageNum: pageParam,
-        keyWord: encodeURIComponent(keyWord), // 인코딩 추가
-        row: 10,
-        category: category,
-      },
-    });
-    console.log('이게 몇번>>>', keyWord);
+    const res = await axiosInstance.get(
+      `/law/search?pageNum=${pageParam}&keyWord=${keyWord}&row=10&category=${category}`,
+    );
     return res.data.searchDataList;
   },
+  // 법령 검색
   GetLawList: function (keyWord: string, category: number) {
     return useInfiniteQuery({
       queryKey: ['law', 'list', keyWord, category],
@@ -29,16 +25,7 @@ export const lawApi = {
       },
     });
   },
-  lawCategoryFn: async () => {
-    const res = await axiosInstance.get('/law/category');
-    return res.data.categories;
-  },
-  GetLawCategory: function () {
-    return useQuery({
-      queryKey: ['law', 'category'],
-      queryFn: () => this.lawCategoryFn(),
-    });
-  },
+  // 법령 상세정보
   GetLawInfo: function (lawIdx: number) {
     return useQuery({
       queryKey: ['law', 'info', lawIdx],
@@ -46,6 +33,29 @@ export const lawApi = {
         const res = await axiosInstance.get(`/law/detail/${lawIdx}`);
         console.log('>>resres', res);
         return res.data;
+      },
+    });
+  },
+  // 카테고리별 법령 개수
+  GetLawCategoryCount: function (keyword: number) {
+    return useQuery({
+      queryKey: ['law', 'count', keyword],
+      queryFn: async (): Promise<LawCountTypes[]> => {
+        const res = await axiosInstance.get(
+          `/law/search/count?keyword=${keyword}`,
+        );
+        console.log('keyword>>', keyword);
+        return res.data.categoryCounts;
+      },
+    });
+  },
+  // 최근 본 법령
+  GetLawHistory: function () {
+    return useQuery({
+      queryKey: ['law', 'history'],
+      queryFn: async (): Promise<LawListTypes[]> => {
+        const res = await axiosInstance.get('/law/history?pageNum=1&row=5 ');
+        return res.data.lawHistory;
       },
     });
   },

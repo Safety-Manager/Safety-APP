@@ -102,6 +102,7 @@ const SearchInfoScreens = ({
     category: '',
   });
 
+  console.log('lawIdx>>', lawIdx);
   const {data, isFetching, isLoading} = lawApi.GetLawInfo(lawIdx);
 
   useEffect(() => {

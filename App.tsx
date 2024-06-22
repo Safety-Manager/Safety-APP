@@ -8,8 +8,6 @@ import SearchInfoScreens from '@screens/SearchInfoScreens';
 import SearchScreens from '@screens/SearchScreens';
 import MyTabs from '@navigation/MyTabs';
 import CodePush from 'react-native-code-push';
-import {Button} from 'react-native';
-import LawIcon from '@assets/icons/LatestLaw.png';
 
 // 타입 정의
 export type RootStackParamList = {
@@ -19,6 +17,7 @@ export type RootStackParamList = {
   Search: {
     searchQuery: string;
     searchData: [{lawIdx: number; lawDocId: string; title: string}];
+    category: number;
   };
   SearchInfo: {lawIdx: number}; // lawIdx가 필요하다면
 };

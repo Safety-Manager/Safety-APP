@@ -9,13 +9,14 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {lawApi} from '@api/lawApi';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from 'App';
 import LawIcon from '@assets/icons/LatestLaw.png';
 import UpIcon from '@assets/icons/UpBtn.png';
 import TitleBar from '@components/TitleBar';
+import {LawCountTypes} from 'types/law';
 
 type SearchScreenProps = NativeStackNavigationProp<
   RootStackParamList,
@@ -39,8 +40,8 @@ const SearchScreens = ({
   route: any;
   navigation: SearchScreenProps;
 }) => {
-  const {searchQuery, searchData} = route.params; // Assuming `searchQuery` is passed correctly
-  const [selectCategory, setSelectCategory] = React.useState('전체'); // Default category is '전체'
+  const {searchQuery, category} = route.params; // Assuming `searchQuery` is passed correctly
+  const [selectCategory, setSelectCategory] = useState(category); // Default category is '전체'
 
   const scrollToTop = (scrollViewRef: any) => {
     scrollViewRef.current?.scrollTo({y: 0, animated: true});
@@ -48,8 +49,13 @@ const SearchScreens = ({
   const scrollViewRef = useRef<ScrollView>(null);
 
   const {data, fetchNextPage, hasNextPage, isFetchingNextPage} =
-    lawApi.GetLawList(searchQuery, 1); // Call without pageParam
+    lawApi.GetLawList(searchQuery, category); // Call without pageParam
 
+  const {
+    data: countData,
+    isLoading,
+    isFetching,
+  } = lawApi.GetLawCategoryCount(category);
   const renderFooter = () => {
     if (isFetchingNextPage) {
       return <ActivityIndicator />;
@@ -64,11 +70,21 @@ const SearchScreens = ({
     return null;
   };
 
+  console.log('countData>>', countData);
   const onClickSearchInfo = (lawIdx: number) => {
     navigation.navigate('SearchInfo', {
       lawIdx: lawIdx,
     });
   };
+
+  if (isFetching || isLoading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text style={styles.loadingText}>로딩중...</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -83,7 +99,7 @@ const SearchScreens = ({
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.rectangleContainer}>
-          {categoryData.map((item: string, index: number) => (
+          {countData?.map((item: LawCountTypes, index: number) => (
             <View
               key={index}
               style={
@@ -91,12 +107,13 @@ const SearchScreens = ({
                   ? styles.selectRectangleView
                   : styles.rectangleView
               }>
-              <TouchableOpacity onPress={() => setSelectCategory(item)}>
+              <TouchableOpacity
+                onPress={() => setSelectCategory(item.categoryDesc)}>
                 <Text
                   style={
                     selectCategory === item ? styles.selectText : styles.text
                   }>
-                  {item}
+                  {item.categoryDesc} {item.count}건
                 </Text>
               </TouchableOpacity>
             </View>
@@ -300,6 +317,10 @@ const styles = StyleSheet.create({
   icon: {
     width: '100%',
     height: '100%',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
   },
 });
 

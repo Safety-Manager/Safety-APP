@@ -1,9 +1,7 @@
 import {
   View,
   Text,
-  Button,
   StyleSheet,
-  SafeAreaView,
   Image,
   ImageBackground,
   Platform,
@@ -19,13 +17,11 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import HomeImg from '@assets/images/Home.png';
 import ToggleIcon from '@assets/icons/Toggle.png';
 import SearchIcon from '@assets/icons/Search.png';
-import SearchRefresh from '@assets/icons/SearchRefresh.png';
 import LawIcon from '@assets/icons/LatestLaw.png';
 import RecentLaw from '@components/RecentLaw';
 import LancIcon from '@assets/icons/Lank.png';
 import WhiteToggle from '@assets/icons/WhiteToggle.png';
 import UpIcon from '@assets/icons/Up.png';
-import DownIcon from '@assets/icons/Down.png';
 import BottomSheet from '@components/BottomSheet';
 import {lawApi} from '@api/lawApi';
 import axiosInstance from '@utils/axiosInterceptor';
@@ -54,6 +50,8 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const {data: HistoryData} = lawApi.GetLawHistory();
+
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
   const toggleBottomSheet = () => {
@@ -70,16 +68,16 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
     outputRange: ['0deg', '180deg'],
   });
 
+  // 호출 부분
   const fetchData = async (query: string, category: number) => {
-    setLoading(true); // 로딩 시작
     try {
       const response = await axiosInstance.get(
-        `/law/search?pageNum=${1}&keyWord=${query}&row=10&category=${category}`,
+        `/law/search?pageNum=${1}&keyWord=${query}&row=1&category=${category}`,
       );
-      console.log('response>>', response);
       if (response.data.searchDataList.length > 0) {
         navigation.navigate('Search', {
           searchQuery: query,
+          category: category,
           searchData: response.data.searchDataList,
         });
       } else {
@@ -95,8 +93,10 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
     }
   };
 
+  // 검색어 입력 시 0.5초 후에 fetchData 함수 호출
   const debouncedFetchData = useCallback(_.debounce(fetchData, 500), []);
 
+  // 검색 버튼 클릭 시
   const onClickSearch = () => {
     if (searchQuery === '') {
       Alert.alert('검색 에러', '검색어를 입력해주세요', [{text: '확인'}]);
@@ -234,12 +234,16 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
         <Image source={LawIcon} style={styles.LowIcons} resizeMode="contain" />
         <Text style={styles.LowText}>최근 조회한 이력</Text>
       </View>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.LowCardContainer}>
-        <RecentLaw data={suggestions} />
-      </ScrollView>
+      {HistoryData && HistoryData.length > 0 ? (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.LowCardContainer}>
+          <RecentLaw data={HistoryData} />
+        </ScrollView>
+      ) : (
+        <RecentLaw data={HistoryData} />
+      )}
 
       <View style={styles.lank}>
         <Image source={LancIcon} style={styles.LowIcons} resizeMode="contain" />

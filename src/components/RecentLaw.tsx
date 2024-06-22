@@ -18,9 +18,7 @@ interface RecentLawProps {
   data: any;
 }
 const RecentLaw = ({data}: RecentLawProps) => {
-  const onClickSearchInfo = () => {
-    console.log('onClickSearchInfo');
-  };
+  const onClickSearchInfo = () => {};
 
   return (
     <>

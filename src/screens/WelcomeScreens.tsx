@@ -28,7 +28,6 @@ const WelcomeScreens = ({navigation}: any) => {
 
   const handleSubmit = () => {
     // Here you can handle the submission logic, e.g., sending the response to a server
-    console.log('Selected option:', selectedOption);
     setModalVisible(false);
   };
 
