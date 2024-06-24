@@ -54,12 +54,7 @@ const generateHtmlContent = (
               border-radius: 8px;
               box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
           }
-          .category {
-            color: #333;
-            font-size: 14px; /* 글자 크기 조정 */
-            text-align: center;
-            margin-bottom: 20px;
-          }
+         
           ul {
               padding-left: 20px;
           }
