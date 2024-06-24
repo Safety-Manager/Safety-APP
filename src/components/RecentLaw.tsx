@@ -13,19 +13,33 @@ import {
 } from 'react-native';
 import React from 'react';
 import NodataIcon from '@assets/icons/NoData.png';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from 'App';
 
 interface RecentLawProps {
   data: any;
 }
+
+type SearchScreenProps = NativeStackNavigationProp<RootStackParamList>;
+
 const RecentLaw = ({data}: RecentLawProps) => {
-  const onClickSearchInfo = () => {};
+  const navigation: SearchScreenProps = useNavigation(); // Use the useNavigation hook to access the navigation object
+
+  const onClickSearchInfo = (lawIdx: number) => {
+    navigation.navigate('SearchInfo', {
+      lawIdx: lawIdx,
+    });
+  };
 
   return (
     <>
       {data?.length > 0 ? (
         <>
           {data.map((list: any, index: number) => (
-            <TouchableOpacity key={index} onPress={() => onClickSearchInfo()}>
+            <TouchableOpacity
+              key={index}
+              onPress={() => onClickSearchInfo(list.lawIdx)}>
               <View style={styles.LowCard}>
                 <View style={{marginLeft: 20}}>
                   <Text style={styles.LowCardTittle}>제목</Text>

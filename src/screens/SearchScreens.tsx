@@ -32,6 +32,7 @@ const SearchScreens = ({
 }) => {
   const {searchQuery, category} = route.params; // Assuming `searchQuery` is passed correctly
   const [selectCategory, setSelectCategory] = useState(category); // Default category is '전체'
+  const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {
     refetch(); // 카테고리가 변경될 때마다 refetch 호출
@@ -63,6 +64,16 @@ const SearchScreens = ({
       );
     }
     return null;
+  };
+
+  const handleScroll = (event: any) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    if (offsetY > 400) {
+      // 스크롤 위치가 200 이상이면 버튼을 보이게 설정
+      setShowButton(true);
+    } else {
+      setShowButton(false);
+    }
   };
 
   const onClickSearchInfo = (lawIdx: number) => {
@@ -130,6 +141,7 @@ const SearchScreens = ({
           }}
           style={styles.flatListContentContainer}
           ref={flatListRef}
+          onScroll={handleScroll}
           contentContainerStyle={{flexGrow: 1}}
           onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter}
@@ -160,11 +172,13 @@ const SearchScreens = ({
           )}
         />
       </View>
-      <TouchableOpacity
-        style={styles.groupChild}
-        onPress={() => scrollToTop(flatListRef)}>
-        <Image resizeMode="contain" source={UpIcon} style={styles.icon} />
-      </TouchableOpacity>
+      {showButton && ( // showButton 상태에 따라 버튼을 렌더링
+        <TouchableOpacity
+          style={styles.groupChild}
+          onPress={() => scrollToTop(flatListRef)}>
+          <Image resizeMode="contain" source={UpIcon} style={styles.icon} />
+        </TouchableOpacity>
+      )}
     </SafeAreaView>
   );
 };
@@ -271,16 +285,15 @@ const styles = StyleSheet.create({
     fontFamily: 'NotoSansCJKkr-Medium',
     color: '#bbb',
     marginTop: 15,
-    marginBottom: 4,
   },
   LowCardTittleInfo: {
     fontSize: 16,
     fontWeight: '500',
     fontFamily: 'NotoSansCJKkr-Medium',
     color: '#000',
-    marginBottom: 12,
     paddingRight: 38,
     textAlign: 'left',
+    paddingBottom: 5,
   },
   LowLine: {
     justifyContent: 'center',
@@ -292,8 +305,9 @@ const styles = StyleSheet.create({
   noDataText: {
     fontSize: 13,
     fontWeight: '500',
-    fontFamily: 'NotoSansCJKkr',
+    fontFamily: 'NotoSansCJKkr-Medium',
     color: '#ccc',
+    marginBottom: 10,
   },
   noDataContainer: {
     alignItems: 'center',

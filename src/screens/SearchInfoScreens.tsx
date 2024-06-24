@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Image,
   View,
+  Platform,
 } from 'react-native';
 import {WebView} from 'react-native-webview';
 import LeftLineIcon from '@assets/icons/LeftLine.png';
@@ -29,14 +30,20 @@ const generateHtmlContent = (
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>${title}</title>
       <style>
+            @font-face {
+            font-family: 'NotoSansCJKkr-Medium';
+            src: url('file:///android_asset/fonts/NotoSansCJKkr-Medium.otf') format('opentype'); /* Android용 경로 */
+            src: url('NotoSansCJKkr-Medium.otf') format('opentype'); /* iOS용 경로 */
+          }
           body {
-              font-family: Arial, sans-serif;
+            font-family: 'NotoSansCJKkr-Medium', Arial, sans-serif;
               line-height: 1.6;
               padding: 10px;
               background-color: #f4f4f4;
           }
           h1 {
             color: #333;
+            font-family: 'NotoSansCJKkr-Bold';
             font-size: 18px; /* 글자 크기 조정 */
             text-align: center;
             margin-bottom: 20px;
@@ -102,7 +109,6 @@ const SearchInfoScreens = ({
     category: '',
   });
 
-  console.log('lawIdx>>', lawIdx);
   const {data, isFetching, isLoading} = lawApi.GetLawInfo(lawIdx);
 
   useEffect(() => {
@@ -110,7 +116,7 @@ const SearchInfoScreens = ({
       setLawInfo({
         title: data?.title,
         content: data?.hilightContent,
-        category: '산업안전보건법',
+        category: data?.category,
       });
     }
   }, [data]);
@@ -142,15 +148,10 @@ const SearchInfoScreens = ({
 
         <Text style={styles.text}>{data?.title}</Text>
         <View style={styles.lineView} />
-        <View
-          style={{
-            flexDirection: 'row',
-            paddingTop: 20,
-            paddingLeft: 20,
-          }}>
+        <View style={styles.categoryContainer}>
           <Text style={styles.categoryText}>카테고리</Text>
           <View style={styles.rectangleView}>
-            <Text>안업안전보건법</Text>
+            <Text style={styles.roundText}>안업안전보건법</Text>
           </View>
         </View>
       </View>
@@ -179,6 +180,7 @@ const styles = StyleSheet.create({
   text: {
     paddingTop: 66,
     paddingBottom: 20,
+    paddingHorizontal: 70,
     fontSize: 20,
     fontWeight: '700',
     fontFamily: 'NotoSansCJKkr-Bold',
@@ -201,15 +203,29 @@ const styles = StyleSheet.create({
     fontFamily: 'NotoSansCJKkr-Medium',
     color: '#000',
   },
+  categoryContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingBottom: 20,
+  },
   rectangleView: {
     borderRadius: 50,
     backgroundColor: '#fff',
     borderStyle: 'solid',
     borderColor: '#bbb',
     borderWidth: 1,
-    flex: 1,
-    width: '100%',
-    height: 35,
+    marginLeft: 10,
+    paddingVertical: Platform.OS === 'ios' ? 5 : 0,
+    paddingHorizontal: 16,
+  },
+  roundText: {
+    fontSize: 13,
+    fontWeight: '500',
+    fontFamily: 'NotoSansCJKkr-Medium',
+    color: '#000',
   },
   loadingContainer: {
     flex: 1,
