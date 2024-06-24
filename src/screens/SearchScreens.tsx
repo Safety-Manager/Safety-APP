@@ -9,7 +9,7 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {lawApi} from '@api/lawApi';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from 'App';
@@ -23,16 +23,6 @@ type SearchScreenProps = NativeStackNavigationProp<
   'Search'
 >;
 
-const categoryData = [
-  '전체',
-  '산업안전보건법',
-  '산업안전보건법 시행령',
-  '산업안전보건법 시행규칙',
-  '산업안전보건법 기준에 관한 규칙',
-  '고시 · 훈령 · 예규',
-  'KOSHA GUIDE',
-];
-
 const SearchScreens = ({
   route,
   navigation,
@@ -43,19 +33,24 @@ const SearchScreens = ({
   const {searchQuery, category} = route.params; // Assuming `searchQuery` is passed correctly
   const [selectCategory, setSelectCategory] = useState(category); // Default category is '전체'
 
-  const scrollToTop = (scrollViewRef: any) => {
-    scrollViewRef.current?.scrollTo({y: 0, animated: true});
+  useEffect(() => {
+    refetch(); // 카테고리가 변경될 때마다 refetch 호출
+  }, [selectCategory]);
+
+  const scrollToTop = (flatListRef: any) => {
+    flatListRef.current?.scrollToOffset({offset: 0, animated: true});
   };
-  const scrollViewRef = useRef<ScrollView>(null);
+  const flatListRef = useRef<FlatList>(null);
 
   const {data, fetchNextPage, hasNextPage, isFetchingNextPage} =
-    lawApi.GetLawList(searchQuery, category); // Call without pageParam
+    lawApi.GetLawList(searchQuery, selectCategory); // Call without pageParam
 
   const {
     data: countData,
     isLoading,
     isFetching,
-  } = lawApi.GetLawCategoryCount(category);
+    refetch,
+  } = lawApi.GetLawCategoryCount(searchQuery);
   const renderFooter = () => {
     if (isFetchingNextPage) {
       return <ActivityIndicator />;
@@ -70,21 +65,15 @@ const SearchScreens = ({
     return null;
   };
 
-  console.log('countData>>', countData);
   const onClickSearchInfo = (lawIdx: number) => {
     navigation.navigate('SearchInfo', {
       lawIdx: lawIdx,
     });
   };
 
-  if (isFetching || isLoading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text style={styles.loadingText}>로딩중...</Text>
-      </SafeAreaView>
-    );
-  }
+  const handleCategory = (data: LawCountTypes) => {
+    setSelectCategory(data.category);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -103,15 +92,16 @@ const SearchScreens = ({
             <View
               key={index}
               style={
-                selectCategory === item
+                selectCategory === item.category
                   ? styles.selectRectangleView
                   : styles.rectangleView
               }>
-              <TouchableOpacity
-                onPress={() => setSelectCategory(item.categoryDesc)}>
+              <TouchableOpacity onPress={() => handleCategory(item)}>
                 <Text
                   style={
-                    selectCategory === item ? styles.selectText : styles.text
+                    selectCategory === item.category
+                      ? styles.selectText
+                      : styles.text
                   }>
                   {item.categoryDesc} {item.count}건
                 </Text>
@@ -139,6 +129,8 @@ const SearchScreens = ({
             }
           }}
           style={styles.flatListContentContainer}
+          ref={flatListRef}
+          contentContainerStyle={{flexGrow: 1}}
           onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter}
           renderItem={({item}) => (
@@ -170,7 +162,7 @@ const SearchScreens = ({
       </View>
       <TouchableOpacity
         style={styles.groupChild}
-        onPress={() => scrollToTop(scrollViewRef)}>
+        onPress={() => scrollToTop(flatListRef)}>
         <Image resizeMode="contain" source={UpIcon} style={styles.icon} />
       </TouchableOpacity>
     </SafeAreaView>
@@ -244,6 +236,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     paddingTop: 30,
+    flex: 1,
     backgroundColor: 'white',
   },
   LowIcons: {
@@ -301,7 +294,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontFamily: 'NotoSansCJKkr',
     color: '#ccc',
-    marginBottom: 10,
   },
   noDataContainer: {
     alignItems: 'center',

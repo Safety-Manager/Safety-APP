@@ -1,6 +1,6 @@
 export interface LawCountTypes {
   category: string;
-  categoryDesc: string;
+  categoryDesc: number;
   count: number;
 }
 export interface LawInfoTypes {

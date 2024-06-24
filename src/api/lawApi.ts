@@ -44,7 +44,6 @@ export const lawApi = {
         const res = await axiosInstance.get(
           `/law/search/count?keyword=${keyword}`,
         );
-        console.log('keyword>>', keyword);
         return res.data.categoryCounts;
       },
     });
