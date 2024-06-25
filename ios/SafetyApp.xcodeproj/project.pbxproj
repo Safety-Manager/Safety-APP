@@ -13,6 +13,8 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		22582E61079A454881E421EF /* NotoSansCJKkr-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7657AF0A69DE46498176B45F /* NotoSansCJKkr-Black.otf */; };
+		4C98EF1C2C2AC3B3007146C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		4C98EF1E2C2AC3B5007146C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		4C9C9A202BFF107400A25EAE /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9C9A1F2BFF107400A25EAE /* SwiftBridge.swift */; };
 		4E730E160431415AB8445285 /* NotoSansCJKkr-Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = DEB139CBAB3B4A1D88270FC2 /* NotoSansCJKkr-Thin.otf */; };
 		7699B88040F8A987B510C191 /* libPods-SafetyApp-SafetyAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-SafetyApp-SafetyAppTests.a */; };
@@ -289,6 +291,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = NO;
 				LastUpgradeCheck = 1210;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
@@ -324,6 +327,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4C98EF1E2C2AC3B5007146C7 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,6 +336,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				4C98EF1C2C2AC3B3007146C7 /* Images.xcassets in Resources */,
 				8DBC192FD93623831315E342 /* PrivacyInfo.xcprivacy in Resources */,
 				22582E61079A454881E421EF /* NotoSansCJKkr-Black.otf in Resources */,
 				A2BD280D58904619A4299B4B /* NotoSansCJKkr-Bold.otf in Resources */,
