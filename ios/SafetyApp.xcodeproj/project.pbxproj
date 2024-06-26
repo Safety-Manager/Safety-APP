@@ -20,6 +20,7 @@
 		7699B88040F8A987B510C191 /* libPods-SafetyApp-SafetyAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-SafetyApp-SafetyAppTests.a */; };
 		7CA7FA2AC64F4FEE9BD905EF /* NotoSansCJKkr-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = E4BC593EF6D147B4A6BE2DA8 /* NotoSansCJKkr-Light.otf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		8BE0C64003164FDD99674478 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BD5DAD9B926249DF8D2F24A0 /* BootSplash.storyboard */; };
 		8DBC192FD93623831315E342 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3C3E710C257446D5CCFBB20D /* PrivacyInfo.xcprivacy */; };
 		A2BD280D58904619A4299B4B /* NotoSansCJKkr-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6D49D5EE1ADA4A4EB6243296 /* NotoSansCJKkr-Bold.otf */; };
 		A5D9AC2A20224D518AEA9657 /* NotoSansCJKkr-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = C5370C7E15044118B0375EEB /* NotoSansCJKkr-Medium.otf */; };
@@ -82,6 +83,7 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = SafetyApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-SafetyApp-SafetyAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SafetyApp-SafetyAppTests.release.xcconfig"; path = "Target Support Files/Pods-SafetyApp-SafetyAppTests/Pods-SafetyApp-SafetyAppTests.release.xcconfig"; sourceTree = "<group>"; };
 		B1ADF336C6144E7996AFFFDF /* NotoSansCJKkr-Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "NotoSansCJKkr-Regular.otf"; path = "../assets/fonts/NotoSansCJKkr-Regular.otf"; sourceTree = "<group>"; };
+		BD5DAD9B926249DF8D2F24A0 /* BootSplash.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = BootSplash.storyboard; path = SafetyApp/BootSplash.storyboard; sourceTree = "<group>"; };
 		C5370C7E15044118B0375EEB /* NotoSansCJKkr-Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "NotoSansCJKkr-Medium.otf"; path = "../assets/fonts/NotoSansCJKkr-Medium.otf"; sourceTree = "<group>"; };
 		DEB139CBAB3B4A1D88270FC2 /* NotoSansCJKkr-Thin.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "NotoSansCJKkr-Thin.otf"; path = "../assets/fonts/NotoSansCJKkr-Thin.otf"; sourceTree = "<group>"; };
 		E4BC593EF6D147B4A6BE2DA8 /* NotoSansCJKkr-Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "NotoSansCJKkr-Light.otf"; path = "../assets/fonts/NotoSansCJKkr-Light.otf"; sourceTree = "<group>"; };
@@ -139,6 +141,7 @@
 				3C3E710C257446D5CCFBB20D /* PrivacyInfo.xcprivacy */,
 				4C9C9A1F2BFF107400A25EAE /* SwiftBridge.swift */,
 				4C9C9A1E2BFF107300A25EAE /* SafetyApp-Bridging-Header.h */,
+				BD5DAD9B926249DF8D2F24A0 /* BootSplash.storyboard */,
 			);
 			name = SafetyApp;
 			sourceTree = "<group>";
@@ -345,6 +348,7 @@
 				A5D9AC2A20224D518AEA9657 /* NotoSansCJKkr-Medium.otf in Resources */,
 				1188DC56BC5C419ABF3B7E08 /* NotoSansCJKkr-Regular.otf in Resources */,
 				4E730E160431415AB8445285 /* NotoSansCJKkr-Thin.otf in Resources */,
+				8BE0C64003164FDD99674478 /* BootSplash.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -530,6 +534,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				DEVELOPMENT_TEAM = ABM7PTQWHN;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -587,6 +592,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = SafetyApp/SafetyAppDebug.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -603,7 +609,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.SafetyApp--explicit-";
 				PRODUCT_NAME = SafetyApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "SafetyApp-Bridging-Header.h";
@@ -619,6 +625,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = SafetyApp/SafetyApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -634,7 +641,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example.SafetyApp;
 				PRODUCT_NAME = SafetyApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "SafetyApp-Bridging-Header.h";
@@ -724,6 +731,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = SafetyApp/SafetyAppStaging.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -739,7 +747,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example.SafetyApp;
 				PRODUCT_NAME = SafetyApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "SafetyApp-Bridging-Header.h";

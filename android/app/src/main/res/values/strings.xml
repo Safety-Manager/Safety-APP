@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">safe_android</string>
+    <string name="app_name">안전 파트너</string>
     <string moduleConfig="true" name="CodePushDeploymentKey">T8vSOsarLuJrQwyCMR2jhpD-mlqePTACu4Sz1</string>
 </resources>

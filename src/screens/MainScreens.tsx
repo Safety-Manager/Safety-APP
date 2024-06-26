@@ -20,6 +20,7 @@ import {RootStackParamList} from 'App';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppleLogin from '@components/AppleLogin';
 import appleAuth from '@invertase/react-native-apple-authentication';
+import jwt_decode from 'jwt-decode';
 
 type userInfoType = {
   message: string;
@@ -109,44 +110,51 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
   };
 
   const handleSignInApple = async () => {
-    // 애플 로그인 요청
-    const appleAuthRequestResponse = await appleAuth.performRequest({
-      requestedOperation: appleAuth.Operation.LOGIN,
-      requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
-    });
-
-    // 사용자 인증 상태 확인
-    const credentialState = await appleAuth.getCredentialStateForUser(
-      appleAuthRequestResponse.user,
-    );
-
-    // 사용자 인증 성공 시 처리
-    if (credentialState === appleAuth.State.AUTHORIZED) {
-      const user = {
-        id: appleAuthRequestResponse.user,
-        email: appleAuthRequestResponse.email!,
-        name: appleAuthRequestResponse.fullName!.givenName!,
-        hpno: '',
-        nickname: appleAuthRequestResponse.fullName!.givenName!,
-        platform: 'apple',
-      };
-
-      mutateJoin.mutate(user, {
-        onSuccess: async (data: any) => {
-          await AsyncStorage.setItem(
-            COOKIE_ACCESS_TOKEN,
-            data.token.accessToken,
-          );
-          await AsyncStorage.setItem(
-            COOKIE_REFRESH_TOKEN,
-            data.token.refreshToken,
-          );
-          navigation.navigate('Home');
-        },
-        onError: (error: any) => {
-          console.log('error>>>', error);
-        },
+    try {
+      // 애플 로그인 요청
+      const appleAuthRequestResponse = await appleAuth.performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
       });
+
+      // 사용자 인증 상태 확인
+      const credentialState = await appleAuth.getCredentialStateForUser(
+        appleAuthRequestResponse.user,
+      );
+
+      // 사용자 인증 성공 시 처리
+      if (credentialState === appleAuth.State.AUTHORIZED) {
+        console.log('appleAuthRequestResponse>>>>', appleAuthRequestResponse);
+        const user = {
+          id: appleAuthRequestResponse.user,
+          email: appleAuthRequestResponse.email || '',
+          name: appleAuthRequestResponse.fullName?.givenName || '',
+          hpno: '',
+          nickname: appleAuthRequestResponse.fullName?.givenName || '',
+          platform: 'apple',
+          identityToken: appleAuthRequestResponse.identityToken,
+          authorizationCode: appleAuthRequestResponse.authorizationCode,
+        };
+
+        mutateJoin.mutate(user, {
+          onSuccess: async (data: any) => {
+            await AsyncStorage.setItem(
+              COOKIE_ACCESS_TOKEN,
+              data.token.accessToken,
+            );
+            await AsyncStorage.setItem(
+              COOKIE_REFRESH_TOKEN,
+              data.token.refreshToken,
+            );
+            navigation.navigate('Home');
+          },
+          onError: (error: any) => {
+            console.log('error>>>', error);
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Apple sign-in failed', error);
     }
   };
 

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -15,6 +15,7 @@ import {
   API_URL,
 } from './src/config/constants';
 import {NavigationProp, ParamListBase} from '@react-navigation/native';
+import BootSplash from 'react-native-bootsplash';
 
 // 타입 정의
 export type RootStackParamList = {
@@ -45,21 +46,30 @@ function App() {
 
 const RootNavigator = () => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
+  const [auth, setAuth] = useState<boolean | null>(null);
 
   useEffect(() => {
     const checkAccessToken = async () => {
       const accessToken = await AsyncStorage.getItem(COOKIE_ACCESS_TOKEN);
-
       if (accessToken) {
+        setAuth(true);
         navigation.navigate('Home');
+      } else {
+        setAuth(false);
       }
+      BootSplash.hide(); // 스플래시 화면 숨기기
     };
 
     checkAccessToken();
   }, [navigation]);
 
+  if (auth === null) {
+    // auth가 아직 설정되지 않았다면 스플래시 화면을 표시
+    return null;
+  }
+
   return (
-    <Stack.Navigator initialRouteName="Main">
+    <Stack.Navigator initialRouteName={auth ? 'Home' : 'Main'}>
       <Stack.Screen
         name="Main"
         component={MainScreens}
@@ -78,7 +88,7 @@ const RootNavigator = () => {
       <Stack.Screen
         name="Search"
         component={SearchScreens}
-        options={{headerShown: false, gestureEnabled: false, title: ''}}
+        options={{headerShown: false, title: ''}}
       />
       <Stack.Screen
         name="SearchInfo"

@@ -28,6 +28,7 @@ import axiosInstance from '@utils/axiosInterceptor';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from 'App';
 import _ from 'lodash';
+import {BackHandler} from 'react-native';
 
 const suggestions = [
   '지게차',
@@ -51,6 +52,19 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
   const [loading, setLoading] = useState(false);
 
   const {data: HistoryData} = lawApi.GetLawHistory();
+
+  useEffect(() => {
+    const backAction = () => {
+      return true; // Prevent going back
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
