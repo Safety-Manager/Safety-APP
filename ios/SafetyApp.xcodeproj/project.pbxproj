@@ -641,7 +641,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example.SafetyApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.SafetyApp--explicit-";
 				PRODUCT_NAME = SafetyApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "SafetyApp-Bridging-Header.h";
@@ -747,7 +747,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.example.SafetyApp;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.SafetyApp--explicit-";
 				PRODUCT_NAME = SafetyApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "SafetyApp-Bridging-Header.h";
