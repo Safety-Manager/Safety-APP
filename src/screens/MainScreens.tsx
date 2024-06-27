@@ -79,9 +79,9 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
             id: profileResult.response.id,
             email: profileResult.response.email,
             name: profileResult.response.name,
-            hpno: profileResult.response.mobile?.replace(/-/g, '') as string,
+            mobile: profileResult.response.mobile?.replace(/-/g, '') as string,
             nickname: profileResult.response.nickname as string,
-            platform: 'naver ',
+            platform: 'naver',
           },
           {
             onSuccess: async (data: any) => {
@@ -96,7 +96,7 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
                 data.token.refreshToken,
               );
 
-              navigation.navigate('Home');
+              navigation.navigate('HomeTabs');
             },
             onError: (error: any) => {
               console.log('error>>>', error);
@@ -129,7 +129,7 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
           id: appleAuthRequestResponse.user,
           email: appleAuthRequestResponse.email || '',
           name: appleAuthRequestResponse.fullName?.givenName || '',
-          hpno: '',
+          mobile: '',
           nickname: appleAuthRequestResponse.fullName?.givenName || '',
           platform: 'apple',
           identityToken: appleAuthRequestResponse.identityToken,
@@ -146,7 +146,7 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
               COOKIE_REFRESH_TOKEN,
               data.token.refreshToken,
             );
-            navigation.navigate('Home');
+            navigation.navigate('HomeTabs');
           },
           onError: (error: any) => {
             console.log('error>>>', error);

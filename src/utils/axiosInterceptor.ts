@@ -7,6 +7,12 @@ import {
 import * as Keychain from 'react-native-keychain';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useQuery} from '@tanstack/react-query';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from 'App';
+import {useNavigation} from '@react-navigation/native';
+import {navigateToLogin} from './navigationRef';
+
+type ScreenProps = NativeStackNavigationProp<RootStackParamList>;
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
@@ -34,6 +40,7 @@ axiosInstance.interceptors.request.use(
   },
   error => {
     // 요청 오류 처리
+    console.log('>error>>', error);
     return Promise.reject(error);
   },
 );
@@ -46,11 +53,14 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401) {
       // refresh token react query
       try {
+        console.log('error>>>', error.response.data);
         const newToken = await AsyncStorage.getItem(COOKIE_REFRESH_TOKEN);
 
-        const response = await axiosInstance.post('/user/refresh-token', {
+        const response = await axios.post(`${API_URL}/user/refresh-token`, {
           refreshToken: newToken,
         });
+        console.log('response>>>', response.data);
+
         await AsyncStorage.setItem(
           COOKIE_ACCESS_TOKEN,
           response.data.accessToken,
@@ -59,8 +69,15 @@ axiosInstance.interceptors.response.use(
           COOKIE_REFRESH_TOKEN,
           response.data.refreshToken,
         );
+
         return response.data;
       } catch (tokenRefreshError) {
+        console.log('catch');
+        //
+        AsyncStorage.removeItem(COOKIE_ACCESS_TOKEN);
+        AsyncStorage.removeItem(COOKIE_REFRESH_TOKEN);
+        navigateToLogin();
+
         return Promise.reject(tokenRefreshError);
       }
     }

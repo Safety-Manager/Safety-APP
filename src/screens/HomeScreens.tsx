@@ -29,6 +29,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from 'App';
 import _ from 'lodash';
 import {BackHandler} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 
 const suggestions = [
   '지게차',
@@ -51,20 +52,24 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const {data: HistoryData} = lawApi.GetLawHistory();
+  const {data: HistoryData, refetch} = lawApi.GetLawHistory();
 
-  useEffect(() => {
-    const backAction = () => {
-      return true; // Prevent going back
-    };
+  useFocusEffect(
+    useCallback(() => {
+      refetch(); // 페이지가 포커스될 때마다 refetch 함수 호출
 
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      backAction,
-    );
+      const backAction = () => {
+        return true;
+      };
 
-    return () => backHandler.remove();
-  }, []);
+      const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        backAction,
+      );
+
+      return () => backHandler.remove();
+    }, [refetch]),
+  );
 
   const rotateAnim = useRef(new Animated.Value(0)).current;
 

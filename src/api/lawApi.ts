@@ -31,7 +31,6 @@ export const lawApi = {
       queryKey: ['law', 'info', lawIdx],
       queryFn: async () => {
         const res = await axiosInstance.get(`/law/detail/${lawIdx}`);
-        console.log('>>resres', res);
         return res.data;
       },
     });
@@ -54,8 +53,13 @@ export const lawApi = {
       queryKey: ['law', 'history'],
       queryFn: async (): Promise<LawListTypes[]> => {
         const res = await axiosInstance.get('/law/history?pageNum=1&row=5 ');
+        console.log('>>resres', res);
+
         return res.data.lawHistory;
       },
+      refetchOnWindowFocus: true, // 페이지가 다시 포커스될 때 재호출
+      staleTime: 0, // 데이터가 stale 상태가 되기까지의 시간 (0초)
+      gcTime: 0, // 데이터가 캐시될 시간 (0초, 데이터가 캐시되지 않도록 설정)
     });
   },
 };

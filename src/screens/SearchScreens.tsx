@@ -8,6 +8,7 @@ import {
   StyleSheet,
   ScrollView,
   Image,
+  Platform,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {lawApi} from '@api/lawApi';
@@ -43,17 +44,16 @@ const SearchScreens = ({
   };
   const flatListRef = useRef<FlatList>(null);
 
-  const {data, fetchNextPage, hasNextPage, isFetchingNextPage} =
+  const {data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading} =
     lawApi.GetLawList(searchQuery, selectCategory); // Call without pageParam
 
   const {
     data: countData,
-    isLoading,
     isFetching,
     refetch,
   } = lawApi.GetLawCategoryCount(searchQuery);
   const renderFooter = () => {
-    if (isFetchingNextPage) {
+    if (isFetchingNextPage || isLoading) {
       return <ActivityIndicator />;
     }
     if (!hasNextPage) {
@@ -159,10 +159,7 @@ const SearchScreens = ({
                     </Text>
                     <View style={styles.LowLine} />
                     <Text style={styles.LowCardTittle}>카테고리</Text>
-                    <Text
-                      style={styles.LowCardTittleInfo}
-                      numberOfLines={1}
-                      ellipsizeMode="tail">
+                    <Text style={styles.LowCardTittleInfo}>
                       {item.category ?? '카테고리 없음'}
                     </Text>
                   </View>
@@ -276,8 +273,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#f2f2f2',
     width: '100%',
-    height: 170,
+    height: Platform.OS === 'ios' ? 170 : 200,
     marginBottom: 10,
+    flexDirection: 'column',
   },
   LowCardTittle: {
     fontSize: 12,
@@ -293,14 +291,12 @@ const styles = StyleSheet.create({
     color: '#000',
     paddingRight: 38,
     textAlign: 'left',
-    paddingBottom: 5,
   },
   LowLine: {
-    justifyContent: 'center',
     borderStyle: 'solid',
     borderColor: '#ddd',
     borderTopWidth: 1,
-    flex: 1,
+    marginTop: 10,
   },
   noDataText: {
     fontSize: 13,
@@ -323,6 +319,11 @@ const styles = StyleSheet.create({
   icon: {
     width: '100%',
     height: '100%',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   loadingText: {
     marginTop: 10,

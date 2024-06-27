@@ -1,7 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {NavigationContainer, useNavigation} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {
+  NavigationContainer,
+  NavigationContainerRef,
+} from '@react-navigation/native';
+import {
+  NativeStackNavigationProp,
+  createNativeStackNavigator,
+} from '@react-navigation/native-stack';
 import MainScreens from '@screens/MainScreens';
 import WelcomeScreens from '@screens/WelcomeScreens';
 import SearchInfoScreens from '@screens/SearchInfoScreens';
@@ -9,18 +15,15 @@ import SearchScreens from '@screens/SearchScreens';
 import MyTabs from '@navigation/MyTabs';
 import CodePush from 'react-native-code-push';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  COOKIE_ACCESS_TOKEN,
-  COOKIE_REFRESH_TOKEN,
-  API_URL,
-} from './src/config/constants';
-import {NavigationProp, ParamListBase} from '@react-navigation/native';
+import {COOKIE_ACCESS_TOKEN} from './src/config/constants';
 import BootSplash from 'react-native-bootsplash';
+import {navigationRef} from '@utils/navigationRef';
 
 // 타입 정의
 export type RootStackParamList = {
   Main: undefined;
   Welcome: undefined;
+  HomeTabs: undefined;
   Home: undefined;
   Search: {
     searchQuery: string;
@@ -35,17 +38,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function App() {
   const queryClient = new QueryClient();
 
-  return (
-    <QueryClientProvider client={queryClient}>
-      <NavigationContainer>
-        <RootNavigator />
-      </NavigationContainer>
-    </QueryClientProvider>
-  );
-}
-
-const RootNavigator = () => {
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
+  const [isReady, setIsReady] = useState(false);
   const [auth, setAuth] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -53,23 +46,38 @@ const RootNavigator = () => {
       const accessToken = await AsyncStorage.getItem(COOKIE_ACCESS_TOKEN);
       if (accessToken) {
         setAuth(true);
-        navigation.navigate('Home');
       } else {
         setAuth(false);
       }
-      BootSplash.hide(); // 스플래시 화면 숨기기
+      setIsReady(true);
     };
 
     checkAccessToken();
-  }, [navigation]);
+  }, []);
 
-  if (auth === null) {
-    // auth가 아직 설정되지 않았다면 스플래시 화면을 표시
+  useEffect(() => {
+    if (isReady) {
+      BootSplash.hide();
+    }
+  }, [isReady]);
+
+  if (!isReady) {
+    // 스플래시 화면이 표시되므로 아무것도 렌더링하지 않음
     return null;
   }
 
   return (
-    <Stack.Navigator initialRouteName={auth ? 'Home' : 'Main'}>
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer ref={navigationRef}>
+        <RootNavigator auth={auth} />
+      </NavigationContainer>
+    </QueryClientProvider>
+  );
+}
+
+const RootNavigator = ({auth}: {auth: boolean | null}) => {
+  return (
+    <Stack.Navigator initialRouteName={auth ? 'HomeTabs' : 'Main'}>
       <Stack.Screen
         name="Main"
         component={MainScreens}
@@ -81,7 +89,7 @@ const RootNavigator = () => {
         options={{headerShown: false}}
       />
       <Stack.Screen
-        name="Home"
+        name="HomeTabs"
         component={MyTabs}
         options={{headerShown: false, gestureEnabled: false, title: ''}}
       />
@@ -103,13 +111,11 @@ const RootNavigator = () => {
 };
 
 const codePushOptions = {
-  checkFrequency: CodePush.CheckFrequency.ON_APP_START,
-  // updateDialog: {
-  //   title: '...',
-  //   optionalUpdateMessage: '...',
-  //   optionalInstallButtonLabel: '업데이트',
-  //   optionalIgnoreButtonLabel: '아니요.',
-  // },
+  checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
+  rollbackRetryOptions: {
+    delayInHours: 1,
+    maxRetryAttempts: 3,
+  },
   installMode: CodePush.InstallMode.IMMEDIATE,
 };
 

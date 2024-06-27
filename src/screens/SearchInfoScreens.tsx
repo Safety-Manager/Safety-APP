@@ -146,7 +146,7 @@ const SearchInfoScreens = ({
         <View style={styles.categoryContainer}>
           <Text style={styles.categoryText}>카테고리</Text>
           <View style={styles.rectangleView}>
-            <Text style={styles.roundText}>안업안전보건법</Text>
+            <Text style={styles.roundText}>{data?.categoryDesc}</Text>
           </View>
         </View>
       </View>
