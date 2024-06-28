@@ -6,10 +6,18 @@ import {
   Image,
   TouchableOpacity,
   SafeAreaView,
+  Alert,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Person from '@assets/icons/Person.png';
 import RightLine from '@assets/icons/RightLine.png';
+import {authApi} from '@api/authApi';
+import {navigate} from '@utils/navigationRef';
+import {RootStackParamList, RouteNames} from '@components/Route';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {UserTypes} from 'types/auth';
 
 const myTab = [
   '개인정보 처리방침',
@@ -19,13 +27,85 @@ const myTab = [
   '탈퇴하기',
 ];
 
+type ScreenProps = NativeStackNavigationProp<RootStackParamList>;
+
 const MyPageScreens = () => {
+  const [user, setUser] = useState<UserTypes | null>(null);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const result = await AsyncStorage.getItem('user');
+      if (result) {
+        setUser(JSON.parse(result));
+      }
+    };
+    getUser();
+  }, []);
+
+  const {mutate} = authApi.DeleteUser();
+
+  const navigation: ScreenProps = useNavigation(); // Use the useNavigation hook to access the navigation object
+
+  const [error, setError] = useState<string | null>(null);
+
+  const handlerEvnet = (item: string) => {
+    switch (item) {
+      case '개인정보 처리방침':
+        console.log('개인정보 처리방침');
+        break;
+      case '약관 및 정책':
+        console.log('약관 및 정책');
+        break;
+      case '문의하기':
+        console.log('문의하기');
+        break;
+      case '로그아웃':
+        console.log('로그아웃');
+        break;
+      case '탈퇴하기':
+        Alert.alert(
+          '계정 탈퇴',
+          '정말로 계정을 탈퇴하시겠습니까? 탈퇴 후에는 모든 데이터가 삭제되며 복구할 수 없습니다.',
+          [
+            {
+              text: '아니요',
+              onPress: () => console.log('탈퇴 취소'),
+              style: 'cancel',
+            },
+            {
+              text: '예',
+              onPress: () => {
+                mutate(undefined, {
+                  onSuccess: res => {
+                    Alert.alert(
+                      '계정 탈퇴',
+                      '계정이 성공적으로 탈퇴되었습니다.',
+                    );
+                    console.log('>>>', res);
+                    navigation.navigate(RouteNames.MAIN);
+                  },
+                  onError: error => {
+                    setError('계정 탈퇴 중 오류가 발생했습니다.');
+                  },
+                });
+              },
+              style: 'destructive',
+            },
+          ],
+          {cancelable: false},
+        );
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container}>
         <View style={styles.rectangleView}>
           <TouchableOpacity style={styles.textContainer}>
-            <Text style={styles.text}>김민지 님</Text>
+            <Text style={styles.text}>{user?.nickname} 님</Text>
             <Text style={styles.profileText}>프로필 수정 &gt; </Text>
           </TouchableOpacity>
           <View style={styles.imageContainer}>
@@ -38,21 +118,21 @@ const MyPageScreens = () => {
         </View>
         <View style={{height: 10, backgroundColor: '#f2f2f2'}} />
         <View style={styles.contantView}>
-          {myTab.map((item: string, index: number) => {
-            return (
-              <View key={index}>
-                <TouchableOpacity style={styles.contantBar}>
-                  <Text style={styles.contantText}>{item}</Text>
-                  <Image
-                    source={RightLine}
-                    style={{width: 20, height: 17}}
-                    resizeMode="contain"
-                  />
-                </TouchableOpacity>
-                <View style={styles.lineView} />
-              </View>
-            );
-          })}
+          {myTab.map((item: string, index: number) => (
+            <View key={index}>
+              <TouchableOpacity
+                style={styles.contantBar}
+                onPress={() => handlerEvnet(item)}>
+                <Text style={styles.contantText}>{item}</Text>
+                <Image
+                  source={RightLine}
+                  style={{width: 20, height: 17}}
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
+              <View style={styles.lineView} />
+            </View>
+          ))}
         </View>
       </ScrollView>
     </SafeAreaView>

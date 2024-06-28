@@ -13,8 +13,8 @@ import {
 import {WebView} from 'react-native-webview';
 import LeftLineIcon from '@assets/icons/LeftLine.png';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from 'App';
 import TitleBar from '@components/TitleBar';
+import {RootStackParamList} from '@components/Route';
 
 // 텍스트 데이터를 HTML로 변환하는 함수
 const generateHtmlContent = (
@@ -85,10 +85,7 @@ const generateHtmlContent = (
   return htmlContent;
 };
 
-type SearchScreenProps = NativeStackNavigationProp<
-  RootStackParamList,
-  'SearchInfo'
->;
+type SearchScreenProps = NativeStackNavigationProp<RootStackParamList>;
 
 const SearchInfoScreens = ({
   route,

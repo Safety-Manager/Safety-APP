@@ -1,3 +1,4 @@
+import {RouteNames} from '@components/Route';
 import React, {useState} from 'react';
 import {
   View,
@@ -57,7 +58,7 @@ const WelcomeScreens = ({navigation}: any) => {
             <View style={styles.buttonContainer}>
               <Button
                 title="Submit"
-                onPress={navigation.navigate('HomeScreens')}
+                onPress={navigation.navigate(RouteNames.HOMETABS)}
               />
               <Button title="Cancel" onPress={() => setModalVisible(false)} />
             </View>

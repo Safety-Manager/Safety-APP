@@ -4,13 +4,12 @@ import {
   COOKIE_REFRESH_TOKEN,
   API_URL,
 } from '../config/constants';
-import * as Keychain from 'react-native-keychain';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useQuery} from '@tanstack/react-query';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from 'App';
 import {useNavigation} from '@react-navigation/native';
 import {navigateToLogin} from './navigationRef';
+import {RootStackParamList} from '@components/Route';
 
 type ScreenProps = NativeStackNavigationProp<RootStackParamList>;
 
@@ -76,6 +75,7 @@ axiosInstance.interceptors.response.use(
         //
         AsyncStorage.removeItem(COOKIE_ACCESS_TOKEN);
         AsyncStorage.removeItem(COOKIE_REFRESH_TOKEN);
+        AsyncStorage.removeItem('user');
         navigateToLogin();
 
         return Promise.reject(tokenRefreshError);

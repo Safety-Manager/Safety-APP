@@ -16,11 +16,11 @@ import NaverLogin, {
 import {authApi} from '@api/authApi';
 import {COOKIE_ACCESS_TOKEN, COOKIE_REFRESH_TOKEN} from '../config/constants';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from 'App';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppleLogin from '@components/AppleLogin';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import jwt_decode from 'jwt-decode';
+import {RootStackParamList, RouteNames} from '@components/Route';
 
 type userInfoType = {
   message: string;
@@ -33,7 +33,7 @@ type userInfoType = {
   };
 };
 
-type MainScreenProps = NativeStackNavigationProp<RootStackParamList, 'Main'>;
+type MainScreenProps = NativeStackNavigationProp<RootStackParamList>;
 
 const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
   const consumerKey = '7tIhAqxaGO6m5sPqtLuD';
@@ -96,7 +96,7 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
                 data.token.refreshToken,
               );
 
-              navigation.navigate('HomeTabs');
+              navigation.navigate(RouteNames.HOMETABS);
             },
             onError: (error: any) => {
               console.log('error>>>', error);
@@ -146,7 +146,7 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
               COOKIE_REFRESH_TOKEN,
               data.token.refreshToken,
             );
-            navigation.navigate('HomeTabs');
+            navigation.navigate(RouteNames.HOMETABS);
           },
           onError: (error: any) => {
             console.log('error>>>', error);
@@ -162,11 +162,20 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <Pressable onPress={() => login()}>
-          <Text>카카오톡으로 시작하기</Text>
+          <Text
+            style={{
+              height: 30,
+              backgroundColor: 'yellow',
+              textAlign: 'center',
+              textAlignVertical: 'center',
+            }}>
+            카카오톡으로 시작하기
+          </Text>
         </Pressable>
-        {Platform.OS === 'ios' && (
+
+        {/* {Platform.OS === 'ios' && (
           <AppleLogin handleSignInApple={handleSignInApple} />
-        )}
+        )} */}
       </View>
     </SafeAreaView>
   );

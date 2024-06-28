@@ -1,6 +1,6 @@
 import axiosInstance from '@utils/axiosInterceptor';
 import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
-import {LawCountTypes, LawListTypes} from 'types/law';
+import {LawCountTypes, LawLankTypes, LawListTypes} from 'types/law';
 
 export const lawApi = {
   lawFn: async (pageParam: number, keyWord: string, category: number) => {
@@ -53,13 +53,25 @@ export const lawApi = {
       queryKey: ['law', 'history'],
       queryFn: async (): Promise<LawListTypes[]> => {
         const res = await axiosInstance.get('/law/history?pageNum=1&row=5 ');
-        console.log('>>resres', res);
 
         return res.data.lawHistory;
       },
       refetchOnWindowFocus: true, // 페이지가 다시 포커스될 때 재호출
       staleTime: 0, // 데이터가 stale 상태가 되기까지의 시간 (0초)
       gcTime: 0, // 데이터가 캐시될 시간 (0초, 데이터가 캐시되지 않도록 설정)
+    });
+  },
+  // 법령 순위
+  GetLawLanking: function () {
+    return useQuery({
+      queryKey: ['law', 'lanking'],
+      queryFn: async (): Promise<LawLankTypes[]> => {
+        const res = await axiosInstance.get('/law/ranking/keyword');
+        return res.data.scoreList;
+      },
+      refetchOnWindowFocus: true,
+      staleTime: 0,
+      gcTime: 0,
     });
   },
 };

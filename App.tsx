@@ -18,20 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COOKIE_ACCESS_TOKEN} from './src/config/constants';
 import BootSplash from 'react-native-bootsplash';
 import {navigationRef} from '@utils/navigationRef';
-
-// 타입 정의
-export type RootStackParamList = {
-  Main: undefined;
-  Welcome: undefined;
-  HomeTabs: undefined;
-  Home: undefined;
-  Search: {
-    searchQuery: string;
-    searchData: [{lawIdx: number; lawDocId: string; title: string}];
-    category: number;
-  };
-  SearchInfo: {lawIdx: number}; // lawIdx가 필요하다면
-};
+import {RootStackParamList, RouteNames} from '@components/Route';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -77,29 +64,25 @@ function App() {
 
 const RootNavigator = ({auth}: {auth: boolean | null}) => {
   return (
-    <Stack.Navigator initialRouteName={auth ? 'HomeTabs' : 'Main'}>
+    <Stack.Navigator
+      initialRouteName={auth ? RouteNames.HOMETABS : RouteNames.MAIN}>
       <Stack.Screen
-        name="Main"
+        name={RouteNames.MAIN}
         component={MainScreens}
         options={{headerShown: false}}
       />
       <Stack.Screen
-        name="Welcome"
-        component={WelcomeScreens}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="HomeTabs"
+        name={RouteNames.HOMETABS}
         component={MyTabs}
         options={{headerShown: false, gestureEnabled: false, title: ''}}
       />
       <Stack.Screen
-        name="Search"
+        name={RouteNames.SEARCH}
         component={SearchScreens}
         options={{headerShown: false, title: ''}}
       />
       <Stack.Screen
-        name="SearchInfo"
+        name={RouteNames.SEARCHINFO}
         component={SearchInfoScreens}
         options={{
           headerShown: false,
@@ -110,13 +93,15 @@ const RootNavigator = ({auth}: {auth: boolean | null}) => {
   );
 };
 
-const codePushOptions = {
-  checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
-  rollbackRetryOptions: {
-    delayInHours: 1,
-    maxRetryAttempts: 3,
-  },
-  installMode: CodePush.InstallMode.IMMEDIATE,
-};
+// const codePushOptions = {
+//   checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
+//   rollbackRetryOptions: {
+//     delayInHours: 1,
+//     maxRetryAttempts: 3,
+//   },
+//   installMode: CodePush.InstallMode.IMMEDIATE,
+// };
 
-export default CodePush(codePushOptions)(App);
+export default App;
+
+527916;

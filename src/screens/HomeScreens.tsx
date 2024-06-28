@@ -26,11 +26,13 @@ import BottomSheet from '@components/BottomSheet';
 import {lawApi} from '@api/lawApi';
 import axiosInstance from '@utils/axiosInterceptor';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from 'App';
 import _ from 'lodash';
 import {BackHandler} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
-
+import {RootStackParamList, RouteNames} from '@components/Route';
+import Loading from '@components/Loading';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {authApi} from '@api/authApi';
 const suggestions = [
   '지게차',
   '비계',
@@ -42,22 +44,25 @@ const suggestions = [
   '화학설비',
 ];
 
-const LankData = ['지게차', '비계', '차', '관로', '관'];
-
-type HomeScreenProps = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+type HomeScreenProps = NativeStackNavigationProp<RootStackParamList>;
 
 const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [searchCategory, setSearchCategory] = useState('전체' as null | string);
   const [searchQuery, setSearchQuery] = useState('');
-  const [loading, setLoading] = useState(false);
 
   const {data: HistoryData, refetch} = lawApi.GetLawHistory();
+  const {data: LankingData, refetch: lankRetetch} = lawApi.GetLawLanking();
+
+  const {data: UserData} = authApi.GetProfile();
+
+  useEffect(() => {
+    AsyncStorage.setItem('user', JSON.stringify(UserData));
+  }, [UserData]);
 
   useFocusEffect(
     useCallback(() => {
       refetch(); // 페이지가 포커스될 때마다 refetch 함수 호출
-
       const backAction = () => {
         return true;
       };
@@ -94,7 +99,7 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
         `/law/search?pageNum=${1}&keyWord=${query}&row=1&category=${category}`,
       );
       if (response.data.searchDataList.length > 0) {
-        navigation.navigate('Search', {
+        navigation.navigate(RouteNames.SEARCH, {
           searchQuery: query,
           category: category,
           searchData: response.data.searchDataList,
@@ -107,8 +112,6 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
       Alert.alert('에러', '데이터를 가져오는 도중 문제가 발생했습니다.', [
         {text: '확인'},
       ]);
-    } finally {
-      setLoading(false); // 로딩 종료
     }
   };
 
@@ -153,20 +156,11 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
 
   return (
     <ScrollView style={styles.container}>
-      {loading && (
-        <View style={styles.loadingContainer}>
-          <View style={styles.overlay}>
-            <ActivityIndicator size="large" color="#0000ff" />
-            <Text style={styles.loadingText}>로딩중...</Text>
-          </View>
-        </View>
-      )}
       <ImageBackground
         style={styles.rectangleImage}
         resizeMode="cover"
         source={HomeImg}
-        imageStyle={styles.image} // imageStyle을 사용하여 opacity 적용
-      >
+        imageStyle={styles.image}>
         <View style={styles.contentContainer}>
           <Text style={styles.imagetext}>
             산업 안전 관리자를 위한{'\n'}
@@ -224,6 +218,7 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
               />
               <Pressable
                 style={styles.searchButton}
+                hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                 onPress={() => onClickSearch()}>
                 <Image
                   source={SearchIcon}
@@ -268,10 +263,10 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
         <Image source={LancIcon} style={styles.LowIcons} resizeMode="contain" />
         <Text style={styles.LowText}>검색어 순위</Text>
       </View>
-      {LankData.map((data, index) => (
+      {LankingData?.map((data, index) => (
         <View style={styles.lancContainer} key={index}>
           <Text style={styles.lankTitle}>{index + 1}</Text>
-          <Text style={styles.lankText}>{data}</Text>
+          <Text style={styles.lankText}>{data.keyword}</Text>
           <Image source={UpIcon} style={styles.lankIcon} resizeMode="contain" />
         </View>
       ))}

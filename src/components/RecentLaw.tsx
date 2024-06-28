@@ -15,7 +15,7 @@ import React from 'react';
 import NodataIcon from '@assets/icons/NoData.png';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from 'App';
+import {RootStackParamList, RouteNames} from './Route';
 
 interface RecentLawProps {
   data: any;
@@ -27,7 +27,7 @@ const RecentLaw = ({data}: RecentLawProps) => {
   const navigation: SearchScreenProps = useNavigation(); // Use the useNavigation hook to access the navigation object
 
   const onClickSearchInfo = (lawIdx: number) => {
-    navigation.navigate('SearchInfo', {
+    navigation.navigate(RouteNames.SEARCHINFO, {
       lawIdx: lawIdx,
     });
   };

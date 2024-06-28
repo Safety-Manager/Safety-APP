@@ -13,16 +13,13 @@ import {
 import React, {useEffect, useRef, useState} from 'react';
 import {lawApi} from '@api/lawApi';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from 'App';
 import LawIcon from '@assets/icons/LatestLaw.png';
 import UpIcon from '@assets/icons/UpBtn.png';
 import TitleBar from '@components/TitleBar';
 import {LawCountTypes} from 'types/law';
+import {RootStackParamList, RouteNames} from '@components/Route';
 
-type SearchScreenProps = NativeStackNavigationProp<
-  RootStackParamList,
-  'Search'
->;
+type SearchScreenProps = NativeStackNavigationProp<RootStackParamList>;
 
 const SearchScreens = ({
   route,
@@ -77,7 +74,7 @@ const SearchScreens = ({
   };
 
   const onClickSearchInfo = (lawIdx: number) => {
-    navigation.navigate('SearchInfo', {
+    navigation.navigate(RouteNames.SEARCHINFO, {
       lawIdx: lawIdx,
     });
   };

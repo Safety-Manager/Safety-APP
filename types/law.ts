@@ -13,3 +13,8 @@ export interface LawListTypes {
   lawDocId: string;
   title: string;
 }
+
+export interface LawLankTypes {
+  keyword: string;
+  score: number;
+}

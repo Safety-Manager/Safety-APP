@@ -6,3 +6,10 @@ export interface UserTypes {
   nickname: string;
   platform: string;
 }
+
+export interface UserProfile {
+  name: string;
+  nickname: string;
+  mobile: string;
+  email: string;
+}
