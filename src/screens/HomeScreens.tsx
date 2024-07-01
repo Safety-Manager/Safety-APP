@@ -57,7 +57,7 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
   const {data: UserData} = authApi.GetProfile();
 
   useEffect(() => {
-    AsyncStorage.setItem('user', JSON.stringify(UserData));
+    if (UserData) AsyncStorage.setItem('user', JSON.stringify(UserData));
   }, [UserData]);
 
   useFocusEffect(
@@ -183,13 +183,6 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
             {searchCategory && (
               <Pressable style={styles.selectRectangleView}>
                 <Text style={styles.selectText}>{searchCategory}</Text>
-                <View style={{width: 9, height: 9}}>
-                  <Animated.Image
-                    source={WhiteToggle}
-                    style={[styles.toggleicon]}
-                    resizeMode="contain"
-                  />
-                </View>
               </Pressable>
             )}
           </View>
@@ -324,8 +317,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    paddingLeft: 15,
-    paddingRight: 15,
+    paddingHorizontal: 15,
     marginLeft: 10,
     marginTop: 90,
     marginBottom: 10,

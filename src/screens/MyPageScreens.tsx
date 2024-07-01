@@ -60,7 +60,38 @@ const MyPageScreens = () => {
         console.log('문의하기');
         break;
       case '로그아웃':
-        console.log('로그아웃');
+        Alert.alert(
+          '로그아웃',
+          '현재 계정에서 로그아웃하시겠습니까?',
+          [
+            {
+              text: '아니요',
+              onPress: () => console.log('탈퇴 취소'),
+              style: 'cancel',
+            },
+            {
+              text: '예',
+              // onPress: () => {
+              //   mutate(undefined, {
+              //     onSuccess: res => {
+              //       Alert.alert(
+              //         '계정 탈퇴',
+              //         '계정이 성공적으로 탈퇴되었습니다.',
+              //       );
+              //       console.log('>>>', res);
+              //       navigation.navigate(RouteNames.MAIN);
+              //     },
+              //     onError: error => {
+              //       setError('계정 탈퇴 중 오류가 발생했습니다.');
+              //     },
+              //   });
+              // },
+              style: 'destructive',
+            },
+          ],
+          {cancelable: false},
+        );
+        break;
         break;
       case '탈퇴하기':
         Alert.alert(

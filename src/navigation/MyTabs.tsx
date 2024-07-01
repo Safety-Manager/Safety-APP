@@ -1,13 +1,15 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import DeviceInfo from 'react-native-device-info';
-import MyPage from '../screens/MyPageScreens';
-import HomePage from '../screens/HomeScreens';
-import SafetyCompany from '../screens/SafetyCompanyScreens';
 import MypageIcon from '@assets/icons/Mypage.png';
 import SafetyIcon from '@assets/icons/Safety.png';
 import SearchIcon from '@assets/icons/Search.png';
 import {Image, Platform, StyleSheet, Text} from 'react-native';
+import {RouteNames} from '@components/Route';
+import MyPageScreens from '@screens/MyPageScreens';
+import HomeScreens from '@screens/HomeScreens';
+import BoardScreens from '@screens/BoardScreens';
+import CommunityIcon from '@assets/icons/Community.png';
 
 export default function MyTabs() {
   const Tab = createBottomTabNavigator();
@@ -47,7 +49,7 @@ export default function MyTabs() {
 
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName={RouteNames.HOME}
       screenOptions={{
         tabBarActiveTintColor: '#000000',
         tabBarInactiveTintColor: '#CCCCCC',
@@ -60,24 +62,24 @@ export default function MyTabs() {
         ],
       }}>
       <Tab.Screen
-        name="SafetyCompany"
-        component={SafetyCompany}
+        name={RouteNames.BOARD}
+        component={BoardScreens}
         options={{
           tabBarLabel: ({color}) => (
-            <Text style={[styles.tabBarLabel, {color}]}>안전교육</Text>
+            <Text style={[styles.tabBarLabel, {color}]}>커뮤니티</Text>
           ),
           headerShown: false,
           tabBarIcon: ({color, size}) => (
             <Image
-              source={SafetyIcon}
+              source={CommunityIcon}
               style={{width: 27.58, height: 19.96, tintColor: color}}
             />
           ),
         }}
       />
       <Tab.Screen
-        name="Home"
-        component={HomePage}
+        name={RouteNames.HOME}
+        component={HomeScreens}
         options={{
           tabBarLabel: ({color}) => (
             <Text style={[styles.tabBarLabel, {color}]}>검색</Text>
@@ -92,8 +94,8 @@ export default function MyTabs() {
         }}
       />
       <Tab.Screen
-        name="MyPage"
-        component={MyPage}
+        name={RouteNames.MYPAGE}
+        component={MyPageScreens}
         options={{
           tabBarLabel: ({color}) => (
             <Text style={[styles.tabBarLabel, {color}]}>내 정보</Text>

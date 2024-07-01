@@ -19,6 +19,19 @@ import {COOKIE_ACCESS_TOKEN} from './src/config/constants';
 import BootSplash from 'react-native-bootsplash';
 import {navigationRef} from '@utils/navigationRef';
 import {RootStackParamList, RouteNames} from '@components/Route';
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://5fdbd09b48895376131cc91f9a7b4726@o4507525130616832.ingest.us.sentry.io/4507525134352384',
+  // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+  // We recommend adjusting this value in production.
+  tracesSampleRate: 1.0,
+  _experiments: {
+    // profilesSampleRate is relative to tracesSampleRate.
+    // Here, we'll capture profiles for 100% of transactions.
+    profilesSampleRate: 1.0,
+  },
+});
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -102,6 +115,4 @@ const RootNavigator = ({auth}: {auth: boolean | null}) => {
 //   installMode: CodePush.InstallMode.IMMEDIATE,
 // };
 
-export default App;
-
-527916;
+export default Sentry.wrap(App);

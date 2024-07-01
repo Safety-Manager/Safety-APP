@@ -4,6 +4,12 @@ export const RouteNames = {
   SEARCHINFO: 'SearchInfo' as const,
   WELCOME: 'Welcome' as const,
   HOMETABS: 'HomeTabs' as const,
+  HOME: 'Home' as const,
+  SAFETYCOMPANY: 'SafetyCompany' as const,
+  BOARD: 'Board' as const,
+  BOARDDETAIL: 'BoardDetail' as const,
+  BOARDWRITE: 'BoardWrite' as const,
+  MYPAGE: 'MyPage' as const,
 };
 
 export type RootStackParamList = {
@@ -15,5 +21,11 @@ export type RootStackParamList = {
     searchData: [{lawIdx: number; lawDocId: string; title: string}];
     category: number;
   };
-  [RouteNames.SEARCHINFO]: {lawIdx: number}; // lawIdx가 필요하다면
+  [RouteNames.SEARCHINFO]: {lawIdx: number};
+  [RouteNames.HOME]: undefined;
+  [RouteNames.SAFETYCOMPANY]: undefined;
+  [RouteNames.BOARD]: undefined;
+  [RouteNames.BOARDDETAIL]: {boardIdx: number};
+  [RouteNames.BOARDWRITE]: undefined;
+  [RouteNames.MYPAGE]: undefined;
 };
