@@ -25,7 +25,7 @@ export type RootStackParamList = {
   [RouteNames.HOME]: undefined;
   [RouteNames.SAFETYCOMPANY]: undefined;
   [RouteNames.BOARD]: undefined;
-  [RouteNames.BOARDDETAIL]: {boardIdx: number};
+  [RouteNames.BOARDDETAIL]: undefined;
   [RouteNames.BOARDWRITE]: undefined;
   [RouteNames.MYPAGE]: undefined;
 };

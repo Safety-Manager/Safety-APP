@@ -137,7 +137,6 @@ const SearchInfoScreens = ({
           backgroundColor: 'white',
         }}>
         <TitleBar />
-
         <Text style={styles.text}>{data?.title}</Text>
         <View style={styles.lineView} />
         <View style={styles.categoryContainer}>
