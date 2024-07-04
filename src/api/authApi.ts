@@ -1,7 +1,7 @@
 import {useMutation, useQuery} from '@tanstack/react-query';
 import axiosInstance from '@utils/axiosInterceptor';
 import {COOKIE_ACCESS_TOKEN, COOKIE_REFRESH_TOKEN} from '../config/constants';
-import {UserProfile, UserTypes} from 'types/auth';
+import {UserNotification, UserProfile, UserTypes} from 'types/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const authApi = {
@@ -28,6 +28,15 @@ export const authApi = {
         await AsyncStorage.removeItem(COOKIE_ACCESS_TOKEN);
         await AsyncStorage.removeItem(COOKIE_REFRESH_TOKEN);
         const res = await axiosInstance.delete('/user/delete');
+        return res.data;
+      },
+    });
+  },
+  // 알림 동의 요청
+  PostAgreeNotification: function () {
+    return useMutation({
+      mutationFn: async (data: UserNotification): Promise<boolean> => {
+        const res = await axiosInstance.post('/user/notification/agree', data);
         return res.data;
       },
     });

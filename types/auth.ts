@@ -13,3 +13,8 @@ export interface UserProfile {
   mobile: string;
   email: string;
 }
+
+export interface UserNotification {
+  fcmDeviceToken: string;
+  notificationType: [string];
+}
