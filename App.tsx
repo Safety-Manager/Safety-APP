@@ -16,6 +16,8 @@ import {RootStackParamList, RouteNames} from '@components/Route';
 import * as Sentry from '@sentry/react-native';
 import WriteScreens from '@screens/WriteScreens';
 import BoardDetailScreens from '@screens/BoardDetailScreens';
+import messaging from '@react-native-firebase/messaging';
+import {NativeModules, PermissionsAndroid, Platform} from 'react-native';
 
 Sentry.init({
   dsn: 'https://5fdbd09b48895376131cc91f9a7b4726@o4507525130616832.ingest.us.sentry.io/4507525134352384',
@@ -32,6 +34,86 @@ function App() {
 
   const [isReady, setIsReady] = useState(false);
   const [auth, setAuth] = useState<boolean | null>(null);
+
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  }
+
+  const getToken = async () => {
+    const token = await messaging().getToken();
+    console.log('koten>', token);
+  };
+
+  useEffect(() => {
+    requestUserPermission();
+    getToken();
+  }, []);
+
+  // useEffect(() => {
+  //   Platform.OS === 'android'
+  //     ? androidRequestPermission()
+  //     : iosRequestPermission();
+  // }, []);
+
+  // const iosRequestPermission = async () => {
+  //   try {
+  //     const authorizationStatus = await messaging().requestPermission();
+  //     console.log('iOS authorizationStatus:', authorizationStatus); // 로그 추가
+
+  //     if (authorizationStatus === 1) {
+  //       const apnsToken = await firebaseMessaging.getAPNSToken();
+  //       console.log('iOS APNs Token:', apnsToken); // 로그 추가
+
+  //       if (apnsToken) {
+  //         const fcmToken = await firebaseMessaging.getToken();
+  //         console.log('iOS FCM Token:', fcmToken); // 로그 추가
+  //         NativeModules.DotReactBridge.setPushToken(fcmToken);
+  //       }
+  //     } else {
+  //       console.log('알림권한 비 활성화:');
+  //     }
+  //   } catch (error) {
+  //     console.log('ios error::', error);
+  //   }
+  // };
+
+  // const androidRequestPermission = async () => {
+  //   try {
+  //     const authorizationStatus = await messaging().requestPermission();
+  //     console.log('Android authorizationStatus:', authorizationStatus); // 로그 추가
+
+  //     const fcmToken = await firebaseMessaging.getToken();
+  //     console.log('Android FCM Token:', fcmToken); // 로그 추가
+
+  //     if (Platform.OS === 'android') {
+  //       if (Platform.Version >= 33) {
+  //         const granted = await PermissionsAndroid.request(
+  //           PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+  //         );
+  //         console.log('Android POST_NOTIFICATIONS granted:', granted); // 로그 추가
+
+  //         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+  //           if (fcmToken) {
+  //             NativeModules.DotReactBridge.setPushToken(fcmToken);
+  //           }
+  //         }
+  //       } else {
+  //         if (fcmToken) {
+  //           NativeModules.DotReactBridge.setPushToken(fcmToken);
+  //         }
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.log('Android error:', error);
+  //   }
+  // };
 
   useEffect(() => {
     const checkAccessToken = async () => {
@@ -79,7 +161,7 @@ const RootNavigator = ({auth}: {auth: boolean | null}) => {
         />
       ) : (
         <Stack.Screen
-          name={RouteNames.HOME}
+          name={RouteNames.HOMETABS}
           component={MyTabs}
           options={{headerShown: false, gestureEnabled: false, title: ''}}
         />

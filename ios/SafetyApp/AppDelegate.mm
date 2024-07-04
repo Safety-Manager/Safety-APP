@@ -6,6 +6,8 @@
 
 #import "RNBootSplash.h"
 
+#import "Firebase.h"
+
 @implementation AppDelegate
 
 - (void)customizeRootView:(RCTRootView *)rootView {
@@ -14,7 +16,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  
   self.moduleName = @"SafetyApp";
+  [FIRApp configure];
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
@@ -24,6 +28,7 @@
 
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
+
 {
   return [self bundleURL];
 }

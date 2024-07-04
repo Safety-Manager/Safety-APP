@@ -16,6 +16,13 @@ end
 
 target 'SafetyApp' do
   config = use_native_modules!
+  use_frameworks! :linkage => :static
+  $RNFirebaseAsStaticFramework = true
+#  pod 'Firebase', :modular_headers => true
+#  pod 'FirebaseCoreInternal', :modular_headers => true
+#  pod 'GoogleUtilities', :modular_headers => true
+#  pod 'FirebaseCore', :modular_headers => true
+
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
   use_react_native!(

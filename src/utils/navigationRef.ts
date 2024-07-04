@@ -1,3 +1,4 @@
+import {RouteNames} from '@components/Route';
 import {
   createNavigationContainerRef,
   NavigationContainerRef,
@@ -17,5 +18,5 @@ export function navigate(name: string, params?: object) {
 
 // 로그인 페이지로 이동하는 함수
 export function navigateToLogin() {
-  navigate('Main'); // 'Login' 화면으로 네비게이션 이동
+  navigate(RouteNames.MAIN); // 'Login' 화면으로 네비게이션 이동
 }

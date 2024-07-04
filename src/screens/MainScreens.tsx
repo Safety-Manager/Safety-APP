@@ -96,7 +96,7 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
                 data.token.refreshToken,
               );
 
-              navigation.navigate(RouteNames.HOMETABS);
+              navigation.navigate(RouteNames.HOME);
             },
             onError: (error: any) => {
               console.log('error>>>', error);
