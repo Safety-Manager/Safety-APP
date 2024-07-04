@@ -23,6 +23,7 @@ module.exports = {
           '@constants': './src/constants',
           '@utils': './src/utils',
           '@styles': './src/styles',
+          '@config': './src/config',
         },
       },
     ],

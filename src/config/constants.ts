@@ -6,3 +6,4 @@ const COOKIE_BASE_NAME = 'Bearer';
 
 export const COOKIE_ACCESS_TOKEN = `${COOKIE_BASE_NAME}_accs`;
 export const COOKIE_REFRESH_TOKEN = `${COOKIE_BASE_NAME}_rfrs`;
+export const FCM_TOKEN = 'fcmToken';

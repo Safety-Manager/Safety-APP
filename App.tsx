@@ -16,6 +16,10 @@ import * as Sentry from '@sentry/react-native';
 import WriteScreens from '@screens/WriteScreens';
 import BoardDetailScreens from '@screens/BoardDetailScreens';
 import messaging from '@react-native-firebase/messaging';
+import {Alert} from 'react-native';
+import {AppState} from 'react-native';
+import notifee, {AndroidImportance, AndroidColor} from '@notifee/react-native';
+import pushNoti from '@utils/pushNoti';
 
 Sentry.init({
   dsn: 'https://5fdbd09b48895376131cc91f9a7b4726@o4507525130616832.ingest.us.sentry.io/4507525134352384',
@@ -32,27 +36,6 @@ function App() {
 
   const [isReady, setIsReady] = useState(false);
   const [initialState, setInitialState] = useState<InitialState | undefined>();
-
-  async function requestUserPermission() {
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
-    if (enabled) {
-      console.log('Authorization status:', authStatus);
-    }
-  }
-
-  const getToken = async () => {
-    const token = await messaging().getToken();
-    console.log('koten>', token);
-  };
-
-  useEffect(() => {
-    requestUserPermission();
-    getToken();
-  }, []);
 
   useEffect(() => {
     const checkAccessToken = async () => {
@@ -81,6 +64,13 @@ function App() {
     };
 
     checkAccessToken();
+
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log(remoteMessage);
+      pushNoti.displayNoti(remoteMessage); // 위에서 작성한 함수로 넘겨준다
+    });
+
+    return unsubscribe;
   }, []);
 
   useEffect(() => {
@@ -88,6 +78,10 @@ function App() {
       BootSplash.hide();
     }
   }, [isReady]);
+
+  messaging().setBackgroundMessageHandler(async remoteMessage => {
+    console.log('Message handled in the background!', remoteMessage);
+  });
 
   if (!isReady) {
     return null;

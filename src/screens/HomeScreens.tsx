@@ -20,7 +20,6 @@ import SearchIcon from '@assets/icons/Search.png';
 import LawIcon from '@assets/icons/LatestLaw.png';
 import RecentLaw from '@components/RecentLaw';
 import LancIcon from '@assets/icons/Lank.png';
-import WhiteToggle from '@assets/icons/WhiteToggle.png';
 import UpIcon from '@assets/icons/Up.png';
 import BottomSheet from '@components/BottomSheet';
 import {lawApi} from '@api/lawApi';
@@ -30,9 +29,11 @@ import _ from 'lodash';
 import {BackHandler} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {RootStackParamList, RouteNames} from '@components/Route';
-import Loading from '@components/Loading';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {authApi} from '@api/authApi';
+import messaging from '@react-native-firebase/messaging';
+import {FCM_TOKEN} from '../config/constants';
+
 const suggestions = [
   '지게차',
   '비계',
@@ -55,6 +56,58 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
   const {data: LankingData, refetch: lankRetetch} = lawApi.GetLawLanking();
 
   const {data: UserData} = authApi.GetProfile();
+
+  const {mutate} = authApi.PutAgreeNotification();
+
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+      getToken();
+    } else {
+      console.log('Notification permission not granted');
+    }
+  }
+
+  const getToken = async () => {
+    try {
+      const token = await messaging().getToken();
+      const fcmToken = await AsyncStorage.getItem(FCM_TOKEN);
+      if (token && fcmToken === null) {
+        mutate(
+          {
+            fcmDeviceToken: token,
+            notificationType: ['QNA_NOTIFICATION'],
+          },
+          {
+            onSuccess: async () => {
+              console.log('알림 동의 성공');
+              await AsyncStorage.setItem(FCM_TOKEN, JSON.stringify(token));
+            },
+            onError: error => {
+              console.error('Error agreeing notification:', error);
+              Alert.alert(
+                '알림 동의 실패',
+                '알림 동의에 실패했습니다. 다시 시도해주세요.',
+              );
+            },
+          },
+        );
+      } else {
+        console.log('Failed to get FCM token');
+      }
+    } catch (error) {
+      console.error('Error fetching FCM token:', error);
+    }
+  };
+
+  useEffect(() => {
+    requestUserPermission();
+  }, []);
 
   useEffect(() => {
     if (UserData) AsyncStorage.setItem('user', JSON.stringify(UserData));
@@ -289,7 +342,7 @@ const styles = StyleSheet.create({
   },
   imagetext: {
     fontWeight: '800',
-    fontFamily: 'NanumGothic',
+    fontFamily: 'NotoSansCJKkr-medium',
     color: '#fff',
     textAlign: 'left',
     fontSize: 25,

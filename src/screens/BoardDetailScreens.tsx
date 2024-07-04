@@ -10,8 +10,9 @@ import {
   TextInput,
   Keyboard,
   ScrollView,
+  KeyboardAvoidingView,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import WriteIcon from '@assets/icons/Write.png';
 import CommentIcon from '@assets/icons/Comments.png';
 import Person from '@assets/icons/Person.png';
@@ -21,7 +22,6 @@ import SearchIcon from '@assets/icons/Search.png';
 import SendIcon from '@assets/icons/Send.png';
 
 const BoardDetailScreens = () => {
-  const [keyboardOffset, setKeyboardOffset] = useState(0);
   const [replyCommentId, setReplyCommentId] = useState(null);
   const [comments, setComments] = useState([
     {
@@ -34,18 +34,22 @@ const BoardDetailScreens = () => {
   ]);
   const [replyText, setReplyText] = useState('');
   const [newCommentText, setNewCommentText] = useState(''); // New state for the main comment text
+  const replyInputRef = useRef(null);
+  const scrollViewRef = useRef(null);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
-      event => {
-        setKeyboardOffset(event.endCoordinates.height);
+      () => {
+        if (scrollViewRef.current) {
+          scrollViewRef.current.scrollToEnd({animated: true});
+        }
       },
     );
     const keyboardDidHideListener = Keyboard.addListener(
       'keyboardDidHide',
       () => {
-        setKeyboardOffset(0);
+        // Do nothing when the keyboard hides
       },
     );
 
@@ -55,14 +59,23 @@ const BoardDetailScreens = () => {
     };
   }, []);
 
-  const handleReplyPress = (commentId: any) => {
-    setReplyCommentId(replyCommentId === commentId ? null : commentId);
+  const handleReplyPress = commentId => {
+    if (replyCommentId === commentId) {
+      setReplyCommentId(null);
+    } else {
+      setReplyCommentId(commentId);
+      setTimeout(() => {
+        if (replyInputRef.current) {
+          replyInputRef.current.focus();
+        }
+      }, 100);
+    }
   };
 
   const handleReplySubmit = () => {
     if (replyText.trim() !== '') {
       setComments(prevComments =>
-        prevComments.map((comment: any) =>
+        prevComments.map(comment =>
           comment.id === replyCommentId
             ? {
                 ...comment,
@@ -100,22 +113,28 @@ const BoardDetailScreens = () => {
     }
   };
 
+  const handleDeleteComment = commentId => {
+    setComments(prevComments =>
+      prevComments.filter(comment => comment.id !== commentId),
+    );
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View
-        style={{
-          width: '100%',
-          height: 50,
-        }}>
+      <View style={styles.titleBarContainer}>
         <TitleBar />
       </View>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <View style={styles.divider} />
+
+      <ScrollView
+        contentContainerStyle={styles.scrollViewContent}
+        ref={scrollViewRef}>
         <View style={styles.cardContent}>
           <Text style={styles.title}>
             산업 안전 보건령에 대한 질문이 있습니다.
           </Text>
           <Text style={styles.content}>
-            Seeking for a data science intern to josdsdin our tedsddsam.
+            Seeking for a data science intern to join our team.
           </Text>
           <View style={styles.headerRow}>
             <Image
@@ -134,6 +153,7 @@ const BoardDetailScreens = () => {
             />
             <Text style={styles.commentCount}>{comments.length}</Text>
           </View>
+          <View style={styles.dividerWithMargin} />
           <Text style={styles.comment}>답글</Text>
           <View style={styles.commentSection}>
             {comments.map(comment => (
@@ -145,7 +165,7 @@ const BoardDetailScreens = () => {
                     resizeMode="contain"
                   />
                   <View style={styles.commentColumn}>
-                    <View style={{flexDirection: 'row'}}>
+                    <View style={styles.commentHeader}>
                       <Text style={styles.commentNickName}>
                         {comment.nickname}
                       </Text>
@@ -154,14 +174,14 @@ const BoardDetailScreens = () => {
                     <Text style={styles.commentContent}>{comment.content}</Text>
                   </View>
                   <TouchableOpacity
-                    style={styles.replyButton}
-                    onPress={() => handleReplyPress(comment.id)}>
-                    <Text style={styles.replyButtonText}>답글</Text>
+                    style={styles.deleteButton}
+                    onPress={() => handleDeleteComment(comment.id)}>
+                    <Text style={styles.deleteButtonText}>삭제</Text>
                   </TouchableOpacity>
                 </View>
 
-                {comment.replies.map((reply: any) => (
-                  <View key={reply.id} style={{marginLeft: 56, marginTop: 10}}>
+                {comment.replies.map(reply => (
+                  <View key={reply.id} style={styles.replyContainer}>
                     <View style={styles.commentRow}>
                       <Image
                         source={PersonIcon}
@@ -169,7 +189,7 @@ const BoardDetailScreens = () => {
                         resizeMode="contain"
                       />
                       <View style={styles.commentColumn}>
-                        <View style={{flexDirection: 'row'}}>
+                        <View style={styles.commentHeader}>
                           <Text style={styles.commentNickName}>
                             {reply.nickname}
                           </Text>
@@ -179,9 +199,15 @@ const BoardDetailScreens = () => {
                           {reply.content}
                         </Text>
                       </View>
+                      <TouchableOpacity
+                        style={styles.deleteButton}
+                        onPress={() => handleDeleteComment(reply.id)}>
+                        <Text style={styles.deleteButtonText}>삭제</Text>
+                      </TouchableOpacity>
                     </View>
                   </View>
                 ))}
+
                 {replyCommentId === comment.id && (
                   <View style={styles.replyForm}>
                     <Image
@@ -196,6 +222,8 @@ const BoardDetailScreens = () => {
                         placeholder="답글을 입력해주세요."
                         value={replyText}
                         onChangeText={setReplyText}
+                        ref={replyInputRef}
+                        onSubmitEditing={handleReplySubmit}
                       />
                       <Pressable
                         style={styles.searchButton}
@@ -210,39 +238,49 @@ const BoardDetailScreens = () => {
                     </View>
                   </View>
                 )}
+                <TouchableOpacity
+                  style={styles.replyButton}
+                  onPress={() => handleReplyPress(comment.id)}>
+                  <Text style={styles.replyButtonText}>
+                    {replyCommentId === comment.id ? '취소' : '댓글달기'}
+                  </Text>
+                </TouchableOpacity>
               </View>
             ))}
           </View>
         </View>
       </ScrollView>
-      <View style={styles.bottomReply}>
-        <View style={styles.keyboardAvoidingView}>
-          <Image
-            source={PersonIcon}
-            style={styles.replyPersonIcon}
-            resizeMode="contain"
-          />
-          <View style={styles.searchbarContainer}>
-            <TextInput
-              style={styles.searchbarView}
-              placeholderTextColor="black"
-              placeholder="댓글을 입력해주세요."
-              value={newCommentText}
-              onChangeText={setNewCommentText}
+      {replyCommentId === null && (
+        <View style={styles.bottomReply}>
+          <View style={styles.keyboardAvoidingView}>
+            <Image
+              source={PersonIcon}
+              style={styles.replyPersonIcon}
+              resizeMode="contain"
             />
-            <Pressable
-              style={styles.searchButton}
-              hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-              onPress={handleNewCommentSubmit}>
-              <Image
-                source={SendIcon}
-                style={styles.searchicon}
-                resizeMode="contain"
+            <View style={styles.searchbarContainer}>
+              <TextInput
+                style={styles.searchbarView}
+                placeholderTextColor="black"
+                placeholder="댓글을 입력해주세요."
+                value={newCommentText}
+                onChangeText={setNewCommentText}
+                onSubmitEditing={handleNewCommentSubmit}
               />
-            </Pressable>
+              <Pressable
+                style={styles.searchButton}
+                hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                onPress={handleNewCommentSubmit}>
+                <Image
+                  source={SendIcon}
+                  style={styles.searchicon}
+                  resizeMode="contain"
+                />
+              </Pressable>
+            </View>
           </View>
         </View>
-      </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -250,6 +288,8 @@ const BoardDetailScreens = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    height: '100%',
+    width: '100%',
     backgroundColor: '#fff',
   },
   scrollViewContent: {
@@ -319,7 +359,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontFamily: 'NotoSansCJKkr-Bold',
     color: '#121417',
-    marginTop: 60,
+    marginTop: 20,
   },
   commentSection: {
     flexDirection: 'column',
@@ -328,7 +368,7 @@ const styles = StyleSheet.create({
   commentRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   commentPersonIcon: {
     width: 40,
@@ -369,7 +409,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 0 : 10,
+    bottom: 0,
     left: 0,
     right: 0,
     padding: 10,
@@ -399,13 +439,22 @@ const styles = StyleSheet.create({
     height: 20,
   },
   replyButton: {
-    backgroundColor: '#000',
+    paddingLeft: 63,
+    paddingBottom: 30,
+  },
+  replyButtonText: {
+    color: '#888888', // Light grey color for the reply button
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  deleteButton: {
+    backgroundColor: 'transparent', // Transparent background for text
     borderRadius: 5,
     paddingHorizontal: 15,
     paddingVertical: 10,
   },
-  replyButtonText: {
-    color: '#fff',
+  deleteButtonText: {
+    color: '#FF0000', // Red text color for delete button
     fontSize: 14,
     fontWeight: '600',
   },
@@ -413,7 +462,30 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 56,
-    marginBottom: 20,
+    marginBottom: 10,
+  },
+  replyContainer: {
+    marginLeft: 56,
+    marginTop: 10,
+  },
+  divider: {
+    borderTopWidth: 1,
+    borderStyle: 'solid',
+    borderColor: '#e6e6e6',
+  },
+  dividerWithMargin: {
+    borderTopWidth: 1,
+    borderStyle: 'solid',
+    borderColor: '#e6e6e6',
+    marginTop: 20,
+  },
+  commentHeader: {
+    flexDirection: 'row',
+  },
+  titleBarContainer: {
+    width: '100%',
+    height: 60,
+    backgroundColor: 'white',
   },
 });
 

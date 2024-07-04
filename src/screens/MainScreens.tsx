@@ -3,12 +3,13 @@ import {
   View,
   Text,
   StyleSheet,
+  Image,
+  ImageBackground,
+  ScrollView,
   Pressable,
-  SafeAreaView,
-  Alert,
+  Linking,
   Platform,
 } from 'react-native';
-
 import NaverLogin, {
   NaverLoginResponse,
   GetProfileResponse,
@@ -19,8 +20,12 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppleLogin from '@components/AppleLogin';
 import appleAuth from '@invertase/react-native-apple-authentication';
-import jwt_decode from 'jwt-decode';
 import {RootStackParamList, RouteNames} from '@components/Route';
+import HomeImg from '@assets/images/Home.png';
+import SearchIcon from '@assets/icons/Search.png';
+import SafetyIcon from '@assets/icons/Safety.png';
+import CommunityIcon from '@assets/icons/Community.png';
+import NaverIcon from '@assets/icons/Naver.png';
 
 type userInfoType = {
   message: string;
@@ -85,7 +90,7 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
           },
           {
             onSuccess: async (data: any) => {
-              // 쿠키에 토큰 저장
+              // Save tokens in AsyncStorage
               await AsyncStorage.setItem(
                 COOKIE_ACCESS_TOKEN,
                 data.token.accessToken,
@@ -111,18 +116,18 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
 
   const handleSignInApple = async () => {
     try {
-      // 애플 로그인 요청
+      // Apple login request
       const appleAuthRequestResponse = await appleAuth.performRequest({
         requestedOperation: appleAuth.Operation.LOGIN,
         requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
       });
 
-      // 사용자 인증 상태 확인
+      // Check user credential state
       const credentialState = await appleAuth.getCredentialStateForUser(
         appleAuthRequestResponse.user,
       );
 
-      // 사용자 인증 성공 시 처리
+      // Handle successful authentication
       if (credentialState === appleAuth.State.AUTHORIZED) {
         console.log('appleAuthRequestResponse>>>>', appleAuthRequestResponse);
         const user = {
@@ -159,37 +164,203 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <Pressable onPress={() => login()}>
-          <Text
-            style={{
-              height: 30,
-              backgroundColor: 'yellow',
-              textAlign: 'center',
-              textAlignVertical: 'center',
-            }}>
-            카카오톡으로 시작하기
+    <ScrollView style={styles.safeArea}>
+      <ImageBackground
+        style={styles.rectangleImage}
+        resizeMode="cover"
+        source={HomeImg}
+        imageStyle={styles.image}>
+        <View style={styles.contentContainer}>
+          <Text style={styles.mainText}>안전 파트너</Text>
+          <Text style={styles.imagetext}>
+            쉽고 빠르게! 안전 법규와 함께 안전을 지키세요!
           </Text>
-        </Pressable>
-
-        {/* {Platform.OS === 'ios' && (
-          <AppleLogin handleSignInApple={handleSignInApple} />
-        )} */}
+        </View>
+      </ImageBackground>
+      <View style={styles.content}>
+        <View style={{flexDirection: 'row', gap: 10, width: '100%'}}>
+          <View style={styles.cardContainer}>
+            <Image
+              source={SearchIcon}
+              style={styles.cardIcon}
+              resizeMode="contain"
+            />
+            <Text style={styles.cardText}>법령 빠른 검색</Text>
+          </View>
+          <View style={styles.cardContainer}>
+            <Image
+              source={CommunityIcon}
+              style={styles.cardIcon}
+              resizeMode="contain"
+            />
+            <Text style={styles.cardText}>커뮤니티</Text>
+          </View>
+        </View>
+        <View style={styles.columnContainer}>
+          <Text style={styles.additionalFeaturesText}>추가 기능 예정</Text>
+          <View style={styles.cardContainer}>
+            <Image
+              source={SafetyIcon}
+              style={styles.cardIcon}
+              resizeMode="contain"
+            />
+            <Text style={styles.cardText}>안전 교육 매칭</Text>
+          </View>
+        </View>
       </View>
-    </SafeAreaView>
+      <View style={styles.container}>
+        <Pressable onPress={() => login()} style={styles.loginContainer}>
+          <Image
+            source={NaverIcon}
+            style={styles.loginIcon}
+            resizeMode="contain"
+          />
+          <Text style={styles.loginText}>네이버로 계속하기</Text>
+        </Pressable>
+        {Platform.OS === 'ios' && (
+          <AppleLogin handleSignInApple={handleSignInApple} />
+        )}
+      </View>
+      <Text style={styles.footerText}>
+        안전 파트너에 가입함으로써{' '}
+        <Text
+          style={styles.linkText}
+          onPress={() => Linking.openURL('https://example.com/terms')}>
+          이용약관
+        </Text>
+        및
+        <Text
+          style={styles.linkText}
+          onPress={() => Linking.openURL('https://example.com/privacy')}>
+          개인정보처리방침
+        </Text>
+        에 동의하게 됩니다.
+      </Text>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff',
   },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 20,
+  },
+  rectangleImage: {
+    width: '100%',
+    height: 400,
+    backgroundColor: '#000',
+  },
+  image: {
+    opacity: 0.6,
+  },
+  contentContainer: {
+    position: 'absolute',
+    bottom: 30,
+    left: 20,
+  },
+  mainText: {
+    fontFamily: 'NotoSansCJKkr-Bold',
+    fontSize: 36,
+    letterSpacing: -1,
+    color: '#fff',
+    fontWeight: '800',
+    marginBottom: 10,
+  },
+  imagetext: {
+    fontFamily: 'NotoSansCJKkr-Medium',
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  content: {
+    marginTop: 20,
+    marginHorizontal: 30,
+  },
+  cardContainer: {
+    width: '48%',
+    height: 100,
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 1,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+        elevation: 2,
+      },
+      android: {
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 5,
+        },
+        shadowOpacity: 0.36,
+        shadowRadius: 6.68,
+        elevation: 3,
+      },
+    }),
+  },
+  cardIcon: {
+    height: 24,
+    width: 24,
+    marginBottom: 10,
+    tintColor: 'black',
+  },
+  cardText: {
+    fontSize: 16,
+    fontWeight: '700',
+    fontFamily: 'NotoSansCJKkr-Bold',
+    color: '#211a0a',
+  },
+  columnContainer: {
+    flexDirection: 'column',
+    gap: 10,
+    marginVertical: 10,
+  },
+  additionalFeaturesText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#211a0a',
+  },
+  loginContainer: {
+    width: '70%',
+    height: 50,
+    backgroundColor: '#03C75A',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    flexDirection: 'row',
+  },
+  loginIcon: {
+    height: 34,
+    width: 34,
+  },
+  loginText: {
+    fontSize: 14,
+    fontWeight: '700',
+    fontFamily: 'NotoSansCJKkr-Bold',
+    color: '#fff',
+  },
+  footerText: {
+    margin: 20,
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  linkText: {
+    color: 'blue',
   },
 });
 

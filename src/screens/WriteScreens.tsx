@@ -28,31 +28,41 @@ const WriteScreens = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <View style={styles.header}>
+        <TitleBar />
+        <Text style={styles.headerTitle}>게시물 작성</Text>
+      </View>
+      <View
+        style={{
+          borderTopWidth: 1,
+          borderStyle: 'solid',
+          borderColor: '#e6e6e6',
+          marginTop: 10,
+        }}
+      />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
-          <View style={styles.header}>
-            <TitleBar />
-            <Text style={styles.headerTitle}>게시글 작성</Text>
-          </View>
           <View style={styles.container}>
             <Text style={styles.title}>제목</Text>
             <TextInput
               style={styles.postTitle}
               placeholder="제목을 입력해주세요."
+              placeholderTextColor="#6b6b6b"
             />
             <Text style={styles.title}>내용</Text>
             <TextInput
               style={styles.postContent}
               placeholder="내용을 입력해주세요."
               multiline={true}
+              placeholderTextColor="#6b6b6b"
               textAlignVertical="top"
             />
           </View>
         </ScrollView>
         <TouchableOpacity style={styles.submitButton}>
-          <Text style={styles.submitButtonText}>게시글 제출</Text>
+          <Text style={styles.submitButtonText}>작성 완료</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -79,7 +89,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 15,
   },
   headerTitle: {
     marginTop: 11,
@@ -106,7 +115,7 @@ const styles = StyleSheet.create({
   postTitle: {
     fontSize: 16,
     fontFamily: 'NotoSansCJKkr-Regular',
-    backgroundColor: '#f0f2f5',
+    backgroundColor: '#ededed',
     width: '100%',
     height: 50,
     borderRadius: 12,
@@ -117,7 +126,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'NotoSansCJKkr-Regular',
     borderRadius: 12,
-    backgroundColor: '#f0f2f5',
+    backgroundColor: '#ededed',
     width: '100%',
     height: '75%',
     paddingHorizontal: 15,
@@ -126,14 +135,14 @@ const styles = StyleSheet.create({
   imagePicker: {
     marginTop: 20,
     padding: 10,
-    backgroundColor: '#f0f2f5',
+    backgroundColor: '#ededed',
     borderRadius: 12,
     alignItems: 'center',
   },
   imagePickerText: {
     fontSize: 16,
     fontFamily: 'NotoSansCJKkr-Medium',
-    color: '#637587',
+    color: '#6b6b6b',
   },
   imagePreview: {
     width: '100%',
@@ -142,7 +151,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   submitButton: {
-    backgroundColor: '#637587',
+    backgroundColor: 'black',
     paddingVertical: 15,
     alignItems: 'center',
     justifyContent: 'center',

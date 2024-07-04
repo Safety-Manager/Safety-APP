@@ -1362,6 +1362,11 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNNotifee (7.8.2):
+    - React-Core
+    - RNNotifee/NotifeeCore (= 7.8.2)
+  - RNNotifee/NotifeeCore (7.8.2):
+    - React-Core
   - RNReanimated (3.12.0):
     - DoubleConversion
     - glog
@@ -1508,6 +1513,7 @@ DEPENDENCIES:
   - RNGoogleMobileAds (from `../node_modules/react-native-google-mobile-ads`)
   - RNIap (from `../node_modules/react-native-iap`)
   - "RNNaverLogin (from `../node_modules/@react-native-seoul/naver-login`)"
+  - "RNNotifee (from `../node_modules/@notifee/react-native`)"
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
@@ -1676,6 +1682,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-iap"
   RNNaverLogin:
     :path: "../node_modules/@react-native-seoul/naver-login"
+  RNNotifee:
+    :path: "../node_modules/@notifee/react-native"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -1776,6 +1784,7 @@ SPEC CHECKSUMS:
   RNGoogleMobileAds: 86bd8e6f5ac413f5236af4cb5c815d7fed859614
   RNIap: b30126ab51607421ba595d534a3710d2796212f4
   RNNaverLogin: 1e5f1b4c23191f077680e7258df65c725265fdba
+  RNNotifee: 8e2d3df3f0e9ce8f5d1fe4c967431138190b6175
   RNReanimated: 967ae35616ef948658afa75d24595d4584051540
   RNScreens: 30249f9331c3b00ae7cb7922e11f58b3ed369c07
   RNSentry: e9aa15bb2f3e18c822c002eea13bbd3b222ab493
