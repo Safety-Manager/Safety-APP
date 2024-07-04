@@ -92,6 +92,10 @@
 		<string>NotoSansCJKkr-Regular.otf</string>
 		<string>NotoSansCJKkr-Thin.otf</string>
 	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>BootSplash</string>
 	<key>UIRequiredDeviceCapabilities</key>

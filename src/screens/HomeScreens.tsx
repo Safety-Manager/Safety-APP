@@ -109,9 +109,9 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
       }
     } catch (error) {
       console.error(error);
-      Alert.alert('에러', '데이터를 가져오는 도중 문제가 발생했습니다.', [
-        {text: '확인'},
-      ]);
+      // Alert.alert('에러', '데이터를 가져오는 도중 문제가 발생했습니다.', [
+      //   {text: '확인'},
+      // ]);
     }
   };
 

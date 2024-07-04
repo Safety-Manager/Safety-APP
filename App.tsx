@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, InitialState} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import MainScreens from '@screens/MainScreens';
-import WelcomeScreens from '@screens/WelcomeScreens';
 import SearchInfoScreens from '@screens/SearchInfoScreens';
 import SearchScreens from '@screens/SearchScreens';
 import MyTabs from '@navigation/MyTabs';
@@ -17,7 +16,6 @@ import * as Sentry from '@sentry/react-native';
 import WriteScreens from '@screens/WriteScreens';
 import BoardDetailScreens from '@screens/BoardDetailScreens';
 import messaging from '@react-native-firebase/messaging';
-import {NativeModules, PermissionsAndroid, Platform} from 'react-native';
 
 Sentry.init({
   dsn: 'https://5fdbd09b48895376131cc91f9a7b4726@o4507525130616832.ingest.us.sentry.io/4507525134352384',
@@ -33,7 +31,7 @@ function App() {
   const queryClient = new QueryClient();
 
   const [isReady, setIsReady] = useState(false);
-  const [auth, setAuth] = useState<boolean | null>(null);
+  const [initialState, setInitialState] = useState<InitialState | undefined>();
 
   async function requestUserPermission() {
     const authStatus = await messaging().requestPermission();
@@ -56,73 +54,27 @@ function App() {
     getToken();
   }, []);
 
-  // useEffect(() => {
-  //   Platform.OS === 'android'
-  //     ? androidRequestPermission()
-  //     : iosRequestPermission();
-  // }, []);
-
-  // const iosRequestPermission = async () => {
-  //   try {
-  //     const authorizationStatus = await messaging().requestPermission();
-  //     console.log('iOS authorizationStatus:', authorizationStatus); // 로그 추가
-
-  //     if (authorizationStatus === 1) {
-  //       const apnsToken = await firebaseMessaging.getAPNSToken();
-  //       console.log('iOS APNs Token:', apnsToken); // 로그 추가
-
-  //       if (apnsToken) {
-  //         const fcmToken = await firebaseMessaging.getToken();
-  //         console.log('iOS FCM Token:', fcmToken); // 로그 추가
-  //         NativeModules.DotReactBridge.setPushToken(fcmToken);
-  //       }
-  //     } else {
-  //       console.log('알림권한 비 활성화:');
-  //     }
-  //   } catch (error) {
-  //     console.log('ios error::', error);
-  //   }
-  // };
-
-  // const androidRequestPermission = async () => {
-  //   try {
-  //     const authorizationStatus = await messaging().requestPermission();
-  //     console.log('Android authorizationStatus:', authorizationStatus); // 로그 추가
-
-  //     const fcmToken = await firebaseMessaging.getToken();
-  //     console.log('Android FCM Token:', fcmToken); // 로그 추가
-
-  //     if (Platform.OS === 'android') {
-  //       if (Platform.Version >= 33) {
-  //         const granted = await PermissionsAndroid.request(
-  //           PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-  //         );
-  //         console.log('Android POST_NOTIFICATIONS granted:', granted); // 로그 추가
-
-  //         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-  //           if (fcmToken) {
-  //             NativeModules.DotReactBridge.setPushToken(fcmToken);
-  //           }
-  //         }
-  //       } else {
-  //         if (fcmToken) {
-  //           NativeModules.DotReactBridge.setPushToken(fcmToken);
-  //         }
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.log('Android error:', error);
-  //   }
-  // };
-
   useEffect(() => {
     const checkAccessToken = async () => {
       try {
         const accessToken = await AsyncStorage.getItem(COOKIE_ACCESS_TOKEN);
-        setAuth(!!accessToken);
+        if (accessToken) {
+          setInitialState({
+            index: 0,
+            routes: [{name: RouteNames.HOMETABS}],
+          });
+        } else {
+          setInitialState({
+            index: 0,
+            routes: [{name: RouteNames.MAIN}],
+          });
+        }
       } catch (error) {
         console.error('Failed to fetch the access token:', error);
-        setAuth(false);
+        setInitialState({
+          index: 0,
+          routes: [{name: RouteNames.MAIN}],
+        });
       } finally {
         setIsReady(true);
       }
@@ -143,29 +95,26 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <NavigationContainer ref={navigationRef}>
-        <RootNavigator auth={auth} />
+      <NavigationContainer initialState={initialState} ref={navigationRef}>
+        <RootNavigator />
       </NavigationContainer>
     </QueryClientProvider>
   );
 }
 
-const RootNavigator = ({auth}: {auth: boolean | null}) => {
+const RootNavigator = () => {
   return (
     <Stack.Navigator>
-      {auth === false ? (
-        <Stack.Screen
-          name={RouteNames.MAIN}
-          component={MainScreens}
-          options={{headerShown: false}}
-        />
-      ) : (
-        <Stack.Screen
-          name={RouteNames.HOMETABS}
-          component={MyTabs}
-          options={{headerShown: false, gestureEnabled: false, title: ''}}
-        />
-      )}
+      <Stack.Screen
+        name={RouteNames.MAIN}
+        component={MainScreens}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name={RouteNames.HOMETABS}
+        component={MyTabs}
+        options={{headerShown: false, gestureEnabled: false, title: ''}}
+      />
       <Stack.Screen
         name={RouteNames.SEARCH}
         component={SearchScreens}

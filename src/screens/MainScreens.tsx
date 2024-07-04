@@ -96,7 +96,7 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
                 data.token.refreshToken,
               );
 
-              navigation.navigate(RouteNames.HOME);
+              navigation.navigate(RouteNames.HOMETABS);
             },
             onError: (error: any) => {
               console.log('error>>>', error);
@@ -146,7 +146,7 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
               COOKIE_REFRESH_TOKEN,
               data.token.refreshToken,
             );
-            navigation.navigate(RouteNames.HOMETABS);
+            navigation.navigate(RouteNames.HOME);
           },
           onError: (error: any) => {
             console.log('error>>>', error);
