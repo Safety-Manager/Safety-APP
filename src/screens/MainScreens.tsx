@@ -197,7 +197,6 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
           </View>
         </View>
         <View style={styles.columnContainer}>
-          <Text style={styles.additionalFeaturesText}>추가 기능 예정</Text>
           <View style={styles.cardContainer}>
             <Image
               source={SafetyIcon}

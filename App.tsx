@@ -66,7 +66,7 @@ function App() {
     checkAccessToken();
 
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      console.log(remoteMessage);
+      console.log('A new FCM message arrived!', remoteMessage);
       pushNoti.displayNoti(remoteMessage); // 위에서 작성한 함수로 넘겨준다
     });
 

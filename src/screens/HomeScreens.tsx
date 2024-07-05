@@ -12,6 +12,7 @@ import {
   Animated,
   Alert,
   ActivityIndicator,
+  PermissionsAndroid,
 } from 'react-native';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import HomeImg from '@assets/images/Home.png';
@@ -60,23 +61,43 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
   const {mutate} = authApi.PutAgreeNotification();
 
   async function requestUserPermission() {
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    if (Platform.OS === 'ios') {
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-    if (enabled) {
-      console.log('Authorization status:', authStatus);
-      getToken();
-    } else {
-      console.log('Notification permission not granted');
+      if (enabled) {
+        console.log('Authorization status:', authStatus);
+        getToken();
+      } else {
+        console.log('Notification permission not granted');
+      }
+    } else if (Platform.OS === 'android') {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+        {
+          title: '알림 권한 요청',
+          message: '이 앱은 알림을 보내기 위해 알림 권한이 필요합니다.',
+          buttonNeutral: '나중에 묻기',
+          buttonNegative: '취소',
+          buttonPositive: '확인',
+        },
+      );
+
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('Notification permission granted');
+        getToken();
+      } else {
+        console.log('Notification permission not granted');
+      }
     }
   }
 
   const getToken = async () => {
     try {
       const token = await messaging().getToken();
-      const fcmToken = await AsyncStorage.getItem(FCM_TOKEN);
+      const fcmToken = await AsyncStorage.getItem('FCM_TOKEN');
       if (token && fcmToken === null) {
         mutate(
           {
@@ -86,7 +107,7 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
           {
             onSuccess: async () => {
               console.log('알림 동의 성공');
-              await AsyncStorage.setItem(FCM_TOKEN, JSON.stringify(token));
+              await AsyncStorage.setItem('FCM_TOKEN', JSON.stringify(token));
             },
             onError: error => {
               console.error('Error agreeing notification:', error);
@@ -342,7 +363,7 @@ const styles = StyleSheet.create({
   },
   imagetext: {
     fontWeight: '800',
-    fontFamily: 'NotoSansCJKkr-medium',
+    fontFamily: 'NotoSansCJKkr-Medium',
     color: '#fff',
     textAlign: 'left',
     fontSize: 25,
