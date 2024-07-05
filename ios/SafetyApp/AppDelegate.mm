@@ -17,6 +17,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   
+  
   self.moduleName = @"SafetyApp";
   [FIRApp configure];
   // You can add your custom initial props in the dictionary below.

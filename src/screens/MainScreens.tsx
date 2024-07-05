@@ -26,6 +26,7 @@ import SearchIcon from '@assets/icons/Search.png';
 import SafetyIcon from '@assets/icons/Safety.png';
 import CommunityIcon from '@assets/icons/Community.png';
 import NaverIcon from '@assets/icons/Naver.png';
+import jwt_decode from 'jwt-decode';
 
 type userInfoType = {
   message: string;
@@ -122,6 +123,10 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
         requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
       });
 
+      const decodedToken: any = jwt_decode(
+        appleAuthRequestResponse.identityToken as any,
+      );
+
       // Check user credential state
       const credentialState = await appleAuth.getCredentialStateForUser(
         appleAuthRequestResponse.user,
@@ -129,18 +134,20 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
 
       // Handle successful authentication
       if (credentialState === appleAuth.State.AUTHORIZED) {
-        console.log('appleAuthRequestResponse>>>>', appleAuthRequestResponse);
+        const {email, email_verified, is_private_email, sub} = decodedToken;
         const user = {
-          id: appleAuthRequestResponse.user,
+          id: appleAuthRequestResponse.identityToken as string,
           email: appleAuthRequestResponse.email || '',
-          name: appleAuthRequestResponse.fullName?.givenName || '',
+          name:
+            (appleAuthRequestResponse.fullName?.familyName || '') +
+            (appleAuthRequestResponse.fullName?.givenName || ''),
           mobile: '',
-          nickname: appleAuthRequestResponse.fullName?.givenName || '',
+          nickname:
+            (appleAuthRequestResponse.fullName?.familyName || '') +
+            (appleAuthRequestResponse.fullName?.givenName || ''),
           platform: 'apple',
-          identityToken: appleAuthRequestResponse.identityToken,
-          authorizationCode: appleAuthRequestResponse.authorizationCode,
         };
-
+        console.log('user>>>', user);
         mutateJoin.mutate(user, {
           onSuccess: async (data: any) => {
             await AsyncStorage.setItem(
@@ -164,78 +171,82 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
   };
 
   return (
-    <ScrollView style={styles.safeArea}>
-      <ImageBackground
-        style={styles.rectangleImage}
-        resizeMode="cover"
-        source={HomeImg}
-        imageStyle={styles.image}>
-        <View style={styles.contentContainer}>
-          <Text style={styles.mainText}>안전 파트너</Text>
-          <Text style={styles.imagetext}>
-            쉽고 빠르게! 안전 법규와 함께 안전을 지키세요!
+    <View style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <ImageBackground
+          style={styles.rectangleImage}
+          resizeMode="cover"
+          source={HomeImg}
+          imageStyle={styles.image}>
+          <View style={styles.contentContainer}>
+            <Text style={styles.mainText}>안전 파트너</Text>
+            <Text style={styles.imagetext}>
+              쉽고 빠르게! 안전 법규와 함께 안전을 지키세요!
+            </Text>
+          </View>
+        </ImageBackground>
+        <View style={styles.content}>
+          <View style={{flexDirection: 'row', gap: 10, width: '100%'}}>
+            <View style={styles.cardContainer}>
+              <Image
+                source={SearchIcon}
+                style={styles.cardIcon}
+                resizeMode="contain"
+              />
+              <Text style={styles.cardText}>법령 빠른 검색</Text>
+            </View>
+            <View style={styles.cardContainer}>
+              <Image
+                source={CommunityIcon}
+                style={styles.cardIcon}
+                resizeMode="contain"
+              />
+              <Text style={styles.cardText}>커뮤니티</Text>
+            </View>
+          </View>
+          <View style={styles.columnContainer}>
+            <View style={styles.cardContainer}>
+              <Image
+                source={SafetyIcon}
+                style={styles.cardIcon}
+                resizeMode="contain"
+              />
+              <Text style={styles.cardText}>안전 교육 매칭</Text>
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+      <View style={styles.footer}>
+        <View style={styles.container}>
+          <Pressable onPress={() => login()} style={styles.loginContainer}>
+            <Image
+              source={NaverIcon}
+              style={styles.loginIcon}
+              resizeMode="contain"
+            />
+            <Text style={styles.loginText}>네이버로 계속하기</Text>
+          </Pressable>
+          {Platform.OS === 'ios' && (
+            <AppleLogin handleSignInApple={handleSignInApple} />
+          )}
+        </View>
+        <Text style={styles.footerText}>
+          안전 파트너에 가입함으로써{'\n'}
+          <Text
+            style={styles.linkText}
+            onPress={() => Linking.openURL('https://example.com/terms')}>
+            이용약관
           </Text>
-        </View>
-      </ImageBackground>
-      <View style={styles.content}>
-        <View style={{flexDirection: 'row', gap: 10, width: '100%'}}>
-          <View style={styles.cardContainer}>
-            <Image
-              source={SearchIcon}
-              style={styles.cardIcon}
-              resizeMode="contain"
-            />
-            <Text style={styles.cardText}>법령 빠른 검색</Text>
-          </View>
-          <View style={styles.cardContainer}>
-            <Image
-              source={CommunityIcon}
-              style={styles.cardIcon}
-              resizeMode="contain"
-            />
-            <Text style={styles.cardText}>커뮤니티</Text>
-          </View>
-        </View>
-        <View style={styles.columnContainer}>
-          <View style={styles.cardContainer}>
-            <Image
-              source={SafetyIcon}
-              style={styles.cardIcon}
-              resizeMode="contain"
-            />
-            <Text style={styles.cardText}>안전 교육 매칭</Text>
-          </View>
-        </View>
-      </View>
-      <View style={styles.container}>
-        <Pressable onPress={() => login()} style={styles.loginContainer}>
-          <Image
-            source={NaverIcon}
-            style={styles.loginIcon}
-            resizeMode="contain"
-          />
-          <Text style={styles.loginText}>네이버로 계속하기</Text>
-        </Pressable>
-        {Platform.OS === 'ios' && (
-          <AppleLogin handleSignInApple={handleSignInApple} />
-        )}
-      </View>
-      <Text style={styles.footerText}>
-        안전 파트너에 가입함으로써{' '}
-        <Text
-          style={styles.linkText}
-          onPress={() => Linking.openURL('https://example.com/terms')}>
-          이용약관
+          및
+          <Text
+            style={styles.linkText}
+            onPress={() => Linking.openURL('https://example.com/privacy')}>
+            개인정보처리방침
+          </Text>
+          에 동의하게 됩니다.
         </Text>
-        및
-        <Text
-          style={styles.linkText}
-          onPress={() => Linking.openURL('https://example.com/privacy')}>
-          개인정보처리방침
-        </Text>
-        에 동의하게 됩니다.
-      </Text>
-    </ScrollView>
+      </View>
+    </View>
   );
 };
 
@@ -244,11 +255,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
   },
+  scrollContainer: {
+    flexGrow: 1,
+  },
   container: {
-    flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
   },
   rectangleImage: {
     width: '100%',
@@ -352,6 +363,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontFamily: 'NotoSansCJKkr-Bold',
     color: '#fff',
+  },
+  footer: {
+    marginBottom: 5,
   },
   footerText: {
     margin: 20,
