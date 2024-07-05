@@ -122,7 +122,7 @@ const BoardDetailScreens = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.titleBarContainer}>
-        <TitleBar />
+        <TitleBar icon={'CloseIcon'} />
       </View>
       <View style={styles.divider} />
 

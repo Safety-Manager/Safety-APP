@@ -29,17 +29,17 @@ const WriteScreens = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-        <TitleBar />
-        <Text style={styles.headerTitle}>게시물 작성</Text>
+        <TitleBar icon={'CloseIcon'} />
+        <View style={styles.headerContainer}>
+          <View>
+            <Text style={styles.headerRight}>완료</Text>
+          </View>
+        </View>
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.headerTitle}>게시글 작성</Text>
+        </View>
       </View>
-      <View
-        style={{
-          borderTopWidth: 1,
-          borderStyle: 'solid',
-          borderColor: '#e6e6e6',
-          marginTop: 10,
-        }}
-      />
+      <View style={{height: 10, backgroundColor: '#f2f2f2'}} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}>
@@ -61,9 +61,6 @@ const WriteScreens = () => {
             />
           </View>
         </ScrollView>
-        <TouchableOpacity style={styles.submitButton}>
-          <Text style={styles.submitButtonText}>작성 완료</Text>
-        </TouchableOpacity>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -72,12 +69,14 @@ const WriteScreens = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+    height: '100%',
+    width: '100%',
     backgroundColor: '#fff',
   },
   container: {
     flex: 1,
     paddingHorizontal: 15,
-    paddingTop: 20,
+    paddingTop: 10,
   },
   scrollViewContent: {
     flexGrow: 1,
@@ -85,30 +84,40 @@ const styles = StyleSheet.create({
   },
   header: {
     width: '100%',
-    height: 50,
+    height: Platform.OS === 'ios' ? 100 : 120,
+  },
+  headerContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
+    width: '100%',
+  },
+  headerRight: {
+    fontSize: 18,
+    marginTop: 19,
+    fontWeight: '700',
+    position: 'absolute',
+    right: 21,
+    fontFamily: 'NotoSansCJKkr-Regular',
+    color: '#000',
   },
   headerTitle: {
-    marginTop: 11,
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
     fontFamily: 'NotoSansCJKkr-Bold',
-    color: '#121417',
+    color: '#000',
+    flex: 1,
+    marginTop: Platform.OS === 'ios' ? 60 : 60,
   },
-  postBtn: {
-    marginTop: 11,
-    fontSize: 16,
-    fontWeight: '700',
-    fontFamily: 'NotoSansCJKkr-Bold',
-    color: '#637587',
+  headerTitleContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
     fontSize: 16,
-    fontWeight: '500',
-    fontFamily: 'NotoSansCJKkr-Medium',
-    color: '#121417',
+    fontWeight: '700',
+    fontFamily: 'NotoSansCJKkr-Bold',
+    color: '#000',
     marginTop: 10,
     marginBottom: 10,
   },
@@ -118,50 +127,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#ededed',
     width: '100%',
     height: 50,
-    borderRadius: 12,
+    borderRadius: 5,
     paddingHorizontal: 15,
-    marginBottom: 25,
+    marginBottom: 15,
   },
   postContent: {
     fontSize: 16,
     fontFamily: 'NotoSansCJKkr-Regular',
-    borderRadius: 12,
+    borderRadius: 5,
     backgroundColor: '#ededed',
     width: '100%',
     height: '75%',
     paddingHorizontal: 15,
     paddingTop: 15,
-  },
-  imagePicker: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: '#ededed',
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  imagePickerText: {
-    fontSize: 16,
-    fontFamily: 'NotoSansCJKkr-Medium',
-    color: '#6b6b6b',
-  },
-  imagePreview: {
-    width: '100%',
-    height: 200,
-    marginTop: 20,
-    borderRadius: 12,
-  },
-  submitButton: {
-    backgroundColor: 'black',
-    paddingVertical: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 12,
-    marginBottom: Platform.OS === 'ios' ? 0 : 20,
-  },
-  submitButtonText: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#fff',
   },
 });
 

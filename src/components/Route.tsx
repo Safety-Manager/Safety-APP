@@ -10,6 +10,7 @@ export const RouteNames = {
   BOARDDETAIL: 'BoardDetail' as const,
   BOARDWRITE: 'BoardWrite' as const,
   MYPAGE: 'MyPage' as const,
+  PROFILE: 'Profile' as const,
 };
 
 export type RootStackParamList = {
@@ -28,4 +29,5 @@ export type RootStackParamList = {
   [RouteNames.BOARDDETAIL]: undefined;
   [RouteNames.BOARDWRITE]: undefined;
   [RouteNames.MYPAGE]: undefined;
+  [RouteNames.PROFILE]: undefined;
 };

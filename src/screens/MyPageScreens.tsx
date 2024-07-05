@@ -106,7 +106,9 @@ const MyPageScreens = () => {
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container}>
         <View style={styles.rectangleView}>
-          <TouchableOpacity style={styles.textContainer}>
+          <TouchableOpacity
+            style={styles.textContainer}
+            onPress={() => navigation.navigate(RouteNames.PROFILE)}>
             <Text style={styles.text}>{user?.nickname} 님</Text>
             <Text style={styles.profileText}>프로필 수정 &gt; </Text>
           </TouchableOpacity>

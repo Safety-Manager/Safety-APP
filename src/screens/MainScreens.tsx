@@ -237,7 +237,7 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
             onPress={() => Linking.openURL('https://example.com/terms')}>
             이용약관
           </Text>
-          및
+          {`\u00A0`}및{`\u00A0`}
           <Text
             style={styles.linkText}
             onPress={() => Linking.openURL('https://example.com/privacy')}>
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
   },
   rectangleImage: {
     width: '100%',
-    height: 400,
+    height: 360,
     backgroundColor: '#000',
   },
   image: {

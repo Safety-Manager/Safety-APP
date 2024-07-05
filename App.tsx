@@ -20,6 +20,7 @@ import {Alert} from 'react-native';
 import {AppState} from 'react-native';
 import notifee, {AndroidImportance, AndroidColor} from '@notifee/react-native';
 import pushNoti from '@utils/pushNoti';
+import ProfileScreens from '@screens/ProfileScreens';
 
 Sentry.init({
   dsn: 'https://5fdbd09b48895376131cc91f9a7b4726@o4507525130616832.ingest.us.sentry.io/4507525134352384',
@@ -128,6 +129,11 @@ const RootNavigator = () => {
         name={RouteNames.BOARDDETAIL}
         component={BoardDetailScreens}
         options={{headerShown: false, title: '커뮤니티'}}
+      />
+      <Stack.Screen
+        name={RouteNames.PROFILE}
+        component={ProfileScreens}
+        options={{headerShown: false, title: ''}}
       />
     </Stack.Navigator>
   );
