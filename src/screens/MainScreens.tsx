@@ -21,7 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppleLogin from '@components/AppleLogin';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import {RootStackParamList, RouteNames} from '@components/Route';
-import HomeImg from '@assets/images/Home.png';
+import HomeImg from '@assets/images/Main.png';
 import SearchIcon from '@assets/icons/Search.png';
 import SafetyIcon from '@assets/icons/Safety.png';
 import CommunityIcon from '@assets/icons/Community.png';
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
   },
   image: {
-    opacity: 0.6,
+    opacity: 0.7,
   },
   contentContainer: {
     position: 'absolute',
