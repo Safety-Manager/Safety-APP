@@ -22,13 +22,16 @@ import notifee, {AndroidImportance, AndroidColor} from '@notifee/react-native';
 import pushNoti from '@utils/pushNoti';
 import ProfileScreens from '@screens/ProfileScreens';
 
-Sentry.init({
-  dsn: 'https://5fdbd09b48895376131cc91f9a7b4726@o4507525130616832.ingest.us.sentry.io/4507525134352384',
-  tracesSampleRate: 1.0,
-  _experiments: {
-    profilesSampleRate: 1.0,
-  },
-});
+// 프로덕션 모드일 때만 Sentry 초기화
+if (!__DEV__) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    tracesSampleRate: 1.0,
+    _experiments: {
+      profilesSampleRate: 1.0,
+    },
+  });
+}
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -139,4 +142,5 @@ const RootNavigator = () => {
   );
 };
 
-export default Sentry.wrap(App);
+// 프로덕션 모드일 때만 Sentry.wrap 사용
+export default __DEV__ ? App : Sentry.wrap(App);

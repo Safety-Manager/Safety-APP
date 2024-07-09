@@ -8,19 +8,126 @@ import {
   TouchableHighlight,
   View,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import TitleBar from '@components/TitleBar';
-import Person from '@assets/icons/Person.png';
+import ProfileIcon from '@assets/icons/Profile.png';
+import {authApi} from '@api/authApi';
+import {UserProfile} from 'types/auth';
 
 const ProfileScreens = () => {
+  const [profile, setProfile] = useState<UserProfile>({
+    name: '',
+    nickname: '',
+    mobile: '',
+    email: '',
+  });
+
+  const [error, setError] = useState({
+    nickname: '',
+    mobile: '',
+    email: '',
+  });
+  const {data: UserData} = authApi.GetProfile();
+
+  const {mutate: PutProfileMutate} = authApi.PutProfile();
+
+  const {mutate: GetCheckNicknameMutate} = authApi.GetCheckNickname();
+
+  useEffect(() => {
+    if (UserData)
+      setProfile({
+        name: UserData?.name,
+        nickname: UserData?.nickname,
+        mobile: UserData?.mobile,
+        email: UserData?.email,
+      });
+  }, [UserData]);
+
+  const handlerSubmit = () => {
+    let isValid = true;
+    let newError = {
+      nickname: '',
+      mobile: '',
+      email: '',
+    };
+
+    if (!profile.nickname) {
+      newError.nickname = '닉네임을 입력해주세요!';
+      isValid = false;
+    }
+
+    if (!profile.email) {
+      newError.email = '이메일을 입력해주세요!';
+      isValid = false;
+    }
+
+    if (!profile.mobile) {
+      newError.mobile = '전화번호를 입력해주세요!';
+      isValid = false;
+    }
+
+    setError(newError);
+
+    if (isValid) {
+      PutProfileMutate(profile, {
+        onSuccess: () => {},
+        onError: () => {},
+      });
+    }
+  };
+
+  const handlerCheck = (type: string) => {
+    if (type === 'nickname' && profile.nickname === '') {
+      setError({
+        ...error,
+        nickname: '닉네임을 입력해주세요!',
+      });
+      return;
+    }
+
+    switch (type) {
+      case 'nickname':
+        GetCheckNicknameMutate(profile.nickname, {
+          onSuccess: (data: boolean) => {
+            if (data) {
+              setError({
+                ...error,
+                nickname: '',
+              });
+            } else {
+              setError({
+                ...error,
+                nickname: '중복된 닉네임입니다!',
+              });
+            }
+          },
+          onError: () => {
+            setError({
+              ...error,
+              nickname: '중복된 닉네임입니다!',
+            });
+          },
+        });
+        break;
+      case 'mobile':
+        break;
+      case 'email':
+        break;
+    }
+  };
+
+  const onChangeText = (key: string, value: string) => {
+    setProfile({...profile, [key]: value});
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TitleBar icon={'CloseIcon'} />
         <View style={styles.headerContainer}>
-          <View>
+          <TouchableHighlight onPress={handlerSubmit}>
             <Text style={styles.headerRight}>완료</Text>
-          </View>
+          </TouchableHighlight>
         </View>
         <View style={styles.headerTitleContainer}>
           <Text style={styles.headerTitle}>프로필 수정</Text>
@@ -28,36 +135,63 @@ const ProfileScreens = () => {
       </View>
       <View style={{height: 10, backgroundColor: '#f2f2f2'}} />
       <View style={{marginHorizontal: 20}}>
-        <Image source={Person} style={styles.PersonIcon} resizeMode="contain" />
+        <Image
+          source={ProfileIcon}
+          style={styles.PersonIcon}
+          resizeMode="contain"
+        />
         <View style={{marginBottom: 30}}>
           <Text style={styles.labelText}>닉네임</Text>
           <View style={styles.btnContainer}>
-            <TextInput style={styles.labelInput} />
-            <TouchableHighlight style={styles.labelBtn}>
+            <TextInput
+              style={styles.labelInput}
+              placeholder="닉네임을 입력해주세요."
+              value={profile.nickname}
+              onChangeText={text => onChangeText('nickname', text)}
+            />
+            <TouchableHighlight
+              style={styles.labelBtn}
+              onPress={() => handlerCheck('nickname')}>
               <Text style={styles.btnText}>중복 체크</Text>
             </TouchableHighlight>
           </View>
-          <Text style={styles.errorText}>중복된 닉네임 입니다!</Text>
+          {error.nickname && (
+            <Text style={styles.errorText}>{error.nickname}</Text>
+          )}
         </View>
         <View style={{marginBottom: 30}}>
           <Text style={styles.labelText}>이메일</Text>
           <View style={styles.btnContainer}>
-            <TextInput style={styles.labelInput} />
-            <TouchableHighlight style={styles.labelBtn}>
+            <TextInput
+              style={styles.labelInput}
+              placeholder="이메일을 입력해주세요."
+              value={profile.email}
+              onChangeText={text => onChangeText('email', text)}
+            />
+            <TouchableHighlight
+              style={styles.labelBtn}
+              onPress={() => handlerCheck('email')}>
               <Text style={styles.btnText}>인증</Text>
             </TouchableHighlight>
           </View>
-          <Text style={styles.errorText}>이메일을 입력해주세요!</Text>
+          {error.email && <Text style={styles.errorText}>{error.email}</Text>}
         </View>
         <View style={{marginBottom: 30}}>
           <Text style={styles.labelText}>전화번호</Text>
           <View style={styles.btnContainer}>
-            <TextInput style={styles.labelInput} />
-            <TouchableHighlight style={styles.labelBtn}>
+            <TextInput
+              style={styles.labelInput}
+              placeholder="전화번호를 입력해주세요."
+              value={profile.mobile}
+              onChangeText={text => onChangeText('mobile', text)}
+            />
+            <TouchableHighlight
+              style={styles.labelBtn}
+              onPress={() => handlerCheck('mobile')}>
               <Text style={styles.btnText}>인증</Text>
             </TouchableHighlight>
           </View>
-          <Text style={styles.errorText}>전화번호를 입력해주세요!</Text>
+          {error.mobile && <Text style={styles.errorText}>{error.mobile}</Text>}
         </View>
       </View>
     </SafeAreaView>

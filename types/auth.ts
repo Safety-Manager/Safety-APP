@@ -8,7 +8,7 @@ export interface UserTypes {
 }
 
 export interface UserProfile {
-  name: string;
+  name?: string;
   nickname: string;
   mobile: string;
   email: string;

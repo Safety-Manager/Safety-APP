@@ -1,6 +1,7 @@
 import axiosInstance from '@utils/axiosInterceptor';
 import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
 import {LawCountTypes, LawLankTypes, LawListTypes} from 'types/law';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const lawApi = {
   lawFn: async (pageParam: number, keyWord: string, category: number) => {
@@ -67,6 +68,7 @@ export const lawApi = {
       queryKey: ['law', 'lanking'],
       queryFn: async (): Promise<LawLankTypes[]> => {
         const res = await axiosInstance.get('/law/ranking/keyword');
+
         return res.data.scoreList;
       },
       refetchOnWindowFocus: true,

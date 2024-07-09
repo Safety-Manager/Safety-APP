@@ -46,4 +46,24 @@ export const authApi = {
       },
     });
   },
+  // 닉네임 중복 검사
+  GetCheckNickname: function () {
+    return useMutation({
+      mutationFn: async (nickname: string): Promise<boolean> => {
+        const res = await axiosInstance.get(
+          `/user/nickname/valid?nickname=${nickname}`,
+        );
+        return res.data.result;
+      },
+    });
+  },
+  // 프로필 수정
+  PutProfile: function () {
+    return useMutation({
+      mutationFn: async (data: UserProfile): Promise<boolean> => {
+        const res = await axiosInstance.put('/user/update', data);
+        return res.data;
+      },
+    });
+  },
 };

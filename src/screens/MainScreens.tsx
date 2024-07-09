@@ -9,6 +9,8 @@ import {
   Pressable,
   Linking,
   Platform,
+  Modal,
+  TouchableOpacity,
 } from 'react-native';
 import NaverLogin, {
   NaverLoginResponse,
@@ -27,6 +29,7 @@ import SafetyIcon from '@assets/icons/Safety.png';
 import CommunityIcon from '@assets/icons/Community.png';
 import NaverIcon from '@assets/icons/Naver.png';
 import jwt_decode from 'jwt-decode';
+import {WebView} from 'react-native-webview';
 
 type userInfoType = {
   message: string;
@@ -170,6 +173,14 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
     }
   };
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [url, setUrl] = useState('');
+
+  const openWebView = (link: string) => {
+    setUrl(link);
+    setModalVisible(true);
+  };
+
   return (
     <View style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -234,18 +245,30 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
           안전 파트너에 가입함으로써{'\n'}
           <Text
             style={styles.linkText}
-            onPress={() => Linking.openURL('https://example.com/terms')}>
+            onPress={() => openWebView('https://example.com/terms')}>
             이용약관
           </Text>
           {`\u00A0`}및{`\u00A0`}
           <Text
             style={styles.linkText}
-            onPress={() => Linking.openURL('https://example.com/privacy')}>
+            onPress={() => openWebView('https://example.com/privacy')}>
             개인정보처리방침
           </Text>
           에 동의하게 됩니다.
         </Text>
       </View>
+      <Modal
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}>
+        <View style={{flex: 1}}>
+          <TouchableOpacity
+            onPress={() => setModalVisible(false)}
+            style={styles.closeButton}>
+            <Text style={styles.closeButtonText}>Close</Text>
+          </TouchableOpacity>
+          <WebView source={{uri: url}} />
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -374,6 +397,15 @@ const styles = StyleSheet.create({
   },
   linkText: {
     color: 'blue',
+  },
+  closeButton: {
+    padding: 10,
+    backgroundColor: 'grey',
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 

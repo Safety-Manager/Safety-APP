@@ -61,6 +61,8 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
   const {mutate} = authApi.PutAgreeNotification();
 
   async function requestUserPermission() {
+    const StoregeLank = await AsyncStorage.getItem('lawLanking');
+
     if (Platform.OS === 'ios') {
       const authStatus = await messaging().requestPermission();
       const enabled =
