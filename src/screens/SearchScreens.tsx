@@ -49,6 +49,7 @@ const SearchScreens = ({
     isFetching,
     refetch,
   } = lawApi.GetLawCategoryCount(searchQuery);
+
   const renderFooter = () => {
     if (isFetchingNextPage || isLoading) {
       return <ActivityIndicator />;

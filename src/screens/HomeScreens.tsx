@@ -34,6 +34,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {authApi} from '@api/authApi';
 import messaging from '@react-native-firebase/messaging';
 import {FCM_TOKEN} from '../config/constants';
+import CustomModal from '@components/CustomModal';
 
 const suggestions = [
   '지게차',
@@ -52,6 +53,15 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [searchCategory, setSearchCategory] = useState('전체' as null | string);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState<{
+    title: string;
+    onConfirm: () => void;
+  }>({
+    title: '',
+    onConfirm: () => {},
+  });
 
   const {data: HistoryData, refetch} = lawApi.GetLawHistory();
   const {data: LankingData, refetch: lankRetetch} = lawApi.GetLawLanking();
@@ -108,15 +118,10 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
           },
           {
             onSuccess: async () => {
-              console.log('알림 동의 성공');
               await AsyncStorage.setItem('FCM_TOKEN', JSON.stringify(token));
             },
             onError: error => {
               console.error('Error agreeing notification:', error);
-              Alert.alert(
-                '알림 동의 실패',
-                '알림 동의에 실패했습니다. 다시 시도해주세요.',
-              );
             },
           },
         );
@@ -181,7 +186,11 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
           searchData: response.data.searchDataList,
         });
       } else {
-        Alert.alert('검색 결과', '검색 결과가 없습니다.', [{text: '확인'}]);
+        setModalVisible(true);
+        setModalContent({
+          title: '검색 결과가 없습니다.',
+          onConfirm: () => setModalVisible(false),
+        });
       }
     } catch (error) {
       console.error(error);
@@ -197,7 +206,11 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
   // 검색 버튼 클릭 시
   const onClickSearch = () => {
     if (searchQuery === '') {
-      Alert.alert('검색 에러', '검색어를 입력해주세요', [{text: '확인'}]);
+      setModalVisible(true);
+      setModalContent({
+        title: '검색어를 입력 해 주세요.',
+        onConfirm: () => setModalVisible(false),
+      });
     } else {
       let category = 0;
       switch (searchCategory) {
@@ -339,6 +352,12 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
           <Image source={UpIcon} style={styles.lankIcon} resizeMode="contain" />
         </View>
       ))}
+      <CustomModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        title={modalContent.title}
+        onConfirm={modalContent.onConfirm}
+      />
     </ScrollView>
   );
 };

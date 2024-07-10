@@ -6,15 +6,17 @@ interface CustomModalProps {
   onClose: () => void;
   title: string;
   onConfirm: () => void;
+  type?: string;
 }
 
 const CustomModal: React.FC<CustomModalProps> = ({
   visible,
   onClose,
   title,
+  type,
   onConfirm,
 }) => {
-  return (
+  return type === 'confirm' ? (
     <Modal
       animationType="fade"
       transparent={true}
@@ -39,9 +41,30 @@ const CustomModal: React.FC<CustomModalProps> = ({
         </View>
       </View>
     </Modal>
+  ) : (
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onClose}>
+      <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <Text style={styles.modalText}>{title}</Text>
+          <View style={styles.buttonContainer}>
+            <Pressable
+              style={[styles.button]}
+              onPress={() => {
+                onConfirm();
+                onClose();
+              }}>
+              <Text style={styles.textStyle}>예</Text>
+            </Pressable>
+          </View>
+        </View>
+      </View>
+    </Modal>
   );
 };
-
 const styles = StyleSheet.create({
   centeredView: {
     flex: 1,

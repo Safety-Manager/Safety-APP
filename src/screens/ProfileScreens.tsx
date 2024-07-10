@@ -6,6 +6,7 @@ import {
   Text,
   TextInput,
   TouchableHighlight,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
@@ -13,6 +14,7 @@ import TitleBar from '@components/TitleBar';
 import ProfileIcon from '@assets/icons/Profile.png';
 import {authApi} from '@api/authApi';
 import {UserProfile} from 'types/auth';
+import CustomModal from '@components/CustomModal';
 
 const ProfileScreens = () => {
   const [profile, setProfile] = useState<UserProfile>({
@@ -27,7 +29,17 @@ const ProfileScreens = () => {
     mobile: '',
     email: '',
   });
-  const {data: UserData} = authApi.GetProfile();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState<{
+    title: string;
+    onConfirm: () => void;
+  }>({
+    title: '',
+    onConfirm: () => {},
+  });
+
+  const [isCheck, setIsCheck] = useState(false);
+  const {data: UserData, refetch} = authApi.GetProfile();
 
   const {mutate: PutProfileMutate} = authApi.PutProfile();
 
@@ -68,10 +80,49 @@ const ProfileScreens = () => {
 
     setError(newError);
 
+    if (!isCheck) {
+      setModalContent({
+        title: '중복 체크를 완료해주세요.',
+        onConfirm: () => setModalVisible(false),
+      });
+      setModalVisible(true);
+      return;
+    }
+
+    if (
+      profile.nickname === UserData?.nickname &&
+      profile.email === UserData?.email &&
+      profile.mobile === UserData?.mobile
+    ) {
+      setModalContent({
+        title: '변경된 사항이 없습니다.',
+        onConfirm: () => setModalVisible(false),
+      });
+      setModalVisible(true);
+      return;
+    }
+
     if (isValid) {
       PutProfileMutate(profile, {
-        onSuccess: () => {},
-        onError: () => {},
+        onSuccess: () => {
+          setModalContent({
+            title: '프로필이 수정되었습니다.',
+            onConfirm: () => {
+              setModalVisible(false);
+              refetch();
+            },
+          });
+          setModalVisible(true);
+        },
+        onError: () => {
+          setModalContent({
+            title: '프로필 수정 중 오류가 발생했습니다.',
+            onConfirm: () => {
+              setModalVisible(false);
+            },
+          });
+          setModalVisible(true);
+        },
       });
     }
   };
@@ -84,7 +135,6 @@ const ProfileScreens = () => {
       });
       return;
     }
-
     switch (type) {
       case 'nickname':
         GetCheckNicknameMutate(profile.nickname, {
@@ -92,13 +142,15 @@ const ProfileScreens = () => {
             if (data) {
               setError({
                 ...error,
-                nickname: '',
+                nickname: '사용 가능한 닉네임입니다!',
               });
+              setIsCheck(true);
             } else {
               setError({
                 ...error,
                 nickname: '중복된 닉네임입니다!',
               });
+              setIsCheck(false);
             }
           },
           onError: () => {
@@ -106,6 +158,7 @@ const ProfileScreens = () => {
               ...error,
               nickname: '중복된 닉네임입니다!',
             });
+            setIsCheck(false);
           },
         });
         break;
@@ -125,9 +178,9 @@ const ProfileScreens = () => {
       <View style={styles.header}>
         <TitleBar icon={'CloseIcon'} />
         <View style={styles.headerContainer}>
-          <TouchableHighlight onPress={handlerSubmit}>
+          <TouchableOpacity onPress={() => handlerSubmit()}>
             <Text style={styles.headerRight}>완료</Text>
-          </TouchableHighlight>
+          </TouchableOpacity>
         </View>
         <View style={styles.headerTitleContainer}>
           <Text style={styles.headerTitle}>프로필 수정</Text>
@@ -156,7 +209,18 @@ const ProfileScreens = () => {
             </TouchableHighlight>
           </View>
           {error.nickname && (
-            <Text style={styles.errorText}>{error.nickname}</Text>
+            <Text
+              style={[
+                styles.errorText,
+                {
+                  color:
+                    error.nickname === '사용 가능한 닉네임입니다!'
+                      ? 'blue'
+                      : 'red',
+                },
+              ]}>
+              {error.nickname}
+            </Text>
           )}
         </View>
         <View style={{marginBottom: 30}}>
@@ -165,10 +229,12 @@ const ProfileScreens = () => {
             <TextInput
               style={styles.labelInput}
               placeholder="이메일을 입력해주세요."
+              readOnly
               value={profile.email}
               onChangeText={text => onChangeText('email', text)}
             />
             <TouchableHighlight
+              disabled
               style={styles.labelBtn}
               onPress={() => handlerCheck('email')}>
               <Text style={styles.btnText}>인증</Text>
@@ -182,11 +248,13 @@ const ProfileScreens = () => {
             <TextInput
               style={styles.labelInput}
               placeholder="전화번호를 입력해주세요."
+              readOnly
               value={profile.mobile}
               onChangeText={text => onChangeText('mobile', text)}
             />
             <TouchableHighlight
               style={styles.labelBtn}
+              disabled
               onPress={() => handlerCheck('mobile')}>
               <Text style={styles.btnText}>인증</Text>
             </TouchableHighlight>
@@ -194,6 +262,12 @@ const ProfileScreens = () => {
           {error.mobile && <Text style={styles.errorText}>{error.mobile}</Text>}
         </View>
       </View>
+      <CustomModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        title={modalContent.title}
+        onConfirm={modalContent.onConfirm}
+      />
     </SafeAreaView>
   );
 };
@@ -212,7 +286,6 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '100%',
   },
   headerTitleContainer: {
     flex: 1,
@@ -225,7 +298,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     position: 'absolute',
     right: 21,
-    fontFamily: 'NotoSansCJKkr-Regular',
+    fontFamily: 'NotoSansCJKkr-Bold',
     color: '#000',
   },
   headerTitle: {
@@ -287,7 +360,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '500',
     fontFamily: 'NotoSansCJKkr-Bold',
-    color: '#ff8d8d',
   },
 });
 

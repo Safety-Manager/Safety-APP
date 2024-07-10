@@ -120,168 +120,175 @@ const BoardDetailScreens = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.titleBarContainer}>
-        <TitleBar icon={'CloseIcon'} />
-      </View>
-      <View style={styles.divider} />
+    <KeyboardAvoidingView
+      style={styles.safeArea}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.titleBarContainer}>
+          <TitleBar icon={'CloseIcon'} />
+        </View>
+        <View style={styles.divider} />
 
-      <ScrollView
-        contentContainerStyle={styles.scrollViewContent}
-        ref={scrollViewRef}>
-        <View style={styles.cardContent}>
-          <Text style={styles.title}>
-            산업 안전 보건령에 대한 질문이 있습니다.
-          </Text>
-          <Text style={styles.content}>
-            Seeking for a data science intern to join our team.
-          </Text>
-          <View style={styles.headerRow}>
-            <Image
-              source={PersonIcon}
-              style={styles.personIcon}
-              resizeMode="contain"
-            />
-            <View style={styles.headerColumn}>
-              <Text style={styles.nickName}>상구</Text>
-              <Text style={styles.date}>2023-04-13</Text>
+        <ScrollView
+          contentContainerStyle={styles.scrollViewContent}
+          ref={scrollViewRef}>
+          <View style={styles.cardContent}>
+            <Text style={styles.title}>
+              산업 안전 보건령에 대한 질문이 있습니다.
+            </Text>
+            <Text style={styles.content}>
+              Seeking for a data science intern to join our team.
+            </Text>
+            <View style={styles.headerRow}>
+              <Image
+                source={PersonIcon}
+                style={styles.personIcon}
+                resizeMode="contain"
+              />
+              <View style={styles.headerColumn}>
+                <Text style={styles.nickName}>상구</Text>
+                <Text style={styles.date}>2023-04-13</Text>
+              </View>
+              <Image
+                source={CommentIcon}
+                style={styles.commentIcon}
+                resizeMode="contain"
+              />
+              <Text style={styles.commentCount}>{comments.length}</Text>
             </View>
-            <Image
-              source={CommentIcon}
-              style={styles.commentIcon}
-              resizeMode="contain"
-            />
-            <Text style={styles.commentCount}>{comments.length}</Text>
-          </View>
-          <View style={styles.dividerWithMargin} />
-          <Text style={styles.comment}>답글</Text>
-          <View style={styles.commentSection}>
-            {comments.map(comment => (
-              <View key={comment.id}>
-                <View style={styles.commentRow}>
-                  <Image
-                    source={PersonIcon}
-                    style={styles.commentPersonIcon}
-                    resizeMode="contain"
-                  />
-                  <View style={styles.commentColumn}>
-                    <View style={styles.commentHeader}>
-                      <Text style={styles.commentNickName}>
-                        {comment.nickname}
-                      </Text>
-                      <Text style={styles.commentDate}>{comment.date}</Text>
-                    </View>
-                    <Text style={styles.commentContent}>{comment.content}</Text>
-                  </View>
-                  <TouchableOpacity
-                    style={styles.deleteButton}
-                    onPress={() => handleDeleteComment(comment.id)}>
-                    <Text style={styles.deleteButtonText}>삭제</Text>
-                  </TouchableOpacity>
-                </View>
-
-                {comment.replies.map(reply => (
-                  <View key={reply.id} style={styles.replyContainer}>
-                    <View style={styles.commentRow}>
-                      <Image
-                        source={PersonIcon}
-                        style={styles.commentPersonIcon}
-                        resizeMode="contain"
-                      />
-                      <View style={styles.commentColumn}>
-                        <View style={styles.commentHeader}>
-                          <Text style={styles.commentNickName}>
-                            {reply.nickname}
-                          </Text>
-                          <Text style={styles.commentDate}>{reply.date}</Text>
-                        </View>
-                        <Text style={styles.commentContent}>
-                          {reply.content}
-                        </Text>
-                      </View>
-                      <TouchableOpacity
-                        style={styles.deleteButton}
-                        onPress={() => handleDeleteComment(reply.id)}>
-                        <Text style={styles.deleteButtonText}>삭제</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                ))}
-
-                {replyCommentId === comment.id && (
-                  <View style={styles.replyForm}>
+            <View style={styles.dividerWithMargin} />
+            <Text style={styles.comment}>답글</Text>
+            <View style={styles.commentSection}>
+              {comments.map(comment => (
+                <View key={comment.id}>
+                  <View style={styles.commentRow}>
                     <Image
                       source={PersonIcon}
-                      style={styles.replyPersonIcon}
+                      style={styles.commentPersonIcon}
                       resizeMode="contain"
                     />
-                    <View style={styles.searchbarContainer}>
-                      <TextInput
-                        style={styles.searchbarView}
-                        placeholderTextColor="black"
-                        placeholder="답글을 입력해주세요."
-                        value={replyText}
-                        onChangeText={setReplyText}
-                        ref={replyInputRef}
-                        onSubmitEditing={handleReplySubmit}
-                      />
-                      <Pressable
-                        style={styles.searchButton}
-                        hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-                        onPress={handleReplySubmit}>
+                    <View style={styles.commentColumn}>
+                      <View style={styles.commentHeader}>
+                        <Text style={styles.commentNickName}>
+                          {comment.nickname}
+                        </Text>
+                        <Text style={styles.commentDate}>{comment.date}</Text>
+                      </View>
+                      <Text style={styles.commentContent}>
+                        {comment.content}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.deleteButton}
+                      onPress={() => handleDeleteComment(comment.id)}>
+                      <Text style={styles.deleteButtonText}>삭제</Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  {comment.replies.map(reply => (
+                    <View key={reply.id} style={styles.replyContainer}>
+                      <View style={styles.commentRow}>
                         <Image
-                          source={SendIcon}
-                          style={styles.searchicon}
+                          source={PersonIcon}
+                          style={styles.commentPersonIcon}
                           resizeMode="contain"
                         />
-                      </Pressable>
+                        <View style={styles.commentColumn}>
+                          <View style={styles.commentHeader}>
+                            <Text style={styles.commentNickName}>
+                              {reply.nickname}
+                            </Text>
+                            <Text style={styles.commentDate}>{reply.date}</Text>
+                          </View>
+                          <Text style={styles.commentContent}>
+                            {reply.content}
+                          </Text>
+                        </View>
+                        <TouchableOpacity
+                          style={styles.deleteButton}
+                          onPress={() => handleDeleteComment(reply.id)}>
+                          <Text style={styles.deleteButtonText}>삭제</Text>
+                        </TouchableOpacity>
+                      </View>
                     </View>
-                  </View>
-                )}
-                <TouchableOpacity
-                  style={styles.replyButton}
-                  onPress={() => handleReplyPress(comment.id)}>
-                  <Text style={styles.replyButtonText}>
-                    {replyCommentId === comment.id ? '취소' : '댓글달기'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            ))}
-          </View>
-        </View>
-      </ScrollView>
-      {replyCommentId === null && (
-        <View style={styles.bottomReply}>
-          <View style={styles.keyboardAvoidingView}>
-            <Image
-              source={PersonIcon}
-              style={styles.replyPersonIcon}
-              resizeMode="contain"
-            />
-            <View style={styles.searchbarContainer}>
-              <TextInput
-                style={styles.searchbarView}
-                placeholderTextColor="black"
-                placeholder="댓글을 입력해주세요."
-                value={newCommentText}
-                onChangeText={setNewCommentText}
-                onSubmitEditing={handleNewCommentSubmit}
-              />
-              <Pressable
-                style={styles.searchButton}
-                hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-                onPress={handleNewCommentSubmit}>
-                <Image
-                  source={SendIcon}
-                  style={styles.searchicon}
-                  resizeMode="contain"
-                />
-              </Pressable>
+                  ))}
+
+                  {replyCommentId === comment.id && (
+                    <View style={styles.replyForm}>
+                      <Image
+                        source={PersonIcon}
+                        style={styles.replyPersonIcon}
+                        resizeMode="contain"
+                      />
+                      <View style={styles.searchbarContainer}>
+                        <TextInput
+                          style={styles.searchbarView}
+                          placeholderTextColor="black"
+                          placeholder="답글을 입력해주세요."
+                          value={replyText}
+                          onChangeText={setReplyText}
+                          ref={replyInputRef}
+                          onSubmitEditing={handleReplySubmit}
+                        />
+                        <Pressable
+                          style={styles.searchButton}
+                          hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                          onPress={handleReplySubmit}>
+                          <Image
+                            source={SendIcon}
+                            style={styles.searchicon}
+                            resizeMode="contain"
+                          />
+                        </Pressable>
+                      </View>
+                    </View>
+                  )}
+                  <TouchableOpacity
+                    style={styles.replyButton}
+                    onPress={() => handleReplyPress(comment.id)}
+                    hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
+                    <Text style={styles.replyButtonText}>
+                      {replyCommentId === comment.id ? '취소' : '댓글달기'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
             </View>
           </View>
-        </View>
-      )}
-    </SafeAreaView>
+        </ScrollView>
+        {replyCommentId === null && (
+          <View style={styles.bottomReply}>
+            <View style={styles.keyboardAvoidingView}>
+              <Image
+                source={PersonIcon}
+                style={styles.replyPersonIcon}
+                resizeMode="contain"
+              />
+              <View style={styles.searchbarContainer}>
+                <TextInput
+                  style={styles.searchbarView}
+                  placeholderTextColor="black"
+                  placeholder="댓글을 입력해주세요."
+                  value={newCommentText}
+                  onChangeText={setNewCommentText}
+                  onSubmitEditing={handleNewCommentSubmit}
+                />
+                <Pressable
+                  style={styles.searchButton}
+                  hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                  onPress={handleNewCommentSubmit}>
+                  <Image
+                    source={SendIcon}
+                    style={styles.searchicon}
+                    resizeMode="contain"
+                  />
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        )}
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -294,7 +301,6 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     flexGrow: 1,
-    paddingBottom: 80, // 하단의 댓글 입력 폼에 공간을 확보하기 위한 여백
   },
   cardContent: {
     marginHorizontal: 10,
@@ -403,7 +409,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: '#e0e0e0',
     backgroundColor: '#fff',
-    height: Platform.OS === 'ios' ? 60 : 70,
+    height: 60,
   },
   keyboardAvoidingView: {
     flexDirection: 'row',
@@ -439,7 +445,7 @@ const styles = StyleSheet.create({
     height: 20,
   },
   replyButton: {
-    paddingLeft: 63,
+    paddingLeft: 50,
     paddingBottom: 30,
   },
   replyButtonText: {
@@ -461,7 +467,7 @@ const styles = StyleSheet.create({
   replyForm: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 56,
+    marginLeft: 42,
     marginBottom: 10,
   },
   replyContainer: {

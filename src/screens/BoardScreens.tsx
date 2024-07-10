@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import SearchIcon from '@assets/icons/Search.png';
 import {
   Image,
@@ -11,6 +11,8 @@ import {
   Platform,
   TouchableOpacity,
   FlatList,
+  ActivityIndicator,
+  BackHandler,
 } from 'react-native';
 import WriteIcon from '@assets/icons/Write.png';
 import CommentIcon from '@assets/icons/Comments.png';
@@ -18,6 +20,10 @@ import PersonIcon from '@assets/icons/Person.png';
 import {navigate} from '@utils/navigationRef';
 import {RootStackParamList, RouteNames} from '@components/Route';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {boardApi} from '@api/boardApi';
+import {useFocusEffect} from '@react-navigation/native';
+import dayjs from 'dayjs';
+import CustomModal from '@components/CustomModal';
 
 const DATA = [
   {
@@ -57,16 +63,85 @@ const DATA = [
 type ScreenProps = NativeStackNavigationProp<RootStackParamList>;
 
 const BoardScreens = ({navigation}: {navigation: ScreenProps}) => {
+  const [keyword, setKeyword] = useState('');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState<{
+    title: string;
+    onConfirm: () => void;
+  }>({
+    title: '',
+    onConfirm: () => {},
+  });
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    refetch,
+  } = boardApi.GetBoardList(keyword); // Call without pageParam
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch(); // 페이지가 포커스될 때마다 refetch 함수 호출
+      const backAction = () => {
+        return true;
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        backAction,
+      );
+
+      return () => backHandler.remove();
+    }, [refetch]),
+  );
+
+  const onRefresh = async () => {
+    setIsRefreshing(true);
+    await refetch();
+    setIsRefreshing(false);
+  };
+
+  const renderFooter = () => {
+    if (isFetchingNextPage || isLoading) {
+      return <ActivityIndicator />;
+    }
+    if (!hasNextPage) {
+      return (
+        <View style={styles.noDataContainer}>
+          <Text style={styles.noDataText}>데이터가 없습니다</Text>
+        </View>
+      );
+    }
+    return null;
+  };
+
+  const onClickSearch = () => {
+    if (keyword === '') {
+      setModalVisible(true);
+      setModalContent({
+        title: '검색어를 입력 해 주세요.',
+        onConfirm: () => setModalVisible(false),
+      });
+    } else {
+      refetch();
+    }
+  };
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.searchbarContainer}>
         <TextInput
           style={styles.searchbarView}
           placeholderTextColor="black"
+          onChangeText={(text: string) => setKeyword(text)}
+          value={keyword}
           placeholder="검색어를 입력해주세요."
         />
         <Pressable
           style={styles.searchButton}
+          onPress={onClickSearch}
           hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
           <Image
             source={SearchIcon}
@@ -75,21 +150,32 @@ const BoardScreens = ({navigation}: {navigation: ScreenProps}) => {
           />
         </Pressable>
       </View>
+
       <View style={styles.safeArea}>
         <View style={styles.CardContainer}>
           <FlatList
-            data={DATA}
+            data={data?.pages.flatMap(page => page)}
+            onEndReached={() => {
+              if (hasNextPage) {
+                fetchNextPage();
+              }
+            }}
+            contentContainerStyle={{flexGrow: 1}}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={renderFooter}
             keyExtractor={item => item.id}
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
             renderItem={({item}) => (
               <TouchableOpacity
                 style={styles.cardContent}
-                onPress={() => navigation.navigate(RouteNames.BOARDDETAIL)}>
-                <Text style={styles.title}>
-                  산업 안전 보건령에 대한 질문이 있습니다.
-                </Text>
-                <Text style={styles.content}>
-                  Seeking for a data science intern to josdsdin our tedsddsam.
-                </Text>
+                onPress={() =>
+                  navigation.navigate(RouteNames.BOARDDETAIL, {
+                    Idx: item.boardIdx,
+                  })
+                }>
+                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.content}>{item.content}</Text>
                 <View
                   style={{
                     marginTop: 10,
@@ -102,8 +188,10 @@ const BoardScreens = ({navigation}: {navigation: ScreenProps}) => {
                     resizeMode="contain"
                   />
                   <View style={{flexDirection: 'column', flex: 1}}>
-                    <Text style={styles.nickName}>상구</Text>
-                    <Text style={styles.date}>2023-04-13</Text>
+                    <Text style={styles.nickName}>{item.createUser}</Text>
+                    <Text style={styles.date}>
+                      {dayjs(item.createDt).format('YYYY-MM-DD')}
+                    </Text>
                   </View>
                   <Image
                     source={CommentIcon}
@@ -111,7 +199,7 @@ const BoardScreens = ({navigation}: {navigation: ScreenProps}) => {
                     resizeMode="contain"
                   />
                   <Text style={{fontSize: 16, lineHeight: 24, marginLeft: 5}}>
-                    3
+                    {item.commentCount}
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -128,6 +216,12 @@ const BoardScreens = ({navigation}: {navigation: ScreenProps}) => {
           />
         </TouchableOpacity>
       </View>
+      <CustomModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        title={modalContent.title}
+        onConfirm={modalContent.onConfirm}
+      />
     </SafeAreaView>
   );
 };
@@ -147,6 +241,7 @@ const styles = StyleSheet.create({
     borderRadius: 80,
   },
   searchbarContainer: {
+    marginTop: 20,
     position: 'relative',
     width: '90%',
     marginBottom: 10,
@@ -224,6 +319,17 @@ const styles = StyleSheet.create({
     height: 60,
     backgroundColor: '#000',
     borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  noDataText: {
+    fontSize: 13,
+    fontWeight: '500',
+    fontFamily: 'NotoSansCJKkr-Medium',
+    color: '#ccc',
+    marginBottom: 10,
+  },
+  noDataContainer: {
     alignItems: 'center',
     justifyContent: 'center',
   },

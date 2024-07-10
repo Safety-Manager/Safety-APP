@@ -7,15 +7,16 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Alert,
+  BackHandler,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Person from '@assets/icons/Person.png';
 import RightLine from '@assets/icons/RightLine.png';
 import {authApi} from '@api/authApi';
 import {navigate} from '@utils/navigationRef';
 import {RootStackParamList, RouteNames} from '@components/Route';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {UserTypes} from 'types/auth';
 import CustomModal from '@components/CustomModal';
@@ -40,6 +41,21 @@ const MyPageScreens = () => {
     title: '',
     onConfirm: () => {},
   });
+
+  useFocusEffect(
+    useCallback(() => {
+      const backAction = () => {
+        return true;
+      };
+
+      const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        backAction,
+      );
+
+      return () => backHandler.remove();
+    }, []),
+  );
 
   useEffect(() => {
     const getUser = async () => {
@@ -142,6 +158,7 @@ const MyPageScreens = () => {
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           title={modalContent.title}
+          type={'confirm'}
           onConfirm={modalContent.onConfirm}
         />
       </ScrollView>

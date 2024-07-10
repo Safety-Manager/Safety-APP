@@ -5,35 +5,77 @@ import {
   SafeAreaView,
   TouchableOpacity,
   TextInput,
-  Image,
   ScrollView,
   Platform,
   KeyboardAvoidingView,
 } from 'react-native';
 import React, {useState} from 'react';
 import TitleBar from '@components/TitleBar';
-import PersonIcon from '@assets/icons/Person.png';
-import SendIcon from '@assets/icons/Send.png';
+import {boardApi} from '@api/boardApi';
+import CustomModal from '@components/CustomModal';
+import {RootStackParamList} from '@components/Route';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-const WriteScreens = () => {
-  const [comments, setComments] = useState([
-    {
-      id: 1,
-      nickname: '상구',
-      date: '2023-04-13',
-      content: 'Seeking for a data science intern to join our team.',
-      replies: [],
-    },
-  ]);
+type ScreenProps = NativeStackNavigationProp<RootStackParamList>;
+
+const WriteScreens = ({navigation}: {navigation: ScreenProps}) => {
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+
+  const {mutate} = boardApi.PostBoard();
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState<{
+    title: string;
+    onConfirm: () => void;
+  }>({
+    title: '',
+    onConfirm: () => {},
+  });
+
+  const handlePostSubmit = () => {
+    if (title !== '' && content !== '') {
+      mutate(
+        {
+          title: title,
+          content: content,
+        },
+        {
+          onSuccess(data, variables, context) {
+            if (data) {
+              setModalContent({
+                title: '게시글이 등록되었습니다.',
+                onConfirm: () => {
+                  setModalVisible(false);
+                  setTitle('');
+                  setContent('');
+                },
+              });
+              setModalVisible(true);
+            }
+          },
+        },
+      );
+    } else {
+      // Handle empty title or content case
+      setModalContent({
+        title: '제목, 내용을 입력해주세요.',
+        onConfirm: () => {
+          setModalVisible(false);
+        },
+      });
+      setModalVisible(true);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
         <TitleBar icon={'CloseIcon'} />
         <View style={styles.headerContainer}>
-          <View>
+          <TouchableOpacity onPress={handlePostSubmit}>
             <Text style={styles.headerRight}>완료</Text>
-          </View>
+          </TouchableOpacity>
         </View>
         <View style={styles.headerTitleContainer}>
           <Text style={styles.headerTitle}>게시글 작성</Text>
@@ -50,6 +92,8 @@ const WriteScreens = () => {
               style={styles.postTitle}
               placeholder="제목을 입력해주세요."
               placeholderTextColor="#6b6b6b"
+              value={title}
+              onChangeText={setTitle}
             />
             <Text style={styles.title}>내용</Text>
             <TextInput
@@ -58,10 +102,18 @@ const WriteScreens = () => {
               multiline={true}
               placeholderTextColor="#6b6b6b"
               textAlignVertical="top"
+              value={content}
+              onChangeText={setContent}
             />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      <CustomModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        title={modalContent.title}
+        onConfirm={modalContent.onConfirm}
+      />
     </SafeAreaView>
   );
 };
@@ -128,7 +180,9 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 50,
     borderRadius: 5,
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 0, // 추가
+    lineHeight: Platform.OS === 'ios' ? 0 : 50, // 추가
     marginBottom: 15,
   },
   postContent: {
@@ -138,8 +192,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#ededed',
     width: '100%',
     height: '75%',
-    paddingHorizontal: 15,
-    paddingTop: 15,
+    paddingHorizontal: 10,
+    paddingVertical: Platform.OS === 'ios' ? 10 : 0, // 추가
+    lineHeight: 24, // 추가
   },
 });
 
