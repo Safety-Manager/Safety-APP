@@ -17,11 +17,9 @@ import {
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import HomeImg from '@assets/images/Home.png';
 import ToggleIcon from '@assets/icons/Toggle.png';
-import SearchIcon from '@assets/icons/Search.png';
-import LawIcon from '@assets/icons/LatestLaw.png';
+import SearchIcon from '@assets/icons/Search.svg';
 import RecentLaw from '@components/RecentLaw';
-import LancIcon from '@assets/icons/Lank.png';
-import UpIcon from '@assets/icons/Up.png';
+import UpIcon from '@assets/icons/Up.svg';
 import BottomSheet from '@components/BottomSheet';
 import {lawApi} from '@api/lawApi';
 import axiosInstance from '@utils/axiosInterceptor';
@@ -35,7 +33,8 @@ import {authApi} from '@api/authApi';
 import messaging from '@react-native-firebase/messaging';
 import {FCM_TOKEN} from '../config/constants';
 import CustomModal from '@components/CustomModal';
-
+import LawIcon from '@assets/icons/LawIcon.svg';
+import LankIcon from '@assets/icons/LankIcon.svg';
 const suggestions = [
   '지게차',
   '비계',
@@ -302,11 +301,7 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
                 style={styles.searchButton}
                 hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                 onPress={() => onClickSearch()}>
-                <Image
-                  source={SearchIcon}
-                  style={styles.searchicon}
-                  resizeMode="contain"
-                />
+                <SearchIcon />
               </Pressable>
             </View>
             <ScrollView
@@ -327,7 +322,7 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
         </View>
       </ImageBackground>
       <View style={styles.LowContainer}>
-        <Image source={LawIcon} style={styles.LowIcons} resizeMode="contain" />
+        <LawIcon />
         <Text style={styles.LowText}>최근 조회한 이력</Text>
       </View>
       {HistoryData && HistoryData.length > 0 ? (
@@ -342,14 +337,14 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
       )}
 
       <View style={styles.lank}>
-        <Image source={LancIcon} style={styles.LowIcons} resizeMode="contain" />
+        <LankIcon />
         <Text style={styles.LowText}>검색어 순위</Text>
       </View>
       {LankingData?.map((data, index) => (
         <View style={styles.lancContainer} key={index}>
           <Text style={styles.lankTitle}>{index + 1}</Text>
           <Text style={styles.lankText}>{data.keyword}</Text>
-          <Image source={UpIcon} style={styles.lankIcon} resizeMode="contain" />
+          <UpIcon style={styles.lankIcon} />
         </View>
       ))}
       <CustomModal
@@ -494,16 +489,13 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginBottom: 10,
   },
-  LowIcons: {
-    width: 20,
-    height: 20,
-    marginRight: 5,
-  },
+
   LowText: {
     fontSize: 15,
     fontWeight: '700',
     fontFamily: 'NotoSansCJKkr-Bold',
     color: '#000',
+    marginLeft: 5,
   },
   LowCardContainer: {
     marginLeft: 20,
@@ -537,8 +529,6 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   lankIcon: {
-    height: 11,
-    width: 11,
     position: 'absolute',
     marginRight: 20,
     right: 20,

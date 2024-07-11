@@ -18,9 +18,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.safetyapp"
+    namespace "com.ssafety"
     defaultConfig {
-        applicationId "com.safetyapp"
+        applicationId "com.ssafety"
         minSdkVersion rootProject.ext.minSdkVersion
         missingDimensionStrategy "store", "play"
         targetSdkVersion rootProject.ext.targetSdkVersion
@@ -35,14 +35,22 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
+                storeFile file(MYAPP_UPLOAD_STORE_FILE)
+                storePassword MYAPP_UPLOAD_STORE_PASSWORD
+                keyAlias MYAPP_UPLOAD_KEY_ALIAS
+                keyPassword MYAPP_UPLOAD_KEY_PASSWORD
+            }
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            signingConfig signingConfigs.debug
-            minifyEnabled enableProguardInReleaseBuilds
+            minifyEnabled false
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
@@ -57,8 +65,8 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-
 }
+
 apply plugin: "com.facebook.react.rootproject"
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle");
 apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"

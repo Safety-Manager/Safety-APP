@@ -190,7 +190,7 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
           source={HomeImg}
           imageStyle={styles.image}>
           <View style={styles.contentContainer}>
-            <Text style={styles.mainText}>안전 파트너</Text>
+            <Text style={styles.mainText}>모두 안전</Text>
             <Text style={styles.imagetext}>
               쉽고 빠르게! 안전 법규와 함께 안전을 지키세요!
             </Text>
@@ -242,7 +242,7 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
           )}
         </View>
         <Text style={styles.footerText}>
-          안전 파트너에 가입함으로써{'\n'}
+          모두 안전에 가입함으로써{'\n'}
           <Text
             style={styles.linkText}
             onPress={() => openWebView('https://example.com/terms')}>

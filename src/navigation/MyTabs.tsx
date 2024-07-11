@@ -10,6 +10,7 @@ import MyPageScreens from '@screens/MyPageScreens';
 import HomeScreens from '@screens/HomeScreens';
 import BoardScreens from '@screens/BoardScreens';
 import CommunityIcon from '@assets/icons/Community.png';
+import SvgUri from 'react-native-svg';
 
 export default function MyTabs() {
   const Tab = createBottomTabNavigator();

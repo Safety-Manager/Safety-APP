@@ -10,8 +10,8 @@ import {
   BackHandler,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
-import Person from '@assets/icons/Person.png';
-import RightLine from '@assets/icons/RightLine.png';
+import Person from '@assets/icons/Person.svg';
+import RightIcon from '@assets/icons/Right.svg';
 import {authApi} from '@api/authApi';
 import {navigate} from '@utils/navigationRef';
 import {RootStackParamList, RouteNames} from '@components/Route';
@@ -129,11 +129,7 @@ const MyPageScreens = () => {
             <Text style={styles.profileText}>프로필 수정 &gt; </Text>
           </TouchableOpacity>
           <View style={styles.imageContainer}>
-            <Image
-              source={Person}
-              style={styles.PersonIcon}
-              resizeMode="contain"
-            />
+            <Person />
           </View>
         </View>
         <View style={{height: 10, backgroundColor: '#f2f2f2'}} />
@@ -144,11 +140,7 @@ const MyPageScreens = () => {
                 style={styles.contantBar}
                 onPress={() => handlerEvent(item)}>
                 <Text style={styles.contantText}>{item}</Text>
-                <Image
-                  source={RightLine}
-                  style={{width: 20, height: 17}}
-                  resizeMode="contain"
-                />
+                <RightIcon />
               </TouchableOpacity>
               <View style={styles.lineView} />
             </View>
