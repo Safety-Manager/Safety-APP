@@ -14,51 +14,15 @@ import {
   ActivityIndicator,
   BackHandler,
 } from 'react-native';
-import WriteIcon from '@assets/icons/Write.png';
-import CommentIcon from '@assets/icons/Comments.png';
-import PersonIcon from '@assets/icons/Person.png';
-import {navigate} from '@utils/navigationRef';
+import WriteIcon from '@assets/icons/Write.svg';
+import CommentIcon from '@assets/icons/Comments.svg';
+import PersonIcon from '@assets/icons/Person.svg';
 import {RootStackParamList, RouteNames} from '@components/Route';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {boardApi} from '@api/boardApi';
 import {useFocusEffect} from '@react-navigation/native';
 import dayjs from 'dayjs';
 import CustomModal from '@components/CustomModal';
-
-const DATA = [
-  {
-    id: '1',
-    title: '자유게시판',
-    content: 'Seeking for a data science intern to join our team.',
-    nickName: '상구',
-    date: '2023-04-13',
-    comments: 3,
-  },
-  {
-    id: '2',
-    title: '자유게시판',
-    content: 'Lunch order for today.',
-    nickName: '미영',
-    date: '2023-04-14',
-    comments: 5,
-  },
-  {
-    id: '2',
-    title: '자유게시판',
-    content: '안녕낭연연앙녀.',
-    nickName: '니엥',
-    date: '2023-04-14',
-    comments: 5,
-  },
-  {
-    id: '2',
-    title: '자유게시판',
-    content: 'Lunch order for today.',
-    nickName: '미영',
-    date: '2023-04-14',
-    comments: 5,
-  },
-];
 
 type ScreenProps = NativeStackNavigationProp<RootStackParamList>;
 
@@ -163,7 +127,7 @@ const BoardScreens = ({navigation}: {navigation: ScreenProps}) => {
             contentContainerStyle={{flexGrow: 1}}
             onEndReachedThreshold={0.5}
             ListFooterComponent={renderFooter}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.boardIdx.toString()}
             refreshing={isRefreshing}
             onRefresh={onRefresh}
             renderItem={({item}) => (
@@ -182,21 +146,16 @@ const BoardScreens = ({navigation}: {navigation: ScreenProps}) => {
                     flexDirection: 'row',
                     alignItems: 'center',
                   }}>
-                  <Image
-                    source={PersonIcon}
-                    style={{width: 42, height: 42, marginRight: 10}}
-                    resizeMode="contain"
-                  />
-                  <View style={{flexDirection: 'column', flex: 1}}>
-                    <Text style={styles.nickName}>{item.createUser}</Text>
+                  <PersonIcon width={42} height={42} />
+                  <View
+                    style={{flexDirection: 'column', flex: 1, marginLeft: 10}}>
+                    <Text style={styles.nickName}>{item.createUserName}</Text>
                     <Text style={styles.date}>
                       {dayjs(item.createDt).format('YYYY-MM-DD')}
                     </Text>
                   </View>
-                  <Image
-                    source={CommentIcon}
+                  <CommentIcon
                     style={{width: 24, height: 24, marginLeft: 10}}
-                    resizeMode="contain"
                   />
                   <Text style={{fontSize: 16, lineHeight: 24, marginLeft: 5}}>
                     {item.commentCount}
@@ -209,11 +168,7 @@ const BoardScreens = ({navigation}: {navigation: ScreenProps}) => {
         <TouchableOpacity
           style={styles.writeBtn}
           onPress={() => navigation.navigate(RouteNames.BOARDWRITE)}>
-          <Image
-            style={{height: 24, width: 24}}
-            resizeMode="cover"
-            source={WriteIcon}
-          />
+          <WriteIcon style={{height: 24, width: 24}} />
         </TouchableOpacity>
       </View>
       <CustomModal

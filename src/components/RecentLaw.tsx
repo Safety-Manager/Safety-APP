@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React from 'react';
-import NodataIcon from '@assets/icons/NoData.png';
+import NodataIcon from '@assets/icons/NoData.svg';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList, RouteNames} from './Route';
@@ -64,9 +64,8 @@ const RecentLaw = ({data}: RecentLawProps) => {
         </>
       ) : (
         <View style={styles.noDataContainer}>
-          <Image
-            source={NodataIcon}
-            style={{height: 32, width: 32, marginBottom: 10}}></Image>
+          <NodataIcon
+            style={{height: 32, width: 32, marginBottom: 10}}></NodataIcon>
           <Text style={styles.noDataText}>최근 조회한 이력이 없습니다.</Text>
         </View>
       )}

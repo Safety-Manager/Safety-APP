@@ -13,29 +13,42 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import React, {useState, useEffect, useRef} from 'react';
-import WriteIcon from '@assets/icons/Write.png';
-import CommentIcon from '@assets/icons/Comments.png';
-import Person from '@assets/icons/Person.png';
+import CommentIcon from '@assets/icons/Comments.svg';
 import TitleBar from '@components/TitleBar';
-import PersonIcon from '@assets/icons/Person.png';
-import SearchIcon from '@assets/icons/Search.png';
-import SendIcon from '@assets/icons/Send.png';
+import PersonIcon from '@assets/icons/Person.svg';
+import SendIcon from '@assets/icons/Send.svg';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from '@components/Route';
+import {boardApi} from '@api/boardApi';
+import dayjs from 'dayjs';
+import {BoardReplyType} from 'types/board';
 
-const BoardDetailScreens = () => {
-  const [replyCommentId, setReplyCommentId] = useState(null);
-  const [comments, setComments] = useState([
-    {
-      id: 1,
-      nickname: '상구',
-      date: '2023-04-13',
-      content: 'Seeking for a data science intern to join our team.',
-      replies: [],
-    },
-  ]);
+type SearchScreenProps = NativeStackNavigationProp<RootStackParamList>;
+
+const BoardDetailScreens = ({
+  route,
+  navigation,
+}: {
+  route: any;
+  navigation: SearchScreenProps;
+}) => {
+  const [replyCommentId, setReplyCommentId] = useState<number | null>(null);
+  const {Idx} = route.params;
+
+  const {
+    data,
+    isFetching,
+    isLoading,
+    refetch: boardRefetch,
+  } = boardApi.GetBoardDetail(Idx);
+  const {data: commentData, refetch} = boardApi.GetCommentList(Idx);
+
+  const {mutate} = boardApi.PostComment();
+
   const [replyText, setReplyText] = useState('');
-  const [newCommentText, setNewCommentText] = useState(''); // New state for the main comment text
-  const replyInputRef = useRef(null);
-  const scrollViewRef = useRef(null);
+  const [newCommentText, setNewCommentText] = useState('');
+  const replyInputRef = useRef<any>(null);
+  const scrollViewRef = useRef<any>(null);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -48,9 +61,7 @@ const BoardDetailScreens = () => {
     );
     const keyboardDidHideListener = Keyboard.addListener(
       'keyboardDidHide',
-      () => {
-        // Do nothing when the keyboard hides
-      },
+      () => {},
     );
 
     return () => {
@@ -59,7 +70,7 @@ const BoardDetailScreens = () => {
     };
   }, []);
 
-  const handleReplyPress = commentId => {
+  const handleReplyPress = (commentId: number) => {
     if (replyCommentId === commentId) {
       setReplyCommentId(null);
     } else {
@@ -74,49 +85,48 @@ const BoardDetailScreens = () => {
 
   const handleReplySubmit = () => {
     if (replyText.trim() !== '') {
-      setComments(prevComments =>
-        prevComments.map(comment =>
-          comment.id === replyCommentId
-            ? {
-                ...comment,
-                replies: [
-                  ...comment.replies,
-                  {
-                    id: comment.replies.length + 1,
-                    nickname: 'User', // Replace with the actual user's nickname
-                    date: new Date().toISOString().split('T')[0],
-                    content: replyText,
-                  },
-                ],
-              }
-            : comment,
-        ),
-      );
-      setReplyText('');
-      setReplyCommentId(null);
+      const newReply = {
+        boardIdx: Idx,
+        parentIdx: replyCommentId,
+        content: replyText,
+      };
+      mutate(newReply, {
+        onSuccess: () => {
+          refetch();
+          boardRefetch();
+          setReplyText('');
+          setReplyCommentId(null);
+        },
+        onError: error => {
+          console.error(error);
+        },
+      });
     }
   };
 
   const handleNewCommentSubmit = () => {
     if (newCommentText.trim() !== '') {
-      setComments(prevComments => [
-        ...prevComments,
-        {
-          id: prevComments.length + 1,
-          nickname: 'User', // Replace with the actual user's nickname
-          date: new Date().toISOString().split('T')[0],
-          content: newCommentText,
-          replies: [],
+      const newComment = {
+        boardIdx: Idx,
+        parentIdx: null,
+        content: newCommentText,
+      };
+      console.log('>>', newComment);
+      mutate(newComment, {
+        onSuccess: () => {
+          refetch();
+          boardRefetch();
+          setNewCommentText('');
         },
-      ]);
-      setNewCommentText('');
+        onError: error => {
+          console.error(error);
+        },
+      });
     }
   };
 
-  const handleDeleteComment = commentId => {
-    setComments(prevComments =>
-      prevComments.filter(comment => comment.id !== commentId),
-    );
+  const handleDeleteComment = (commentId: number) => {
+    // Deletion logic here
   };
 
   return (
@@ -128,141 +138,143 @@ const BoardDetailScreens = () => {
           <TitleBar icon={'CloseIcon'} />
         </View>
         <View style={styles.divider} />
-
         <ScrollView
           contentContainerStyle={styles.scrollViewContent}
           ref={scrollViewRef}>
           <View style={styles.cardContent}>
-            <Text style={styles.title}>
-              산업 안전 보건령에 대한 질문이 있습니다.
-            </Text>
-            <Text style={styles.content}>
-              Seeking for a data science intern to join our team.
-            </Text>
+            <Text style={styles.title}>{data?.title}</Text>
+            <Text style={styles.content}>{data?.content}</Text>
             <View style={styles.headerRow}>
-              <Image
-                source={PersonIcon}
-                style={styles.personIcon}
-                resizeMode="contain"
-              />
+              <PersonIcon style={styles.personIcon} width={40} height={40} />
               <View style={styles.headerColumn}>
-                <Text style={styles.nickName}>상구</Text>
-                <Text style={styles.date}>2023-04-13</Text>
+                <Text style={styles.nickName}>{data?.createUserName}</Text>
+                <Text style={styles.date}>
+                  {dayjs(data?.createDt).format('YYYY-MM-DD')}
+                </Text>
               </View>
-              <Image
-                source={CommentIcon}
-                style={styles.commentIcon}
-                resizeMode="contain"
-              />
-              <Text style={styles.commentCount}>{comments.length}</Text>
+              <CommentIcon style={styles.commentIcon} />
+              <Text style={styles.commentCount}> {data?.commentCount}</Text>
             </View>
             <View style={styles.dividerWithMargin} />
-            <Text style={styles.comment}>답글</Text>
+            <Text style={styles.comment}>댓글</Text>
             <View style={styles.commentSection}>
-              {comments.map(comment => (
-                <View key={comment.id}>
-                  <View style={styles.commentRow}>
-                    <Image
-                      source={PersonIcon}
-                      style={styles.commentPersonIcon}
-                      resizeMode="contain"
-                    />
-                    <View style={styles.commentColumn}>
-                      <View style={styles.commentHeader}>
-                        <Text style={styles.commentNickName}>
-                          {comment.nickname}
-                        </Text>
-                        <Text style={styles.commentDate}>{comment.date}</Text>
-                      </View>
-                      <Text style={styles.commentContent}>
-                        {comment.content}
-                      </Text>
-                    </View>
-                    <TouchableOpacity
-                      style={styles.deleteButton}
-                      onPress={() => handleDeleteComment(comment.id)}>
-                      <Text style={styles.deleteButtonText}>삭제</Text>
-                    </TouchableOpacity>
-                  </View>
-
-                  {comment.replies.map(reply => (
-                    <View key={reply.id} style={styles.replyContainer}>
-                      <View style={styles.commentRow}>
-                        <Image
-                          source={PersonIcon}
-                          style={styles.commentPersonIcon}
-                          resizeMode="contain"
-                        />
-                        <View style={styles.commentColumn}>
-                          <View style={styles.commentHeader}>
-                            <Text style={styles.commentNickName}>
-                              {reply.nickname}
-                            </Text>
-                            <Text style={styles.commentDate}>{reply.date}</Text>
-                          </View>
-                          <Text style={styles.commentContent}>
-                            {reply.content}
+              {commentData
+                ?.filter(
+                  (comment: BoardReplyType) => comment.parentIdx === null,
+                )
+                .map((comment: BoardReplyType) => (
+                  <View key={comment.commentIdx}>
+                    <View style={styles.commentRow}>
+                      <PersonIcon
+                        style={styles.commentPersonIcon}
+                        width={40}
+                        height={40}
+                      />
+                      <View style={styles.commentColumn}>
+                        <View style={styles.commentHeader}>
+                          <Text style={styles.commentNickName}>
+                            {comment.createUserName}
+                          </Text>
+                          <Text style={styles.commentDate}>
+                            {dayjs(comment.createDt).format('YYYY-MM-DD')}
                           </Text>
                         </View>
-                        <TouchableOpacity
-                          style={styles.deleteButton}
-                          onPress={() => handleDeleteComment(reply.id)}>
-                          <Text style={styles.deleteButtonText}>삭제</Text>
-                        </TouchableOpacity>
+                        <Text style={styles.commentContent}>
+                          {comment.content}
+                        </Text>
                       </View>
+                      <TouchableOpacity
+                        style={styles.deleteButton}
+                        onPress={() => handleDeleteComment(comment.commentIdx)}>
+                        <Text style={styles.deleteButtonText}>삭제</Text>
+                      </TouchableOpacity>
                     </View>
-                  ))}
-
-                  {replyCommentId === comment.id && (
-                    <View style={styles.replyForm}>
-                      <Image
-                        source={PersonIcon}
-                        style={styles.replyPersonIcon}
-                        resizeMode="contain"
-                      />
-                      <View style={styles.searchbarContainer}>
-                        <TextInput
-                          style={styles.searchbarView}
-                          placeholderTextColor="black"
-                          placeholder="답글을 입력해주세요."
-                          value={replyText}
-                          onChangeText={setReplyText}
-                          ref={replyInputRef}
-                          onSubmitEditing={handleReplySubmit}
+                    {commentData
+                      ?.filter(
+                        (reply: BoardReplyType) =>
+                          reply.parentIdx === comment.commentIdx,
+                      )
+                      .map((reply: BoardReplyType) => (
+                        <View
+                          key={reply.commentIdx}
+                          style={styles.replyContainer}>
+                          <View style={styles.commentRow}>
+                            <PersonIcon
+                              style={styles.commentPersonIcon}
+                              width={40}
+                              height={40}
+                            />
+                            <View style={styles.commentColumn}>
+                              <View style={styles.commentHeader}>
+                                <Text style={styles.commentNickName}>
+                                  {reply.createUserName}
+                                </Text>
+                                <Text style={styles.commentDate}>
+                                  {dayjs(reply.createDt).format('YYYY-MM-DD')}
+                                </Text>
+                              </View>
+                              <Text style={styles.commentContent}>
+                                {reply.content}
+                              </Text>
+                            </View>
+                            <TouchableOpacity
+                              style={styles.deleteButton}
+                              onPress={() =>
+                                handleDeleteComment(reply.commentIdx)
+                              }>
+                              <Text style={styles.deleteButtonText}>삭제</Text>
+                            </TouchableOpacity>
+                          </View>
+                        </View>
+                      ))}
+                    {replyCommentId === comment.commentIdx && (
+                      <View style={styles.replyForm}>
+                        <PersonIcon
+                          style={styles.replyPersonIcon}
+                          width={40}
+                          height={40}
                         />
-                        <Pressable
-                          style={styles.searchButton}
-                          hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-                          onPress={handleReplySubmit}>
-                          <Image
-                            source={SendIcon}
-                            style={styles.searchicon}
-                            resizeMode="contain"
+                        <View style={styles.searchbarContainer}>
+                          <TextInput
+                            style={styles.searchbarView}
+                            placeholderTextColor="black"
+                            placeholder="답글을 입력해주세요."
+                            value={replyText}
+                            onChangeText={setReplyText}
+                            ref={replyInputRef}
+                            onSubmitEditing={handleReplySubmit}
                           />
-                        </Pressable>
+                          <Pressable
+                            style={styles.searchButton}
+                            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                            onPress={handleReplySubmit}>
+                            <SendIcon style={styles.searchicon} />
+                          </Pressable>
+                        </View>
                       </View>
-                    </View>
-                  )}
-                  <TouchableOpacity
-                    style={styles.replyButton}
-                    onPress={() => handleReplyPress(comment.id)}
-                    hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
-                    <Text style={styles.replyButtonText}>
-                      {replyCommentId === comment.id ? '취소' : '댓글달기'}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              ))}
+                    )}
+                    <TouchableOpacity
+                      style={styles.replyButton}
+                      onPress={() => handleReplyPress(comment.commentIdx)}
+                      hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}>
+                      <Text style={styles.replyButtonText}>
+                        {replyCommentId === comment.commentIdx
+                          ? '취소'
+                          : '댓글달기'}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                ))}
             </View>
           </View>
         </ScrollView>
         {replyCommentId === null && (
           <View style={styles.bottomReply}>
             <View style={styles.keyboardAvoidingView}>
-              <Image
-                source={PersonIcon}
+              <PersonIcon
                 style={styles.replyPersonIcon}
-                resizeMode="contain"
+                width={40}
+                height={40}
               />
               <View style={styles.searchbarContainer}>
                 <TextInput
@@ -277,11 +289,7 @@ const BoardDetailScreens = () => {
                   style={styles.searchButton}
                   hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
                   onPress={handleNewCommentSubmit}>
-                  <Image
-                    source={SendIcon}
-                    style={styles.searchicon}
-                    resizeMode="contain"
-                  />
+                  <SendIcon style={styles.searchicon} />
                 </Pressable>
               </View>
             </View>
@@ -391,7 +399,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontFamily: 'NotoSansCJKkr-Bold',
     color: '#121417',
-    marginRight: 12,
+    marginRight: 7,
   },
   commentDate: {
     fontSize: 14,
@@ -421,8 +429,6 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   replyPersonIcon: {
-    width: 40,
-    height: 40,
     marginRight: 10,
   },
   searchbarContainer: {
@@ -445,7 +451,7 @@ const styles = StyleSheet.create({
     height: 20,
   },
   replyButton: {
-    paddingLeft: 50,
+    paddingLeft: 48,
     paddingBottom: 30,
   },
   replyButtonText: {
@@ -467,11 +473,11 @@ const styles = StyleSheet.create({
   replyForm: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 42,
+    marginLeft: 40,
     marginBottom: 10,
   },
   replyContainer: {
-    marginLeft: 56,
+    marginLeft: 40,
     marginTop: 10,
   },
   divider: {

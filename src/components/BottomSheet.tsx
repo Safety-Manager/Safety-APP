@@ -11,8 +11,8 @@ import {
   TouchableOpacity,
   Platform,
 } from 'react-native';
-import CheckIcon from '@assets/icons/Check.png';
-import CloseIcon from '@assets/icons/Close.png';
+import CheckIcon from '@assets/icons/Check.svg';
+import CloseIcon from '@assets/icons/Close.svg';
 
 type BottomSheetProps = {
   visible: boolean;
@@ -81,11 +81,7 @@ const BottomSheet = ({
             },
           ]}>
           <TouchableWithoutFeedback onPress={slideOut}>
-            <Image
-              source={CloseIcon}
-              resizeMode="contain"
-              style={styles.closeIcon}
-            />
+            <CloseIcon style={styles.closeIcon} />
           </TouchableWithoutFeedback>
           <View style={styles.bottomContainer}>
             {data.map((item, index) => (
@@ -94,11 +90,7 @@ const BottomSheet = ({
                   <Text style={styles.sheetTitle}>{item}</Text>
                 </TouchableOpacity>
                 {searchCategory === item ? (
-                  <Image
-                    source={CheckIcon}
-                    style={styles.checkIcon}
-                    resizeMode="contain"
-                  />
+                  <CheckIcon style={styles.checkIcon} fill="white" />
                 ) : null}
               </View>
             ))}

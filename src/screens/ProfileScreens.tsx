@@ -177,7 +177,9 @@ const ProfileScreens = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TitleBar icon={'CloseIcon'} />
+
         <View style={styles.headerContainer}>
+          <View></View>
           <TouchableOpacity onPress={() => handlerSubmit()}>
             <Text style={styles.headerRight}>완료</Text>
           </TouchableOpacity>
@@ -281,24 +283,25 @@ const styles = StyleSheet.create({
   },
   header: {
     width: '100%',
-    height: 120,
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    height: Platform.OS === 'ios' ? 100 : 120,
   },
   headerTitleContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
+  headerContainer: {
+    flexDirection: 'row',
+    marginTop: Platform.OS === 'ios' ? 10 : 20,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingHorizontal: 15,
+  },
   headerRight: {
     fontSize: 18,
-    marginTop: 19,
     fontWeight: '700',
-    position: 'absolute',
-    right: 21,
-    fontFamily: 'NotoSansCJKkr-Bold',
+    fontFamily: 'NotoSansCJKkr-Regular',
     color: '#000',
   },
   headerTitle: {
@@ -306,8 +309,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontFamily: 'NotoSansCJKkr-Bold',
     color: '#000',
-    flex: 1,
-    marginTop: 60,
+    textAlign: 'center',
+    marginTop: Platform.OS === 'ios' ? 15 : 25,
   },
   PersonIcon: {
     width: 90,

@@ -13,8 +13,8 @@ import {
 import React, {useEffect, useRef, useState} from 'react';
 import {lawApi} from '@api/lawApi';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import LawIcon from '@assets/icons/LatestLaw.png';
-import UpIcon from '@assets/icons/UpBtn.png';
+import LawIcon from '@assets/icons/LawIcon.svg';
+import UpIcon from '@assets/icons/UpEvnet.svg';
 import TitleBar from '@components/TitleBar';
 import {LawCountTypes} from 'types/law';
 import {RootStackParamList, RouteNames} from '@components/Route';
@@ -122,11 +122,7 @@ const SearchScreens = ({
       <View style={{height: 10, backgroundColor: '#f2f2f2'}} />
       <View style={styles.contant}>
         <View style={{flexDirection: 'row', marginBottom: 10, paddingLeft: 20}}>
-          <Image
-            source={LawIcon}
-            style={styles.LowIcons}
-            resizeMode="contain"
-          />
+          <LawIcon style={styles.LowIcons} />
           <Text style={styles.LowText}>검색창</Text>
         </View>
         <FlatList
@@ -171,7 +167,7 @@ const SearchScreens = ({
         <TouchableOpacity
           style={styles.groupChild}
           onPress={() => scrollToTop(flatListRef)}>
-          <Image resizeMode="contain" source={UpIcon} style={styles.icon} />
+          <UpIcon style={styles.icon} />
         </TouchableOpacity>
       )}
     </SafeAreaView>

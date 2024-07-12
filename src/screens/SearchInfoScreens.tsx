@@ -11,7 +11,6 @@ import {
   Platform,
 } from 'react-native';
 import {WebView} from 'react-native-webview';
-import LeftLineIcon from '@assets/icons/LeftLine.png';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import TitleBar from '@components/TitleBar';
 import {RootStackParamList} from '@components/Route';

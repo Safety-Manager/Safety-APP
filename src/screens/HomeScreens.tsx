@@ -13,6 +13,7 @@ import {
   Alert,
   ActivityIndicator,
   PermissionsAndroid,
+  Keyboard,
 } from 'react-native';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import HomeImg from '@assets/images/Home.png';
@@ -204,6 +205,7 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
 
   // 검색 버튼 클릭 시
   const onClickSearch = () => {
+    Keyboard.dismiss();
     if (searchQuery === '') {
       setModalVisible(true);
       setModalContent({
@@ -300,7 +302,7 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
               <Pressable
                 style={styles.searchButton}
                 hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-                onPress={() => onClickSearch()}>
+                onPress={onClickSearch}>
                 <SearchIcon />
               </Pressable>
             </View>
@@ -489,7 +491,6 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginBottom: 10,
   },
-
   LowText: {
     fontSize: 15,
     fontWeight: '700',
@@ -506,13 +507,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 15,
     marginLeft: 20,
-    marginBottom: 12,
+    marginBottom: Platform.OS === 'ios' ? 10 : 4,
   },
   lancContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 20,
-    marginBottom: 20,
+    marginBottom: Platform.OS === 'ios' ? 20 : 5,
     width: '100%',
   },
   lankTitle: {

@@ -72,8 +72,10 @@ const WriteScreens = ({navigation}: {navigation: ScreenProps}) => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
         <TitleBar icon={'CloseIcon'} />
+
         <View style={styles.headerContainer}>
-          <TouchableOpacity onPress={handlePostSubmit}>
+          <View></View>
+          <TouchableOpacity onPress={() => handlePostSubmit()}>
             <Text style={styles.headerRight}>완료</Text>
           </TouchableOpacity>
         </View>
@@ -81,6 +83,7 @@ const WriteScreens = ({navigation}: {navigation: ScreenProps}) => {
           <Text style={styles.headerTitle}>게시글 작성</Text>
         </View>
       </View>
+
       <View style={{height: 10, backgroundColor: '#f2f2f2'}} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -134,21 +137,26 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingBottom: 80,
   },
+  headerTitleContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   header: {
     width: '100%',
     height: Platform.OS === 'ios' ? 100 : 120,
   },
   headerContainer: {
     flexDirection: 'row',
+    marginTop: Platform.OS === 'ios' ? 10 : 20,
     alignItems: 'center',
+    justifyContent: 'space-between',
     width: '100%',
+    paddingHorizontal: 15,
   },
   headerRight: {
     fontSize: 18,
-    marginTop: 19,
     fontWeight: '700',
-    position: 'absolute',
-    right: 21,
     fontFamily: 'NotoSansCJKkr-Regular',
     color: '#000',
   },
@@ -157,13 +165,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontFamily: 'NotoSansCJKkr-Bold',
     color: '#000',
-    flex: 1,
-    marginTop: Platform.OS === 'ios' ? 60 : 60,
-  },
-  headerTitleContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    textAlign: 'center',
+    marginTop: Platform.OS === 'ios' ? 15 : 25,
   },
   title: {
     fontSize: 16,

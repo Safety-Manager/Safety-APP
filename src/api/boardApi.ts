@@ -1,9 +1,13 @@
 import axiosInstance from '@utils/axiosInterceptor';
 import {useInfiniteQuery, useMutation, useQuery} from '@tanstack/react-query';
+import {BoardReplyType, BoardType, BoardWriteType} from 'types/board';
 
 export const boardApi = {
   // 게시글 조회 함수
-  boardFn: async (pageParam: number, keyWord?: string) => {
+  boardFn: async (
+    pageParam: number,
+    keyWord?: string,
+  ): Promise<BoardType[]> => {
     const res = await axiosInstance.get(
       `/board/list?pageNum=${pageParam}&keyWord=${keyWord}&row=10`,
     );
@@ -35,6 +39,55 @@ export const boardApi = {
         content: string;
       }): Promise<boolean> => {
         const res = await axiosInstance.post('/board/create', data);
+        return res.data;
+      },
+    });
+  },
+  // 게시글 상세보기
+  GetBoardDetail: function (id: number) {
+    return useQuery({
+      queryKey: ['board', 'detail', id],
+      queryFn: async (): Promise<BoardType> => {
+        const res = await axiosInstance.get(`/board/${id}`);
+
+        return res.data;
+      },
+      refetchOnWindowFocus: true,
+      staleTime: 0,
+      enabled: !!id,
+    });
+  },
+  // 댓글 조회
+  GetCommentList: function (id: number) {
+    return useQuery({
+      queryKey: ['board', 'comment', id],
+      queryFn: async (): Promise<BoardReplyType[]> => {
+        const res = await axiosInstance.get(`/board/comment/${id}`);
+
+        return res.data.commentList;
+      },
+      refetchOnWindowFocus: true,
+      staleTime: 0,
+      enabled: !!id,
+    });
+  },
+  // 댓글 생성
+  PostComment: function () {
+    return useMutation({
+      mutationFn: async (data: BoardWriteType): Promise<any> => {
+        const res = await axiosInstance.post('/board/comment/create', data);
+        console.log('>>', res.data);
+        return res.data;
+      },
+    });
+  },
+  // 댓글 삭제
+  DeleteComment: function () {
+    return useMutation({
+      mutationFn: async (commentIdx: number): Promise<boolean> => {
+        const res = await axiosInstance.delete(
+          `/board/comment/delete/${commentIdx}`,
+        );
         return res.data;
       },
     });
