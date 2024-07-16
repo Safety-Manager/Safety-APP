@@ -23,13 +23,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppleLogin from '@components/AppleLogin';
 import appleAuth from '@invertase/react-native-apple-authentication';
 import {RootStackParamList, RouteNames} from '@components/Route';
-import HomeImg from '@assets/images/Main.png';
+import HomeImg from '@assets/images/Main.jpeg';
 import SearchIcon from '@assets/icons/Search.png';
 import SafetyIcon from '@assets/icons/Safety.png';
 import CommunityIcon from '@assets/icons/Community.png';
 import NaverIcon from '@assets/icons/Naver.png';
 import jwt_decode from 'jwt-decode';
 import {WebView} from 'react-native-webview';
+import LawIcon from '@assets/icons/Law.svg';
 
 type userInfoType = {
   message: string;
@@ -207,22 +208,28 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
               <Text style={styles.cardText}>법령 빠른 검색</Text>
             </View>
             <View style={styles.cardContainer}>
-              <Image
-                source={CommunityIcon}
-                style={styles.cardIcon}
-                resizeMode="contain"
-              />
-              <Text style={styles.cardText}>커뮤니티</Text>
+              <LawIcon height={24} width={24} style={{marginBottom: 10}} />
+              <Text style={styles.cardText}>최신 법령</Text>
             </View>
           </View>
           <View style={styles.columnContainer}>
-            <View style={styles.cardContainer}>
-              <Image
-                source={SafetyIcon}
-                style={styles.cardIcon}
-                resizeMode="contain"
-              />
-              <Text style={styles.cardText}>안전 교육 매칭</Text>
+            <View style={{flexDirection: 'row', gap: 10, width: '100%'}}>
+              <View style={styles.cardContainer}>
+                <Image
+                  source={SafetyIcon}
+                  style={styles.cardIcon}
+                  resizeMode="contain"
+                />
+                <Text style={styles.cardText}>안전 교육 매칭</Text>
+              </View>
+              <View style={styles.cardContainer}>
+                <Image
+                  source={CommunityIcon}
+                  style={styles.cardIcon}
+                  resizeMode="contain"
+                />
+                <Text style={styles.cardText}>커뮤니티</Text>
+              </View>
             </View>
           </View>
         </View>
@@ -290,7 +297,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
   },
   image: {
-    opacity: 0.7,
+    opacity: 0.6,
   },
   contentContainer: {
     position: 'absolute',

@@ -15,6 +15,8 @@ import ProfileIcon from '@assets/icons/Profile.png';
 import {authApi} from '@api/authApi';
 import {UserProfile} from 'types/auth';
 import CustomModal from '@components/CustomModal';
+import ErrorModal from '@components/ErrorModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfileScreens = () => {
   const [profile, setProfile] = useState<UserProfile>({
@@ -23,12 +25,13 @@ const ProfileScreens = () => {
     mobile: '',
     email: '',
   });
-
+  const [isNicknameAvailable, setIsNicknameAvailable] = useState(false);
   const [error, setError] = useState({
     nickname: '',
     mobile: '',
     email: '',
   });
+  const [isError, setIsError] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState<{
     title: string;
@@ -54,6 +57,11 @@ const ProfileScreens = () => {
         email: UserData?.email,
       });
   }, [UserData]);
+
+  const localProfile = async () => {
+    console.log('profile>>', profile);
+    await AsyncStorage.setItem('user', JSON.stringify(profile));
+  };
 
   const handlerSubmit = () => {
     let isValid = true;
@@ -110,17 +118,13 @@ const ProfileScreens = () => {
             onConfirm: () => {
               setModalVisible(false);
               refetch();
+              localProfile();
             },
           });
           setModalVisible(true);
         },
         onError: () => {
-          setModalContent({
-            title: '프로필 수정 중 오류가 발생했습니다.',
-            onConfirm: () => {
-              setModalVisible(false);
-            },
-          });
+          setIsError(true);
           setModalVisible(true);
         },
       });
@@ -145,12 +149,14 @@ const ProfileScreens = () => {
                 nickname: '사용 가능한 닉네임입니다!',
               });
               setIsCheck(true);
+              setIsNicknameAvailable(true);
             } else {
               setError({
                 ...error,
                 nickname: '중복된 닉네임입니다!',
               });
               setIsCheck(false);
+              setIsNicknameAvailable(false);
             }
           },
           onError: () => {
@@ -159,6 +165,7 @@ const ProfileScreens = () => {
               nickname: '중복된 닉네임입니다!',
             });
             setIsCheck(false);
+            setIsNicknameAvailable(false);
           },
         });
         break;
@@ -205,7 +212,10 @@ const ProfileScreens = () => {
               onChangeText={text => onChangeText('nickname', text)}
             />
             <TouchableHighlight
-              style={styles.labelBtn}
+              style={[
+                styles.labelBtn,
+                isNicknameAvailable && {backgroundColor: '#404D60'},
+              ]}
               onPress={() => handlerCheck('nickname')}>
               <Text style={styles.btnText}>중복 체크</Text>
             </TouchableHighlight>
@@ -270,6 +280,7 @@ const ProfileScreens = () => {
         title={modalContent.title}
         onConfirm={modalContent.onConfirm}
       />
+      <ErrorModal visible={isError} onClose={() => setIsError(false)} />
     </SafeAreaView>
   );
 };

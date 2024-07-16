@@ -7,6 +7,7 @@ import {
 } from '../config/constants';
 import {UserNotification, UserProfile, UserTypes} from 'types/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 export const authApi = {
   PostJoin: function () {
@@ -28,11 +29,15 @@ export const authApi = {
   },
   DeleteUser: function () {
     return useMutation({
-      mutationFn: async () => {
+      mutationFn: async (token: string): Promise<boolean> => {
+        const res = await axiosInstance.delete('/user/delete', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         await AsyncStorage.removeItem(COOKIE_ACCESS_TOKEN);
         await AsyncStorage.removeItem(COOKIE_REFRESH_TOKEN);
         await AsyncStorage.removeItem(FCM_TOKEN);
-        const res = await axiosInstance.delete('/user/delete');
         return res.data;
       },
     });
@@ -62,6 +67,18 @@ export const authApi = {
     return useMutation({
       mutationFn: async (data: UserProfile): Promise<boolean> => {
         const res = await axiosInstance.put('/user/update', data);
+        return res.data;
+      },
+    });
+  },
+  // 로그아웃
+  GetLogout: function () {
+    return useMutation({
+      mutationFn: async (): Promise<boolean> => {
+        const res = await axiosInstance.get('/user/logout');
+        await AsyncStorage.removeItem('user');
+        await AsyncStorage.removeItem(COOKIE_ACCESS_TOKEN);
+        await AsyncStorage.removeItem(COOKIE_REFRESH_TOKEN);
         return res.data;
       },
     });

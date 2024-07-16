@@ -20,6 +20,7 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {UserTypes} from 'types/auth';
 import CustomModal from '@components/CustomModal';
+import {COOKIE_ACCESS_TOKEN} from '@config/constants';
 
 const myTab = [
   '개인정보 처리방침',
@@ -32,6 +33,8 @@ const myTab = [
 type ScreenProps = NativeStackNavigationProp<RootStackParamList>;
 
 const MyPageScreens = () => {
+  const navigation: ScreenProps = useNavigation(); // Use the useNavigation hook to access the navigation object
+
   const [user, setUser] = useState<UserTypes | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState<{
@@ -42,6 +45,9 @@ const MyPageScreens = () => {
     onConfirm: () => {},
   });
 
+  const {mutate: deleteUser} = authApi.DeleteUser();
+
+  const {mutate: getLogout} = authApi.GetLogout();
   useFocusEffect(
     useCallback(() => {
       const backAction = () => {
@@ -57,34 +63,50 @@ const MyPageScreens = () => {
     }, []),
   );
 
-  useEffect(() => {
-    const getUser = async () => {
-      const result = await AsyncStorage.getItem('user');
-      if (result) {
-        setUser(JSON.parse(result));
-      }
-    };
-    getUser();
-  }, []);
-
-  const {mutate: deleteUser} = authApi.DeleteUser();
-
-  const navigation: ScreenProps = useNavigation(); // Use the useNavigation hook to access the navigation object
+  useFocusEffect(
+    React.useCallback(() => {
+      const getUser = async () => {
+        try {
+          const result = await AsyncStorage.getItem('user');
+          console.log('result>>', result);
+          if (result) {
+            setUser(JSON.parse(result));
+          }
+        } catch (error) {
+          console.log('error>>', error);
+        }
+      };
+      getUser();
+    }, []),
+  );
 
   const handleConfirmLogout = async () => {
-    await AsyncStorage.removeItem('user');
-    navigation.navigate(RouteNames.MAIN);
-  };
+    getLogout(undefined, {
+      onSuccess: async res => {
+        console.log('>>', res);
 
-  const handleConfirmDelete = () => {
-    deleteUser(undefined, {
-      onSuccess: res => {
-        navigation.navigate(RouteNames.MAIN);
+        if (res) {
+          navigation.navigate(RouteNames.MAIN);
+        }
       },
       onError: error => {
-        Alert.alert('오류', '계정 탈퇴 중 오류가 발생했습니다.');
+        Alert.alert('오류', '로그아웃 중 오류가 발생했습니다.');
       },
     });
+  };
+
+  const handleConfirmDelete = async () => {
+    const token = await AsyncStorage.getItem(COOKIE_ACCESS_TOKEN);
+    if (token) {
+      deleteUser(token, {
+        onSuccess: res => {
+          navigation.navigate(RouteNames.MAIN);
+        },
+        onError: error => {
+          Alert.alert('오류', '계정 탈퇴 중 오류가 발생했습니다.');
+        },
+      });
+    }
   };
 
   const handlerEvent = (item: string) => {
@@ -108,7 +130,7 @@ const MyPageScreens = () => {
       case '탈퇴하기':
         setModalContent({
           title:
-            '정말로 계정을 탈퇴하시겠습니까?\n탈퇴 후에는 모든 데이터가 삭제되며 복구할 수 없습니다.',
+            '정말로 계정을 탈퇴하시겠습니까?\n탈퇴 후에는 모든 데이터가 삭제되며 복구할 수 없습니다.\n탈퇴 후 다시 회원가입은 7일 후에만 가능합니다.',
           onConfirm: handleConfirmDelete,
         });
         setModalVisible(true);

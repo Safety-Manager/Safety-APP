@@ -16,7 +16,7 @@ import {
   Keyboard,
 } from 'react-native';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import HomeImg from '@assets/images/Home.png';
+import HomeImg from '@assets/images/Home.jpeg';
 import ToggleIcon from '@assets/icons/Toggle.png';
 import SearchIcon from '@assets/icons/Search.svg';
 import RecentLaw from '@components/RecentLaw';
@@ -249,8 +249,7 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
       <ImageBackground
         style={styles.rectangleImage}
         resizeMode="cover"
-        source={HomeImg}
-        imageStyle={styles.image}>
+        source={HomeImg}>
         <View style={styles.contentContainer}>
           <Text style={styles.imagetext}>
             산업 안전 관리자를 위한{'\n'}
@@ -367,14 +366,8 @@ const styles = StyleSheet.create({
   rectangleImage: {
     width: '100%',
     height: 500,
-    backgroundColor: '#000',
-  },
-  image: {
-    opacity: 0.6,
   },
   contentContainer: {
-    // position: 'absolute',
-    // top: Platform.OS === 'ios' ? 100 : 70,
     paddingTop: Platform.OS === 'ios' ? '20%' : '10%',
     height: 250,
     left: 20,
