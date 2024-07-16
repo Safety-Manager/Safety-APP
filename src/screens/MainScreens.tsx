@@ -187,7 +187,6 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <ImageBackground
           style={styles.rectangleImage}
-          resizeMode="cover"
           source={HomeImg}
           imageStyle={styles.image}>
           <View style={styles.contentContainer}>
@@ -202,13 +201,18 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
             <View style={styles.cardContainer}>
               <Image
                 source={SearchIcon}
-                style={styles.cardIcon}
+                style={{
+                  height: 21,
+                  width: 21,
+                  marginBottom: 5,
+                  tintColor: 'black',
+                }}
                 resizeMode="contain"
               />
               <Text style={styles.cardText}>법령 빠른 검색</Text>
             </View>
             <View style={styles.cardContainer}>
-              <LawIcon height={24} width={24} style={{marginBottom: 10}} />
+              <LawIcon height={23} width={23} style={{marginBottom: 5}} />
               <Text style={styles.cardText}>최신 법령</Text>
             </View>
           </View>
@@ -295,9 +299,14 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 360,
     backgroundColor: '#000',
+    overflow: 'hidden', // 이미지가 컨테이너를 벗어나지 않도록 함
   },
   image: {
+    width: '100%',
+    height: '160%', // 이미지 높이를 120%로 설정하여 아래쪽이 짤리도록 함
+    resizeMode: 'cover', // 이미지가 컨테이너를 꽉 채우도록 함
     opacity: 0.6,
+    top: 0, // 이미지 상단을 컨테이너 상단에 맞춤
   },
   contentContainer: {
     position: 'absolute',
@@ -319,12 +328,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   content: {
-    marginTop: 20,
+    marginTop: 30,
     marginHorizontal: 30,
   },
   cardContainer: {
     width: '48%',
-    height: 100,
+    height: 90,
     padding: 16,
     borderRadius: 8,
     backgroundColor: '#fff',
@@ -354,9 +363,9 @@ const styles = StyleSheet.create({
     }),
   },
   cardIcon: {
-    height: 24,
-    width: 24,
-    marginBottom: 10,
+    height: 26,
+    width: 26,
+    marginBottom: 5,
     tintColor: 'black',
   },
   cardText: {
