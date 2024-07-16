@@ -22,7 +22,7 @@ export type RootStackParamList = {
     searchData: [{lawIdx: number; lawDocId: string; title: string}];
     category: number;
   };
-  [RouteNames.SEARCHINFO]: {lawIdx: number};
+  [RouteNames.SEARCHINFO]: {searchQuery: string; lawIdx: number};
   [RouteNames.HOME]: undefined;
   [RouteNames.SAFETYCOMPANY]: undefined;
   [RouteNames.BOARD]: undefined;

@@ -344,7 +344,9 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
       {LankingData?.map((data, index) => (
         <View style={styles.lancContainer} key={index}>
           <Text style={styles.lankTitle}>{index + 1}</Text>
-          <Text style={styles.lankText}>{data.keyword}</Text>
+          <TouchableOpacity onPress={() => setSearchQuery(data.keyword)}>
+            <Text style={styles.lankText}>{data.keyword}</Text>
+          </TouchableOpacity>
           <UpIcon style={styles.lankIcon} />
         </View>
       ))}

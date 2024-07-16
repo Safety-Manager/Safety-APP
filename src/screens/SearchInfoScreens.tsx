@@ -20,6 +20,7 @@ const generateHtmlContent = (
   title: string,
   content: string,
   category: string,
+  searchQuery: string,
 ) => {
   let htmlContent = `
   <!DOCTYPE html>
@@ -31,8 +32,8 @@ const generateHtmlContent = (
       <style>
             @font-face {
             font-family: 'NotoSansCJKkr-Medium';
-            src: url('file:///android_asset/fonts/NotoSansCJKkr-Medium.otf') format('opentype'); /* Android용 경로 */
-            src: url('NotoSansCJKkr-Medium.otf') format('opentype'); /* iOS용 경로 */
+            src: url('file:///android_asset/fonts/NotoSansCJKkr-Medium.otf') format('opentype');
+            src: url('NotoSansCJKkr-Medium.otf') format('opentype');
           }
           body {
             font-family: 'NotoSansCJKkr-Medium', Arial, sans-serif;
@@ -43,7 +44,7 @@ const generateHtmlContent = (
           h1 {
             color: #333;
             font-family: 'NotoSansCJKkr-Bold';
-            font-size: 18px; /* 글자 크기 조정 */
+            font-size: 18px;
             text-align: center;
             margin-bottom: 20px;
         }
@@ -60,12 +61,24 @@ const generateHtmlContent = (
           li {
               margin-bottom: 10px;
           }
+          .highlight {
+              background-color: yellow;
+          }
       </style>
   </head>
   <body>
       <div class="content">
           <ul>
   `;
+
+  // 검색어가 있을 경우 하이라이트 처리
+  if (searchQuery) {
+    const regex = new RegExp(searchQuery, 'gi');
+    content = content.replace(
+      regex,
+      match => `<span class="highlight">${match}</span>`,
+    );
+  }
 
   // 텍스트를 HTML 형식으로 변환
   const formattedContent = content
@@ -93,7 +106,8 @@ const SearchInfoScreens = ({
   route: any;
   navigation: SearchScreenProps;
 }) => {
-  const {lawIdx} = route.params;
+  const {searchQuery, lawIdx} = route.params;
+  console.log('>>', searchQuery);
   const [lawInfo, setLawInfo] = useState({
     title: '',
     content: '',
@@ -125,6 +139,7 @@ const SearchInfoScreens = ({
     lawInfo.title,
     lawInfo.content,
     lawInfo.category,
+    searchQuery,
   );
 
   return (

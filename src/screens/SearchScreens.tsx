@@ -77,6 +77,7 @@ const SearchScreens = ({
   const onClickSearchInfo = (lawIdx: number) => {
     navigation.navigate(RouteNames.SEARCHINFO, {
       lawIdx: lawIdx,
+      searchQuery: searchQuery,
     });
   };
 
