@@ -12,6 +12,7 @@ export interface UserProfile {
   nickname: string;
   mobile: string;
   email: string;
+  username: string;
 }
 
 export interface UserNotification {

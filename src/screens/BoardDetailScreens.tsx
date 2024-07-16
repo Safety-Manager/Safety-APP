@@ -3,7 +3,6 @@ import {
   Text,
   StyleSheet,
   SafeAreaView,
-  Image,
   TouchableOpacity,
   Platform,
   Pressable,
@@ -11,6 +10,7 @@ import {
   Keyboard,
   ScrollView,
   KeyboardAvoidingView,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useState, useEffect, useRef} from 'react';
 import CommentIcon from '@assets/icons/Comments.svg';
@@ -22,6 +22,8 @@ import {RootStackParamList} from '@components/Route';
 import {boardApi} from '@api/boardApi';
 import dayjs from 'dayjs';
 import {BoardReplyType} from 'types/board';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomModal from '@components/CustomModal';
 
 type SearchScreenProps = NativeStackNavigationProp<RootStackParamList>;
 
@@ -33,7 +35,16 @@ const BoardDetailScreens = ({
   navigation: SearchScreenProps;
 }) => {
   const [replyCommentId, setReplyCommentId] = useState<number | null>(null);
+  const [replyLoading, setReplyLoading] = useState<number | null>(null); // 답글 로딩 상태 관리
   const {Idx} = route.params;
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState<{
+    title: string;
+    onConfirm: () => void;
+  }>({
+    title: '',
+    onConfirm: () => {},
+  });
 
   const {
     data,
@@ -44,18 +55,34 @@ const BoardDetailScreens = ({
   const {data: commentData, refetch} = boardApi.GetCommentList(Idx);
 
   const {mutate} = boardApi.PostComment();
-
+  const {mutate: deleteMutate} = boardApi.DeleteComment();
+  const {mutate: deletePostMutate} = boardApi.DeleteBoard();
   const [replyText, setReplyText] = useState('');
   const [newCommentText, setNewCommentText] = useState('');
   const replyInputRef = useRef<any>(null);
   const scrollViewRef = useRef<any>(null);
+  const [user, setUser] = useState({
+    name: '',
+    nickname: '',
+    mobile: '',
+    email: '',
+    username: '',
+  });
+
+  const initUser = async () => {
+    const user = await AsyncStorage.getItem('user');
+    if (user) {
+      setUser(JSON.parse(user));
+    }
+  };
 
   useEffect(() => {
+    initUser();
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       () => {
         if (scrollViewRef.current) {
-          scrollViewRef.current.scrollToEnd({animated: true});
+          scrollViewRef.current.scrollTo({x: 0, y: 0, animated: true});
         }
       },
     );
@@ -73,6 +100,7 @@ const BoardDetailScreens = ({
   const handleReplyPress = (commentId: number) => {
     if (replyCommentId === commentId) {
       setReplyCommentId(null);
+      setReplyText('');
     } else {
       setReplyCommentId(commentId);
       setTimeout(() => {
@@ -90,15 +118,18 @@ const BoardDetailScreens = ({
         parentIdx: replyCommentId,
         content: replyText,
       };
+      setReplyLoading(replyCommentId); // 답글 로딩 상태 설정
       mutate(newReply, {
         onSuccess: () => {
           refetch();
           boardRefetch();
           setReplyText('');
           setReplyCommentId(null);
+          setReplyLoading(null); // 답글 로딩 상태 해제
         },
         onError: error => {
           console.error(error);
+          setReplyLoading(null); // 답글 로딩 상태 해제
         },
       });
     }
@@ -111,12 +142,14 @@ const BoardDetailScreens = ({
         parentIdx: null,
         content: newCommentText,
       };
-      console.log('>>', newComment);
       mutate(newComment, {
         onSuccess: () => {
           refetch();
           boardRefetch();
           setNewCommentText('');
+          if (scrollViewRef.current) {
+            scrollViewRef.current.scrollTo({x: 0, y: 0, animated: true});
+          }
         },
         onError: error => {
           console.error(error);
@@ -126,9 +159,35 @@ const BoardDetailScreens = ({
   };
 
   const handleDeleteComment = (commentId: number) => {
-    // Deletion logic here
+    deleteMutate(commentId, {
+      onSuccess: () => {
+        refetch();
+        boardRefetch();
+      },
+      onError: error => {
+        console.error(error);
+      },
+    });
   };
 
+  const handleDeletePost = () => {
+    setModalContent({
+      title: '게시글을 삭제하시겠습니까?',
+      onConfirm: muateDelete,
+    });
+    setModalVisible(true);
+  };
+
+  const muateDelete = () => {
+    deletePostMutate(Idx, {
+      onSuccess: () => {
+        navigation.goBack();
+      },
+      onError: (error: any) => {
+        console.error(error);
+      },
+    });
+  };
   return (
     <KeyboardAvoidingView
       style={styles.safeArea}
@@ -142,7 +201,16 @@ const BoardDetailScreens = ({
           contentContainerStyle={styles.scrollViewContent}
           ref={scrollViewRef}>
           <View style={styles.cardContent}>
-            <Text style={styles.title}>{data?.title}</Text>
+            {data?.createUser === user.username && (
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={handleDeletePost}>
+                <Text style={styles.deleteButtonText}>게시글 삭제</Text>
+              </TouchableOpacity>
+            )}
+            <View style={styles.headerContainer}>
+              <Text style={styles.title}>{data?.title}</Text>
+            </View>
             <Text style={styles.content}>{data?.content}</Text>
             <View style={styles.headerRow}>
               <PersonIcon style={styles.personIcon} width={40} height={40} />
@@ -183,11 +251,15 @@ const BoardDetailScreens = ({
                           {comment.content}
                         </Text>
                       </View>
-                      <TouchableOpacity
-                        style={styles.deleteButton}
-                        onPress={() => handleDeleteComment(comment.commentIdx)}>
-                        <Text style={styles.deleteButtonText}>삭제</Text>
-                      </TouchableOpacity>
+                      {comment?.createUser === user.username && (
+                        <TouchableOpacity
+                          style={styles.deleteButton}
+                          onPress={() =>
+                            handleDeleteComment(comment.commentIdx)
+                          }>
+                          <Text style={styles.deleteButtonText}>삭제</Text>
+                        </TouchableOpacity>
+                      )}
                     </View>
                     {commentData
                       ?.filter(
@@ -217,13 +289,17 @@ const BoardDetailScreens = ({
                                 {reply.content}
                               </Text>
                             </View>
-                            <TouchableOpacity
-                              style={styles.deleteButton}
-                              onPress={() =>
-                                handleDeleteComment(reply.commentIdx)
-                              }>
-                              <Text style={styles.deleteButtonText}>삭제</Text>
-                            </TouchableOpacity>
+                            {user.username === reply.createUser && (
+                              <TouchableOpacity
+                                style={styles.deleteButton}
+                                onPress={() =>
+                                  handleDeleteComment(reply.commentIdx)
+                                }>
+                                <Text style={styles.deleteButtonText}>
+                                  삭제
+                                </Text>
+                              </TouchableOpacity>
+                            )}
                           </View>
                         </View>
                       ))}
@@ -246,12 +322,20 @@ const BoardDetailScreens = ({
                           />
                           <Pressable
                             style={styles.searchButton}
-                            hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
+                            hitSlop={{
+                              top: 10,
+                              bottom: 10,
+                              left: 10,
+                              right: 10,
+                            }}
                             onPress={handleReplySubmit}>
                             <SendIcon style={styles.searchicon} />
                           </Pressable>
                         </View>
                       </View>
+                    )}
+                    {replyLoading === comment.commentIdx && (
+                      <ActivityIndicator size="small" color="#0000ff" />
                     )}
                     <TouchableOpacity
                       style={styles.replyButton}
@@ -296,6 +380,13 @@ const BoardDetailScreens = ({
           </View>
         )}
       </SafeAreaView>
+      <CustomModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        title={modalContent.title}
+        type={'confirm'}
+        onConfirm={modalContent.onConfirm}
+      />
     </KeyboardAvoidingView>
   );
 };
@@ -314,6 +405,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     padding: 15,
     gap: 20,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   title: {
     fontSize: 22,
@@ -462,8 +558,8 @@ const styles = StyleSheet.create({
   deleteButton: {
     backgroundColor: 'transparent', // Transparent background for text
     borderRadius: 5,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingVertical: 5,
+    alignItems: 'flex-end',
   },
   deleteButtonText: {
     color: '#FF0000', // Red text color for delete button

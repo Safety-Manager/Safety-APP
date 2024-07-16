@@ -205,7 +205,6 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
 
   // 검색 버튼 클릭 시
   const onClickSearch = () => {
-    Keyboard.dismiss();
     if (searchQuery === '') {
       setModalVisible(true);
       setModalContent({
@@ -296,12 +295,13 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
                 placeholder="검색어를 입력해주세요."
                 value={searchQuery}
                 onChangeText={text => setSearchQuery(text)}
-                onSubmitEditing={onClickSearch}
+                onSubmitEditing={onClickSearch} // 키보드의 검색 버튼을 눌렀을 때 호출
               />
               <Pressable
                 style={styles.searchButton}
                 hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-                onPress={onClickSearch}>
+                onPressIn={onClickSearch} // 검색 버튼을 눌렀을 때 호출
+              >
                 <SearchIcon />
               </Pressable>
             </View>

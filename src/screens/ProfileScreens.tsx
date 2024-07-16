@@ -24,6 +24,7 @@ const ProfileScreens = () => {
     nickname: '',
     mobile: '',
     email: '',
+    username: '',
   });
   const [isNicknameAvailable, setIsNicknameAvailable] = useState(false);
   const [error, setError] = useState({
@@ -55,6 +56,7 @@ const ProfileScreens = () => {
         nickname: UserData?.nickname,
         mobile: UserData?.mobile,
         email: UserData?.email,
+        username: UserData?.username,
       });
   }, [UserData]);
 

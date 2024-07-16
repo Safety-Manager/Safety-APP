@@ -25,7 +25,8 @@ import {COOKIE_ACCESS_TOKEN} from '@config/constants';
 const myTab = [
   '개인정보 처리방침',
   '약관 및 정책',
-  '문의하기',
+  '내 게시글',
+  '저장한 게시글',
   '로그아웃',
   '탈퇴하기',
 ];
@@ -117,8 +118,11 @@ const MyPageScreens = () => {
       case '약관 및 정책':
         console.log('약관 및 정책');
         break;
-      case '문의하기':
-        console.log('문의하기');
+      case '내 게시글':
+        console.log('내 게시글');
+        break;
+      case '게저장한 시글':
+        console.log('게저장한 시글');
         break;
       case '로그아웃':
         setModalContent({

@@ -57,6 +57,15 @@ export const boardApi = {
       enabled: !!id,
     });
   },
+  // 게시글 삭제
+  DeleteBoard: function () {
+    return useMutation({
+      mutationFn: async (boardIdx: number): Promise<boolean> => {
+        const res = await axiosInstance.delete(`/board/delete/${boardIdx}`);
+        return res.data;
+      },
+    });
+  },
   // 댓글 조회
   GetCommentList: function (id: number) {
     return useQuery({
