@@ -21,6 +21,8 @@ import {AppState} from 'react-native';
 import notifee, {AndroidImportance, AndroidColor} from '@notifee/react-native';
 import pushNoti from '@utils/pushNoti';
 import ProfileScreens from '@screens/ProfileScreens';
+import WebViewScreen from '@screens/WebviewScreens';
+import MyBoardScreens from '@screens/MyBoardScreens';
 
 // 프로덕션 모드일 때만 Sentry 초기화
 if (!__DEV__) {
@@ -136,6 +138,16 @@ const RootNavigator = () => {
       <Stack.Screen
         name={RouteNames.PROFILE}
         component={ProfileScreens}
+        options={{headerShown: false, title: ''}}
+      />
+      <Stack.Screen
+        name={RouteNames.WEBVIEW}
+        component={WebViewScreen}
+        options={{headerShown: false, title: ''}}
+      />
+      <Stack.Screen
+        name={RouteNames.MyBoard}
+        component={MyBoardScreens}
         options={{headerShown: false, title: ''}}
       />
     </Stack.Navigator>

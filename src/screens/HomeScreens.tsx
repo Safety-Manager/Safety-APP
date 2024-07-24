@@ -32,10 +32,10 @@ import {RootStackParamList, RouteNames} from '@components/Route';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {authApi} from '@api/authApi';
 import messaging from '@react-native-firebase/messaging';
-import {FCM_TOKEN} from '../config/constants';
 import CustomModal from '@components/CustomModal';
 import LawIcon from '@assets/icons/LawIcon.svg';
 import LankIcon from '@assets/icons/LankIcon.svg';
+import useDebouncedFetchData from '@utils/debounce';
 const suggestions = [
   '지게차',
   '비계',
@@ -294,14 +294,10 @@ const HomeScreens = ({navigation}: {navigation: HomeScreenProps}) => {
                 placeholderTextColor="#ccc"
                 placeholder="검색어를 입력해주세요."
                 value={searchQuery}
+                onSubmitEditing={onClickSearch}
                 onChangeText={text => setSearchQuery(text)}
-                onSubmitEditing={onClickSearch} // 키보드의 검색 버튼을 눌렀을 때 호출
               />
-              <Pressable
-                style={styles.searchButton}
-                hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
-                onPressIn={onClickSearch} // 검색 버튼을 눌렀을 때 호출
-              >
+              <Pressable style={styles.searchButton} onPress={onClickSearch}>
                 <SearchIcon />
               </Pressable>
             </View>

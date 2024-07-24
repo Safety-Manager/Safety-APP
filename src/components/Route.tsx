@@ -11,6 +11,8 @@ export const RouteNames = {
   BOARDWRITE: 'BoardWrite' as const,
   MYPAGE: 'MyPage' as const,
   PROFILE: 'Profile' as const,
+  WEBVIEW: 'WebView' as const,
+  MyBoard: 'MyBoard' as const,
 };
 
 export type RootStackParamList = {
@@ -30,4 +32,6 @@ export type RootStackParamList = {
   [RouteNames.BOARDWRITE]: undefined;
   [RouteNames.MYPAGE]: undefined;
   [RouteNames.PROFILE]: undefined;
+  [RouteNames.WEBVIEW]: {url: string; title: string};
+  [RouteNames.MyBoard]: undefined;
 };

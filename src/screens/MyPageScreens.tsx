@@ -21,12 +21,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {UserTypes} from 'types/auth';
 import CustomModal from '@components/CustomModal';
 import {COOKIE_ACCESS_TOKEN} from '@config/constants';
+import {WebView} from 'react-native-webview';
 
 const myTab = [
   '개인정보 처리방침',
   '약관 및 정책',
   '내 게시글',
-  '저장한 게시글',
+  // '저장한 게시글',
   '로그아웃',
   '탈퇴하기',
 ];
@@ -113,17 +114,23 @@ const MyPageScreens = () => {
   const handlerEvent = (item: string) => {
     switch (item) {
       case '개인정보 처리방침':
-        console.log('개인정보 처리방침');
+        navigation.navigate(RouteNames.WEBVIEW, {
+          url: 'https://modusafe.site/Information',
+          title: '개인정보 처리방침',
+        });
         break;
       case '약관 및 정책':
-        console.log('약관 및 정책');
+        navigation.navigate(RouteNames.WEBVIEW, {
+          url: 'https://modusafe.site/Teams',
+          title: '약관 및 정책',
+        });
         break;
       case '내 게시글':
-        console.log('내 게시글');
+        navigation.navigate(RouteNames.MyBoard);
         break;
-      case '게저장한 시글':
-        console.log('게저장한 시글');
-        break;
+      // case '게저장한 시글':
+      //   console.log('게저장한 시글');
+      //   break;
       case '로그아웃':
         setModalContent({
           title: '현재 계정에서 로그아웃하시겠습니까?',

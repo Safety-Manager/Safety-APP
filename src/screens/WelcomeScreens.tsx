@@ -35,7 +35,6 @@ const WelcomeScreens = ({navigation}: any) => {
   return (
     <View style={styles.container}>
       <Button title="Open Survey" onPress={() => setModalVisible(true)} />
-
       <Modal
         transparent={true}
         animationType="slide"

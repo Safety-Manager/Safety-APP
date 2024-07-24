@@ -256,13 +256,13 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
           모두 안전에 가입함으로써{'\n'}
           <Text
             style={styles.linkText}
-            onPress={() => openWebView('https://example.com/terms')}>
+            onPress={() => openWebView('https://modusafe.site/Teams')}>
             이용약관
           </Text>
           {`\u00A0`}및{`\u00A0`}
           <Text
             style={styles.linkText}
-            onPress={() => openWebView('https://example.com/privacy')}>
+            onPress={() => openWebView('https://modusafe.site/Information')}>
             개인정보처리방침
           </Text>
           에 동의하게 됩니다.

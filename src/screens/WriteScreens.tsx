@@ -9,12 +9,13 @@ import {
   Platform,
   KeyboardAvoidingView,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import TitleBar from '@components/TitleBar';
 import {boardApi} from '@api/boardApi';
 import CustomModal from '@components/CustomModal';
-import {RootStackParamList} from '@components/Route';
+import {RootStackParamList, RouteNames} from '@components/Route';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import _ from 'lodash';
 
 type ScreenProps = NativeStackNavigationProp<RootStackParamList>;
 
@@ -33,40 +34,43 @@ const WriteScreens = ({navigation}: {navigation: ScreenProps}) => {
     onConfirm: () => {},
   });
 
-  const handlePostSubmit = () => {
-    if (title !== '' && content !== '') {
-      mutate(
-        {
-          title: title,
-          content: content,
-        },
-        {
-          onSuccess(data, variables, context) {
-            if (data) {
-              setModalContent({
-                title: '게시글이 등록되었습니다.',
-                onConfirm: () => {
-                  setModalVisible(false);
-                  setTitle('');
-                  setContent('');
-                },
-              });
-              setModalVisible(true);
-            }
+  const handlePostSubmit = useCallback(
+    _.debounce(() => {
+      if (title !== '' && content !== '') {
+        mutate(
+          {
+            title: title,
+            content: content,
           },
-        },
-      );
-    } else {
-      // Handle empty title or content case
-      setModalContent({
-        title: '제목, 내용을 입력해주세요.',
-        onConfirm: () => {
-          setModalVisible(false);
-        },
-      });
-      setModalVisible(true);
-    }
-  };
+          {
+            onSuccess(data, variables, context) {
+              if (data) {
+                setModalContent({
+                  title: '게시글이 등록되었습니다.',
+                  onConfirm: () => {
+                    setModalVisible(false);
+                    setTitle('');
+                    setContent('');
+                  },
+                });
+                setModalVisible(true);
+                navigation.navigate(RouteNames.BOARD);
+              }
+            },
+          },
+        );
+      } else {
+        setModalContent({
+          title: '제목, 내용을 입력해주세요.',
+          onConfirm: () => {
+            setModalVisible(false);
+          },
+        });
+        setModalVisible(true);
+      }
+    }, 300),
+    [title, content, mutate, navigation],
+  );
 
   return (
     <SafeAreaView style={styles.safeArea}>

@@ -23,10 +23,11 @@ import {boardApi} from '@api/boardApi';
 import {useFocusEffect} from '@react-navigation/native';
 import dayjs from 'dayjs';
 import CustomModal from '@components/CustomModal';
+import TitleBar from '@components/TitleBar';
 
 type ScreenProps = NativeStackNavigationProp<RootStackParamList>;
 
-const BoardScreens = ({navigation}: {navigation: ScreenProps}) => {
+const MyBoardScreens = ({navigation}: {navigation: ScreenProps}) => {
   const [keyword, setKeyword] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -72,6 +73,7 @@ const BoardScreens = ({navigation}: {navigation: ScreenProps}) => {
     if (isFetchingNextPage || isLoading) {
       return <ActivityIndicator />;
     }
+
     if (!hasNextPage) {
       return (
         <View style={styles.noDataContainer}>
@@ -82,37 +84,16 @@ const BoardScreens = ({navigation}: {navigation: ScreenProps}) => {
     return null;
   };
 
-  const onClickSearch = () => {
-    if (keyword === '') {
-      setModalVisible(true);
-      setModalContent({
-        title: '검색어를 입력 해 주세요.',
-        onConfirm: () => setModalVisible(false),
-      });
-    } else {
-      refetch();
-    }
-  };
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.searchbarContainer}>
-        <TextInput
-          style={styles.searchbarView}
-          placeholderTextColor="black"
-          onChangeText={(text: string) => setKeyword(text)}
-          value={keyword}
-          placeholder="검색어를 입력해주세요."
-          onSubmitEditing={onClickSearch}
-        />
-        <Pressable style={styles.searchButton} onPress={onClickSearch}>
-          <Image
-            source={SearchIcon}
-            style={styles.searchicon}
-            resizeMode="contain"
-          />
-        </Pressable>
+      <View
+        style={{
+          width: '100%',
+          height: 60,
+          backgroundColor: 'white',
+        }}>
+        <TitleBar />
       </View>
-
       <View style={styles.safeArea}>
         <View style={styles.CardContainer}>
           <FlatList
@@ -163,11 +144,6 @@ const BoardScreens = ({navigation}: {navigation: ScreenProps}) => {
             )}
           />
         </View>
-        <TouchableOpacity
-          style={styles.writeBtn}
-          onPress={() => navigation.navigate(RouteNames.BOARDWRITE)}>
-          <WriteIcon style={{height: 24, width: 24}} />
-        </TouchableOpacity>
       </View>
       <CustomModal
         visible={modalVisible}
@@ -288,4 +264,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BoardScreens;
+export default MyBoardScreens;

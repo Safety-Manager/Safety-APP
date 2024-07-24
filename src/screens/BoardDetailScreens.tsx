@@ -12,7 +12,7 @@ import {
   KeyboardAvoidingView,
   ActivityIndicator,
 } from 'react-native';
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import CommentIcon from '@assets/icons/Comments.svg';
 import TitleBar from '@components/TitleBar';
 import PersonIcon from '@assets/icons/Person.svg';
@@ -24,6 +24,7 @@ import dayjs from 'dayjs';
 import {BoardReplyType} from 'types/board';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomModal from '@components/CustomModal';
+import _ from 'lodash';
 
 type SearchScreenProps = NativeStackNavigationProp<RootStackParamList>;
 
@@ -36,6 +37,8 @@ const BoardDetailScreens = ({
 }) => {
   const [replyCommentId, setReplyCommentId] = useState<number | null>(null);
   const [replyLoading, setReplyLoading] = useState<number | null>(null); // 답글 로딩 상태 관리
+  const [newCommentLoading, setNewCommentLoading] = useState(false); // 새 댓글 로딩 상태 관리
+
   const {Idx} = route.params;
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState<{
@@ -111,52 +114,61 @@ const BoardDetailScreens = ({
     }
   };
 
-  const handleReplySubmit = () => {
-    if (replyText.trim() !== '') {
-      const newReply = {
-        boardIdx: Idx,
-        parentIdx: replyCommentId,
-        content: replyText,
-      };
-      setReplyLoading(replyCommentId); // 답글 로딩 상태 설정
-      mutate(newReply, {
-        onSuccess: () => {
-          refetch();
-          boardRefetch();
-          setReplyText('');
-          setReplyCommentId(null);
-          setReplyLoading(null); // 답글 로딩 상태 해제
-        },
-        onError: error => {
-          console.error(error);
-          setReplyLoading(null); // 답글 로딩 상태 해제
-        },
-      });
-    }
-  };
+  const handleReplySubmit = useCallback(
+    _.debounce(() => {
+      if (replyText.trim() !== '') {
+        const newReply = {
+          boardIdx: Idx,
+          parentIdx: replyCommentId,
+          content: replyText,
+        };
+        setReplyLoading(replyCommentId); // 답글 로딩 상태 설정
+        mutate(newReply, {
+          onSuccess: () => {
+            refetch();
+            boardRefetch();
+            setReplyText('');
+            setReplyCommentId(null);
+            setReplyLoading(null); // 답글 로딩 상태 해제
+          },
+          onError: error => {
+            console.error(error);
+            setReplyLoading(null); // 답글 로딩 상태 해제
+          },
+        });
+      }
+    }, 300),
+    [replyText, replyCommentId, Idx, mutate, refetch, boardRefetch],
+  );
 
-  const handleNewCommentSubmit = () => {
-    if (newCommentText.trim() !== '') {
-      const newComment = {
-        boardIdx: Idx,
-        parentIdx: null,
-        content: newCommentText,
-      };
-      mutate(newComment, {
-        onSuccess: () => {
-          refetch();
-          boardRefetch();
-          setNewCommentText('');
-          if (scrollViewRef.current) {
-            scrollViewRef.current.scrollTo({x: 0, y: 0, animated: true});
-          }
-        },
-        onError: error => {
-          console.error(error);
-        },
-      });
-    }
-  };
+  const handleNewCommentSubmit = useCallback(
+    _.debounce(() => {
+      if (newCommentText.trim() !== '') {
+        const newComment = {
+          boardIdx: Idx,
+          parentIdx: null,
+          content: newCommentText,
+        };
+        setNewCommentLoading(true); // 새 댓글 로딩 상태 설정
+        mutate(newComment, {
+          onSuccess: () => {
+            refetch();
+            boardRefetch();
+            setNewCommentText('');
+            setNewCommentLoading(false); // 새 댓글 로딩 상태 해제
+            if (scrollViewRef.current) {
+              scrollViewRef.current.scrollTo({x: 0, y: 0, animated: true});
+            }
+          },
+          onError: error => {
+            console.error(error);
+            setNewCommentLoading(false); // 새 댓글 로딩 상태 해제
+          },
+        });
+      }
+    }, 300),
+    [newCommentText, Idx, mutate, refetch, boardRefetch],
+  );
 
   const handleDeleteComment = (commentId: number) => {
     deleteMutate(commentId, {
@@ -188,6 +200,7 @@ const BoardDetailScreens = ({
       },
     });
   };
+
   return (
     <KeyboardAvoidingView
       style={styles.safeArea}
@@ -201,15 +214,15 @@ const BoardDetailScreens = ({
           contentContainerStyle={styles.scrollViewContent}
           ref={scrollViewRef}>
           <View style={styles.cardContent}>
-            {data?.createUser === user.username && (
-              <TouchableOpacity
-                style={styles.deleteButton}
-                onPress={handleDeletePost}>
-                <Text style={styles.deleteButtonText}>게시글 삭제</Text>
-              </TouchableOpacity>
-            )}
             <View style={styles.headerContainer}>
               <Text style={styles.title}>{data?.title}</Text>
+              {data?.createUser === user.username && (
+                <TouchableOpacity
+                  style={styles.deleteButton}
+                  onPress={handleDeletePost}>
+                  <Text style={styles.deleteButtonText}>게시글 삭제</Text>
+                </TouchableOpacity>
+              )}
             </View>
             <Text style={styles.content}>{data?.content}</Text>
             <View style={styles.headerRow}>
@@ -320,6 +333,9 @@ const BoardDetailScreens = ({
                             ref={replyInputRef}
                             onSubmitEditing={handleReplySubmit}
                           />
+                          {replyLoading === comment.commentIdx && (
+                            <ActivityIndicator size="small" color="#0000ff" />
+                          )}
                           <Pressable
                             style={styles.searchButton}
                             hitSlop={{
@@ -333,9 +349,6 @@ const BoardDetailScreens = ({
                           </Pressable>
                         </View>
                       </View>
-                    )}
-                    {replyLoading === comment.commentIdx && (
-                      <ActivityIndicator size="small" color="#0000ff" />
                     )}
                     <TouchableOpacity
                       style={styles.replyButton}
@@ -369,6 +382,9 @@ const BoardDetailScreens = ({
                   onChangeText={setNewCommentText}
                   onSubmitEditing={handleNewCommentSubmit}
                 />
+                {newCommentLoading && (
+                  <ActivityIndicator size="small" color="#0000ff" />
+                )}
                 <Pressable
                   style={styles.searchButton}
                   hitSlop={{top: 10, bottom: 10, left: 10, right: 10}}
