@@ -14,7 +14,6 @@ import {
   ActivityIndicator,
   BackHandler,
 } from 'react-native';
-import WriteIcon from '@assets/icons/Write.svg';
 import CommentIcon from '@assets/icons/Comments.svg';
 import PersonIcon from '@assets/icons/Person.svg';
 import {RootStackParamList, RouteNames} from '@components/Route';
@@ -40,12 +39,10 @@ const MyBoardScreens = ({navigation}: {navigation: ScreenProps}) => {
   });
   const {
     data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
+
     isLoading,
     refetch,
-  } = boardApi.GetBoardList(keyword); // Call without pageParam
+  } = boardApi.GetMyBoardList(); // Call without pageParam
 
   useFocusEffect(
     useCallback(() => {
@@ -69,21 +66,6 @@ const MyBoardScreens = ({navigation}: {navigation: ScreenProps}) => {
     setIsRefreshing(false);
   };
 
-  const renderFooter = () => {
-    if (isFetchingNextPage || isLoading) {
-      return <ActivityIndicator />;
-    }
-
-    if (!hasNextPage) {
-      return (
-        <View style={styles.noDataContainer}>
-          <Text style={styles.noDataText}>데이터가 없습니다</Text>
-        </View>
-      );
-    }
-    return null;
-  };
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <View
@@ -97,15 +79,9 @@ const MyBoardScreens = ({navigation}: {navigation: ScreenProps}) => {
       <View style={styles.safeArea}>
         <View style={styles.CardContainer}>
           <FlatList
-            data={data?.pages.flatMap(page => page)}
-            onEndReached={() => {
-              if (hasNextPage) {
-                fetchNextPage();
-              }
-            }}
+            data={data?.flatMap(page => page)}
             contentContainerStyle={{flexGrow: 1}}
             onEndReachedThreshold={0.5}
-            ListFooterComponent={renderFooter}
             keyExtractor={item => item.boardIdx.toString()}
             refreshing={isRefreshing}
             onRefresh={onRefresh}

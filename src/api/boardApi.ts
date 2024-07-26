@@ -101,4 +101,16 @@ export const boardApi = {
       },
     });
   },
+  GetMyBoardList: function () {
+    return useQuery({
+      queryKey: ['myboard', 'list'],
+      queryFn: async (): Promise<BoardType[]> => {
+        const res = await axiosInstance.get(`/mypage/board`);
+
+        return res.data.boardList;
+      },
+      refetchOnWindowFocus: true,
+      staleTime: 0,
+    });
+  },
 };
