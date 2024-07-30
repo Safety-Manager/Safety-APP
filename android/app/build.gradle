@@ -25,7 +25,7 @@ android {
         missingDimensionStrategy "store", "play"
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 2
-        versionName "1.1"
+        versionName "1.2"
         resValue 'string', "CODE_PUSH_APK_BUILD_TIME", String.format("\"%d\"", System.currentTimeMillis())
     }
     signingConfigs {
