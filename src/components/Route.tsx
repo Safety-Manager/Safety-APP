@@ -13,6 +13,7 @@ export const RouteNames = {
   PROFILE: 'Profile' as const,
   WEBVIEW: 'WebView' as const,
   MyBoard: 'MyBoard' as const,
+  CONTACUS: 'ContactUs' as const,
 };
 
 export type RootStackParamList = {
@@ -34,4 +35,5 @@ export type RootStackParamList = {
   [RouteNames.PROFILE]: undefined;
   [RouteNames.WEBVIEW]: {url: string; title: string};
   [RouteNames.MyBoard]: undefined;
+  [RouteNames.CONTACUS]: undefined;
 };

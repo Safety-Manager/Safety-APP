@@ -26,6 +26,7 @@ import {WebView} from 'react-native-webview';
 const myTab = [
   '개인정보 처리방침',
   '약관 및 정책',
+  '문의하기',
   '내 게시글',
   // '저장한 게시글',
   '로그아웃',
@@ -124,6 +125,9 @@ const MyPageScreens = () => {
           url: 'https://modusafe.site/Teams',
           title: '약관 및 정책',
         });
+        break;
+      case '문의하기':
+        navigation.navigate(RouteNames.CONTACUS);
         break;
       case '내 게시글':
         navigation.navigate(RouteNames.MyBoard);

@@ -23,6 +23,7 @@ import pushNoti from '@utils/pushNoti';
 import ProfileScreens from '@screens/ProfileScreens';
 import WebViewScreen from '@screens/WebviewScreens';
 import MyBoardScreens from '@screens/MyBoardScreens';
+import ContactUsScreens from '@screens/ContactUsScreens';
 
 // 프로덕션 모드일 때만 Sentry 초기화
 if (!__DEV__) {
@@ -148,6 +149,11 @@ const RootNavigator = () => {
       <Stack.Screen
         name={RouteNames.MyBoard}
         component={MyBoardScreens}
+        options={{headerShown: false, title: ''}}
+      />
+      <Stack.Screen
+        name={RouteNames.CONTACUS}
+        component={ContactUsScreens}
         options={{headerShown: false, title: ''}}
       />
     </Stack.Navigator>

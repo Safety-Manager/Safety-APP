@@ -201,6 +201,14 @@ const BoardDetailScreens = ({
     });
   };
 
+  const handleReportPost = () => {
+    setModalContent({
+      title: '게시글을 신고하시겠습니까?',
+      onConfirm: muateDelete,
+    });
+    setModalVisible(true);
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.safeArea}
@@ -216,11 +224,17 @@ const BoardDetailScreens = ({
           <View style={styles.cardContent}>
             <View style={styles.headerContainer}>
               <Text style={styles.title}>{data?.title}</Text>
-              {data?.createUser === user.username && (
+              {data?.createUser === user.username ? (
                 <TouchableOpacity
                   style={styles.deleteButton}
                   onPress={handleDeletePost}>
                   <Text style={styles.deleteButtonText}>게시글 삭제</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  style={styles.deleteButton}
+                  onPress={handleReportPost}>
+                  <Text style={styles.deleteButtonText}>게시글 신고</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -433,6 +447,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontFamily: 'NotoSansCJKkr-Bold',
     color: '#000',
+    width: '75%',
   },
   content: {
     fontSize: 16,
