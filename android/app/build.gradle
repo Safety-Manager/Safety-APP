@@ -24,7 +24,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         missingDimensionStrategy "store", "play"
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
+        versionCode 3
         versionName "1.2"
         resValue 'string', "CODE_PUSH_APK_BUILD_TIME", String.format("\"%d\"", System.currentTimeMillis())
     }
