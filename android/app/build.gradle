@@ -24,8 +24,13 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         missingDimensionStrategy "store", "play"
         targetSdkVersion rootProject.ext.targetSdkVersion
+<<<<<<< HEAD
         versionCode 3
         versionName "1.2"
+=======
+        versionCode 2
+        versionName "1.1"
+>>>>>>> parent of 807700b (feat: Update MainScreens image styles and card icon sizes)
         resValue 'string', "CODE_PUSH_APK_BUILD_TIME", String.format("\"%d\"", System.currentTimeMillis())
     }
     signingConfigs {

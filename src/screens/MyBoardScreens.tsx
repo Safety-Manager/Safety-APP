@@ -60,8 +60,6 @@ const MyBoardScreens = ({navigation}: {navigation: ScreenProps}) => {
     }, [refetch]),
   );
 
-  console.log('>>', data);
-
   const onRefresh = async () => {
     setIsRefreshing(true);
     await refetch();
@@ -84,6 +82,7 @@ const MyBoardScreens = ({navigation}: {navigation: ScreenProps}) => {
             data={data?.flatMap(page => page)}
             contentContainerStyle={{flexGrow: 1}}
             onEndReachedThreshold={0.5}
+            keyExtractor={item => item.boardIdx.toString()}
             refreshing={isRefreshing}
             onRefresh={onRefresh}
             renderItem={({item}) => (

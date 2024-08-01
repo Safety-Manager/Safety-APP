@@ -31,7 +31,6 @@ import NaverIcon from '@assets/icons/Naver.png';
 import jwt_decode from 'jwt-decode';
 import {WebView} from 'react-native-webview';
 import LawIcon from '@assets/icons/Law.svg';
-import TitleBar from '@components/TitleBar';
 
 type userInfoType = {
   message: string;
@@ -257,28 +256,30 @@ const MainScreens = ({navigation}: {navigation: MainScreenProps}) => {
           모두 안전에 가입함으로써{'\n'}
           <Text
             style={styles.linkText}
-            onPress={() =>
-              navigation.navigate(RouteNames.WEBVIEW, {
-                url: 'https://modusafe.site/Teams',
-                title: '이용약관',
-              })
-            }>
+            onPress={() => openWebView('https://modusafe.site/Teams')}>
             이용약관
           </Text>
           {`\u00A0`}및{`\u00A0`}
           <Text
             style={styles.linkText}
-            onPress={() =>
-              navigation.navigate(RouteNames.WEBVIEW, {
-                url: 'https://modusafe.site/Information',
-                title: '개인정보처리방침',
-              })
-            }>
+            onPress={() => openWebView('https://modusafe.site/Information')}>
             개인정보처리방침
           </Text>
           에 동의하게 됩니다.
         </Text>
       </View>
+      <Modal
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}>
+        <View style={{flex: 1}}>
+          <TouchableOpacity
+            onPress={() => setModalVisible(false)}
+            style={styles.closeButton}>
+            <Text style={styles.closeButtonText}>Close</Text>
+          </TouchableOpacity>
+          <WebView source={{uri: url}} />
+        </View>
+      </Modal>
     </View>
   );
 };
