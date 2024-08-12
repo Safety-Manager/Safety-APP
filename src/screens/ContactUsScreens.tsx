@@ -1,3 +1,5 @@
+import {authApi} from '@api/authApi';
+import CustomModal from '@components/CustomModal';
 import TitleBar from '@components/TitleBar';
 import React, {useState} from 'react';
 import {
@@ -11,13 +13,56 @@ import {
 } from 'react-native';
 
 export default function ContactUsScreens() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+  const [data, setData] = useState({
+    title: '',
+    email: '',
+    content: '',
+  });
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState(''); // 모달에 표시할 메시지
+
+  const {mutate: postContactUs} = authApi.PostInquiry();
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleSubmit = () => {
-    // Handle form submission logic
-    console.log('Form submitted', {name, email, message});
+    // 입력 데이터 검증
+    if (!data.title.trim()) {
+      setModalMessage('제목을 입력해 주세요');
+      setModalVisible(true);
+      return;
+    }
+    if (!data.email.trim()) {
+      setModalMessage('이메일을 입력해 주세요');
+      setModalVisible(true);
+      return;
+    }
+    if (!validateEmail(data.email.trim())) {
+      setModalMessage('유효한 이메일 주소를 입력해 주세요');
+      setModalVisible(true);
+      return;
+    }
+    if (!data.content.trim()) {
+      setModalMessage('내용을 입력해 주세요');
+      setModalVisible(true);
+      return;
+    }
+
+    // 모든 입력이 유효한 경우 폼 제출
+    postContactUs(data, {
+      onSuccess: res => {
+        setModalMessage('문의가 성공적으로 제출되었습니다.'); // 성공 메시지 설정
+        setModalVisible(true);
+        setData({title: '', email: '', content: ''}); // 폼 초기화
+      },
+      onError: error => {
+        setModalMessage('문의 제출 중 오류가 발생했습니다.'); // 오류 메시지 설정
+        setModalVisible(true);
+      },
+    });
   };
 
   return (
@@ -41,26 +86,32 @@ export default function ContactUsScreens() {
         <TextInput
           style={styles.input}
           placeholder="문의 제목을 입력해주세요"
-          value={name}
-          onChangeText={setName}
+          value={data.title}
+          onChangeText={e => setData({...data, title: e})}
         />
         <Text style={styles.label}>이메일</Text>
         <TextInput
           style={styles.input}
           placeholder="이메일을 입력해주세요"
-          value={message}
-          onChangeText={setMessage}
+          value={data.email}
+          onChangeText={e => setData({...data, email: e})}
           multiline
         />
         <Text style={styles.label}>내용</Text>
         <TextInput
           style={[styles.input, styles.textArea]}
           placeholder="문의 내용을 입력해주세요"
-          value={message}
-          onChangeText={setMessage}
+          value={data.content}
+          onChangeText={e => setData({...data, content: e})}
           multiline
         />
       </View>
+      <CustomModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        title={modalMessage} // 모달에 표시할 메시지
+        onConfirm={() => setModalVisible(false)}
+      />
     </ScrollView>
   );
 }
