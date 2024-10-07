@@ -13,11 +13,13 @@
 
 ## 프로젝트 소개 이미지
 
-<img src="./assets/images/main.jpg" alt="이미지 설명" width="300" />
-<img src="./assets/images/home.jpg" alt="이미지 설명" width="300" />
-<img src="./assets/images/board.jpg" alt="이미지 설명" width="300" />
-<img src="./assets/images/list.jpg" alt="이미지 설명" width="300" />
-<img src="./assets/images/content.jpg" alt="이미지 설명" width="300" />
+<div style="overflow-x: auto; white-space: nowrap;">
+  <img src="./assets/images/main.jpg" alt="이미지 설명" width="300" style="display: inline-block; margin-right: 10px;" />
+  <img src="./assets/images/home.jpg" alt="이미지 설명" width="300" style="display: inline-block; margin-right: 10px;" />
+  <img src="./assets/images/board.jpg" alt="이미지 설명" width="300" style="display: inline-block; margin-right: 10px;" />
+  <img src="./assets/images/list.jpg" alt="이미지 설명" width="300" style="display: inline-block; margin-right: 10px;" />
+  <img src="./assets/images/content.jpg" alt="이미지 설명" width="300" style="display: inline-block;" />
+</div>
 
 ## 기술 스택
 
