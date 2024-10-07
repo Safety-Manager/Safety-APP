@@ -11,6 +11,14 @@
 2. **안전 교육 정보의 부족 해결**
    - 다양한 안전 교육 업체를 검색하고, 적합한 교육을 받을 수 있도록 돕습니다.
 
+## 프로젝트 소개 이미지
+
+<img src="./assets/images/main.jpg" alt="이미지 설명" width="300" />
+<img src="./assets/images/home.jpg" alt="이미지 설명" width="300" />
+<img src="./assets/images/board.jpg" alt="이미지 설명" width="300" />
+<img src="./assets/images/list.jpg" alt="이미지 설명" width="300" />
+<img src="./assets/images/content.jpg" alt="이미지 설명" width="300" />
+
 ## 기술 스택
 
 - **React Native**: 모바일 애플리케이션 개발
