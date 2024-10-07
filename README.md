@@ -18,8 +18,26 @@
 - **Redux**: 상태 관리
 - **React Navigation**: 네비게이션
 - **Axios**: API 요청
+- **Sentry**: 오류 추적 및 모니터링
+- **Firebase Messaging**: 푸시 알림
+- **Notifee**: 로컬 및 푸시 알림 관리
+- **Day.js**: 날짜 및 시간 처리
+
+## 사용된 라이브러리
+
+- `@react-native-firebase/messaging`: Firebase 클라우드 메시징
+- `@notifee/react-native`: 알림 관리
+- `@sentry/react-native`: 오류 추적
+- `@tanstack/react-query`: 서버 상태 관리
+- `axios`: HTTP 클라이언트
+- `dayjs`: 날짜 및 시간 라이브러리
+- `react-native-bootsplash`: 앱 부트 스플래시 화면
+- `@react-navigation/native`: 네비게이션 라이브러리
+- `@react-navigation/native-stack`: 스택 네비게이션
 
 ## 프로젝트 구조
+
+![이미지 설명](./assets/images/dir.png)
 
 ## 설치 및 실행 방법
 
