@@ -113,4 +113,17 @@ export const boardApi = {
       staleTime: 0,
     });
   },
+  // 게시글 신고하기
+  PostReport: function () {
+    return useMutation({
+      mutationFn: async (data: {
+        boardIdx: number;
+        content: string;
+        reportCategory: string;
+      }): Promise<boolean> => {
+        const res = await axiosInstance.post('/board/report', data);
+        return res.data;
+      },
+    });
+  },
 };

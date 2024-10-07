@@ -25,6 +25,7 @@ import {BoardReplyType} from 'types/board';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomModal from '@components/CustomModal';
 import _ from 'lodash';
+import ReportModal from '@components/ReportModal';
 
 type SearchScreenProps = NativeStackNavigationProp<RootStackParamList>;
 
@@ -39,6 +40,7 @@ const BoardDetailScreens = ({
   const [replyLoading, setReplyLoading] = useState<number | null>(null); // 답글 로딩 상태 관리
   const [newCommentLoading, setNewCommentLoading] = useState(false); // 새 댓글 로딩 상태 관리
 
+  const [ReportModalVisible, setReportModalVisible] = useState(false);
   const {Idx} = route.params;
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState<{
@@ -60,6 +62,8 @@ const BoardDetailScreens = ({
   const {mutate} = boardApi.PostComment();
   const {mutate: deleteMutate} = boardApi.DeleteComment();
   const {mutate: deletePostMutate} = boardApi.DeleteBoard();
+  const {mutate: reportPostMutate} = boardApi.PostReport();
+
   const [replyText, setReplyText] = useState('');
   const [newCommentText, setNewCommentText] = useState('');
   const replyInputRef = useRef<any>(null);
@@ -201,10 +205,34 @@ const BoardDetailScreens = ({
     });
   };
 
+<<<<<<< HEAD
   const handleReportPost = () => {
     setModalContent({
       title: '게시글을 신고하시겠습니까?',
       onConfirm: muateDelete,
+=======
+  const muateReport = () => {
+    reportPostMutate(
+      {
+        boardIdx: Idx,
+        content: '신고합니다.',
+        reportCategory: '게시글',
+      },
+      {
+        onSuccess: () => {
+          setModalVisible(false);
+        },
+        onError: (error: any) => {
+          console.error(error);
+        },
+      },
+    );
+  };
+  const handleReportPost = () => {
+    setModalContent({
+      title: '게시글을 신고하시겠습니까?',
+      onConfirm: muateReport,
+>>>>>>> 0712815940b5f4b04fa754a3fa0ec619749ed7af
     });
     setModalVisible(true);
   };
@@ -233,7 +261,11 @@ const BoardDetailScreens = ({
               ) : (
                 <TouchableOpacity
                   style={styles.deleteButton}
+<<<<<<< HEAD
                   onPress={handleReportPost}>
+=======
+                  onPress={() => setReportModalVisible(true)}>
+>>>>>>> 0712815940b5f4b04fa754a3fa0ec619749ed7af
                   <Text style={styles.deleteButtonText}>게시글 신고</Text>
                 </TouchableOpacity>
               )}
@@ -416,6 +448,11 @@ const BoardDetailScreens = ({
         title={modalContent.title}
         type={'confirm'}
         onConfirm={modalContent.onConfirm}
+      />
+      <ReportModal
+        visible={ReportModalVisible}
+        boardIdx={Idx}
+        onClose={() => setReportModalVisible(false)}
       />
     </KeyboardAvoidingView>
   );

@@ -83,4 +83,17 @@ export const authApi = {
       },
     });
   },
+  // 문의하기
+  PostInquiry: function () {
+    return useMutation({
+      mutationFn: async (data: {
+        title: string;
+        content: string;
+        email: string;
+      }) => {
+        const res = await axiosInstance.post('/common/contact', data);
+        return res.data;
+      },
+    });
+  },
 };
